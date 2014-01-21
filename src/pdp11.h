@@ -112,6 +112,30 @@ using namespace std;
 //Address Mode Mnemonics
 //TODO Jordan use #define's here
 
+//General register addressing modes
+#define reg      	0n //register
+#define regD     	1n //register deferred
+#define regAI	  	2n //auto increment
+#define regAID	 	3n //auto increment deferred
+#define regAD	  	4n //auto decrement
+#define regADD	 	5n //auto decrement deferred
+#define regI    	6n //index
+#define regID   	7n //index deferred
+
+//Program counter addressing modes
+#define pcImm		27 //immediate
+#define pcAbs		37 //absolute
+#define pcRel		67 //relative
+#define pcRelD		77 //relative deferred
+
+//Stack addressing modes
+#define stackD      	16 //deferred
+#define stackAI     	26 //auto increment
+#define stackAID  	36 //auto increment deferred
+#define stackAD	 	46 //auto decrement
+#define stackI	  	66 //indexed
+#define stackID	 	76 //indexed deferred
+
 //Decoded instruction and destination address
 struct instruction {
   int opcode;           //Instruction OpCode
