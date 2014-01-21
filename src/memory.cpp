@@ -10,13 +10,13 @@
 #include "memory.h";
 
 //Function definitions
-int Fetch_Decode(current_inst) {
+int Fetch_Decode(int RAM [], instruction & current_inst) {
 
   //TODO Jordan implement decode and populate current_inst
   //Use OpCode Mnemonics
 }
 
-int Write_mem(int result, int dest_addr) {
+int Write_mem(int & result, int & dest_addr) {
 
   //TODO Jordan implement writes to memory
 }

@@ -14,10 +14,10 @@
 int main() {
 
 //Variables
-instruction current_inst = {0,0,0,0,0,0};   //Fetched/decoded instruction
-PSW Status_word = {0, FALSE, FALSE, FALSE, FALSE};                 //Current PSW
-int RAM[MEM_SIZE];               //Contents of main memory
-int GPR[REGISTERS];              //General Purpose Registers
+instruction current_inst = {0,0,0,0,0,0};       //Fetched/decoded instruction
+PSW Status_word = {0, FALSE, FALSE, FALSE, FALSE, FALSE};       //Current PSW
+int RAM[MEM_SIZE];                              //Contents of main memory
+int GPR[REGISTERS];                             //General Purpose Registers
 
   //Initialize program
   initialize(RAM); //Read ASCII file, write code and static data to memory

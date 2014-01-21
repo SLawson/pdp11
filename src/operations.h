@@ -10,6 +10,6 @@
 #define OPERATIONS_H_
 
 //Function prototypes
-int Operation(instruction current_inst, int GPR [], PSW Status_word);        //Perform operation on current_inst operands
+int Operation(instruction & current_inst, int GPR [], PSW & Status_word);        //Perform operation on current_inst operands
 
 #endif//OPERATIONS_H_

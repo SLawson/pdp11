@@ -9,7 +9,7 @@
 #include "pdp11.h"
 #include "operations.h"
 
-int Operation(instruction current_inst, int GPR [], PSW Status_word) {
+int Operation(instruction & current_inst, int GPR [], PSW & Status_word) {
 
   //TODO Rob/Brett implement instruction ops, populate current_inst.result
 }
