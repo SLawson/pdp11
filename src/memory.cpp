@@ -12,6 +12,7 @@
 //Function definitions
 int Fetch_Decode(int RAM [], instruction & current_inst) {
 
+	
   //TODO Jordan implement decode and populate current_inst
   //Use OpCode Mnemonics
 }
