@@ -44,6 +44,9 @@
 #######################
 work/
 build/
+Build/
+debug/
+Debug/
 
 # OS generated files #
 ######################
