@@ -6,8 +6,8 @@
 // 	   Project: pdp11
 //******************************************************************************
 
-#include "pdp11.h";
-#include "memory.h";
+#include "pdp11.h"
+#include "memory.h"
 
 //Function definitions
 int Fetch_Decode(int RAM [], instruction & current_inst) {

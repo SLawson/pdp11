@@ -113,14 +113,14 @@ using namespace std;
 //TODO Jordan use #define's here
 
 //General register addressing modes
-#define reg      	0n //register
-#define regD     	1n //register deferred
-#define regAI	  	2n //auto increment
-#define regAID	 	3n //auto increment deferred
-#define regAD	  	4n //auto decrement
-#define regADD	 	5n //auto decrement deferred
-#define regI    	6n //index
-#define regID   	7n //index deferred
+#define reg      	0 //register
+#define regD     	1 //register deferred
+#define regAI	  	2 //auto increment
+#define regAID	 	3 //auto increment deferred
+#define regAD	  	4 //auto decrement
+#define regADD	 	5 //auto decrement deferred
+#define regI    	6 //index
+#define regID   	7 //index deferred
 
 //Program counter addressing modes
 #define pcImm		27 //immediate
