@@ -9,6 +9,8 @@
 #ifndef INITIALIZE_H_
 #define INITIALIZE_H_
 
+#include "pdp11.h"
+
 //Function prototypes
 int initialize(int RAM []);      //Reads ASCII, stores code/data sections in memory before execution begins
 
