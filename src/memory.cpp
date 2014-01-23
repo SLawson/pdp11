@@ -12,7 +12,7 @@
 //Function definitions
 int Fetch_Decode(int RAM [], instruction & current_inst) {
 
-  int addr = RAM;
+  /*int addr = RAM;
 
   //single operand instruction
   if (((addr >> 0xc) & 0x0f) == 0x1) {
@@ -34,7 +34,7 @@ int Fetch_Decode(int RAM [], instruction & current_inst) {
   //double operand instruction
   else {
 
-  }
+  }*/
 	
   //TODO Jordan implement decode and populate current_inst
   //Use OpCode Mnemonics
