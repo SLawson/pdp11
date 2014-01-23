@@ -136,6 +136,8 @@ using namespace std;
 #define stackI	  	66 //indexed
 #define stackID	 	76 //indexed deferred
 
+
+// -- I dont think this is correct
 //Decoded instruction and destination address
 struct instruction {
   int opcode;           //Instruction OpCode
@@ -147,6 +149,40 @@ struct instruction {
   int dest_addr;        //Memory write address
   int dest_mode;        //Addressing mode
 };
+
+
+//Double-operand instruction
+struct doubleOpInst {
+  int byteSel;
+  int opCode;
+  int modeA;
+  int source;
+  int modeB;
+  int destination;  
+};
+
+//Double-operand special instruction 
+struct doubleOpSpInst {
+  int opCode;
+  int reg;
+  int mode;
+  int src_dest;
+};
+
+//Single-operand instruction
+struct singleOpInst {
+  int byteSel;
+  int opCode;
+  int mode;
+  int reg;
+};
+
+//Conditional branch instruction
+struct condBrInst {
+  int opCode;
+  int offset;
+};
+
 
 //Processor Status Word fields
 struct PSW {
