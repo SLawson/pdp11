@@ -113,7 +113,7 @@ using namespace std;
 //TODO Jordan use #define's here
 
 //General register addressing modes
-#define reg      	0 //register
+#define regS      	0 //register
 #define regD     	1 //register deferred
 #define regAI	  	2 //auto increment
 #define regAID	 	3 //auto increment deferred
@@ -158,10 +158,10 @@ struct doubleOpInst {
   int modeA;
   int source;
   int modeB;
-  int destination;  
+  int destination;
 };
 
-//Double-operand special instruction 
+//Double-operand special instruction
 struct doubleOpSpInst {
   int opCode;
   int reg;
