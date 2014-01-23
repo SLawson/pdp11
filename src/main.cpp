@@ -21,6 +21,9 @@ int GPR[REGISTERS];                             //General Purpose Registers
 
   cout <<"PDP-11/20 Simulation\n\n";
 
+  if(DEBUG_FLAG)
+    cout <<"*************************DEBUG MODE*************************\n\n";
+
   //Initialize program
   initialize(RAM); //Read ASCII file, write code and static data to memory
 

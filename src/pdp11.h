@@ -13,6 +13,13 @@
 #include <iostream>
 using namespace std;
 
+//Debug configuration flag
+#ifdef _DEBUG
+#define DEBUG_FLAG      true
+#else
+#define DEBUG_FLAG      false
+#endif
+
 //Architecture parameters
 #define MEM_SIZE        65536   //Mem size in bytes
 #define REGISTERS       8       //Number of GPR's

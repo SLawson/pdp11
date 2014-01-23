@@ -45,6 +45,8 @@
 work/
 build/
 Build/
+release/
+Release/
 debug/
 Debug/
 
