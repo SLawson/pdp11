@@ -12,6 +12,6 @@
 #include "pdp11.h"
 
 //Function prototypes
-int initialize(int RAM []);      //Reads ASCII, stores code/data sections in memory before execution begins
+int initialize(int RAM [], int argc, char * argv[], int PC_Reg);      //Reads ASCII, stores code/data sections in memory before execution begins
 
 #endif//INITIALIZE_H_
