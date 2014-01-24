@@ -12,5 +12,5 @@
 
 //Function prototypes
 int Operation(instruction & current_inst, int GPR [], PSW & Status_word);        //Perform operation on current_inst operands
-
+PSW StatusFlags(PSW & Status_word,int regDest);
 #endif//OPERATIONS_H_
