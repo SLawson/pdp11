@@ -10,44 +10,74 @@
 #include "memory.h"
 
 //Function definitions
-int Fetch_Decode(int RAM [], instruction & current_inst) {
+int Fetch_Decode(int RAM [], int GPR [], instruction & current_inst) {
   
+  int CurrentInstL = RAM[(GPR[7])];
+  GPR[7] = (GPR[7] + 1);
+  int CurrentInstU = RAM[(GPR[7])];
+  int CurrentInst = (CurrentInstU << 0x8); 
+  CurrentInst = (CurrentInst | CurrentInstL);
+
   //single operand instruction
-  if (((*RAM >> 0xc) & 0x0f) == 0x1) {
+  if (((CurrentInst >> 0xc) & 0x0f) == 0x1) {
     current_inst.instSel = 1;
-    current_inst.operand1 = (*RAM & 0x7);
-    current_inst.modeDest = ((*RAM & 0x38) >> 0x3);
-    current_inst.opcode = ((*RAM & 0x7c0) >> 0x6);
-    current_inst.byteSel = ((*RAM & 0x8000) >> 0x9);
+
+    current_inst.byteSel = ((CurrentInst & 0x8000) >> 0x9);
+    current_inst.opcode = ((CurrentInst & 0x7c0) >> 0x6);
+    current_inst.modeDest = ((CurrentInst & 0x38) >> 0x3);    
+    
+    GPR[7] = (GPR[7] + 1);
+    current_inst.regster = RAM[GPR[7]];
+    GPR[7] = (GPR[7] + 1);
+    current_inst.regster = ((current_inst.regster << 0x8) & (RAM[(GPR[7])]));
   }
 
   //conditional branch instruction
-  else if (((*RAM >> 0xc) & 0x0f) == 0x0) {
+  else if (((CurrentInst >> 0xc) & 0x0f) == 0x0) {
     current_inst.instSel = 0;
-    current_inst.offset = (*RAM & 0xff);
-    current_inst.opcode = ((*RAM & 0x700) >> 0xf);
+    current_inst.opcode = ((CurrentInst & 0x700) >> 0xf);
+    //current_inst.offset = (CurrentInst & 0xff);
+    
   }
 
   //double operand special operation
-  else if (((*RAM >> 0xd) & 0x07) == 0x7) {
+  else if (((CurrentInst >> 0xd) & 0x07) == 0x7) {
     current_inst.instSel = 3;
-    current_inst.operand2 = (*RAM & 0x7);
-    current_inst.modeDest = ((*RAM & 0x38) >> 0x3);
-    current_inst.operand1 = ((*RAM & 0x1c0) >> 0x6);
-    current_inst.opcode = ((*RAM & 0xe00) >> 0x9);
+
+    current_inst.opcode = ((CurrentInst & 0xe00) >> 0x9);
+    current_inst.modeDest = ((CurrentInst & 0x38) >> 0x3);
+
+    GPR[7] = (GPR[7] + 1);
+    current_inst.source = RAM[GPR[7]];
+    GPR[7] = (GPR[7] + 1);
+    current_inst.source = ((current_inst.source << 0x8) & (RAM[GPR[7]]));
+    GPR[7] = (GPR[7] + 1);
+    current_inst.destination = RAM[GPR[7]];
+    GPR[7] = (GPR[7] + 1);
+    current_inst.destination = ((current_inst.destination << 0x8) & RAM[GPR[7]]);    
   }
 
   //double operand instruction
   else {
     current_inst.instSel = 2;
-    current_inst.operand2 = (*RAM & 0x7);
-    current_inst.modeDest = ((*RAM & 0x38) >> 0x3);
-    current_inst.operand1 = ((*RAM & 0x1c0) >> 0x6);
-    current_inst.modeSrc = ((*RAM & 0xe00) >> 0x9);
-    current_inst.opcode = ((*RAM & 0x7000) >> 0xc);
-    current_inst.byteSel = ((*RAM & 0x8000) >> 0xf);
+
+    current_inst.opcode = ((CurrentInst & 0x7000) >> 0xc);
+    current_inst.byteSel = ((CurrentInst & 0x8000) >> 0xf);
+    current_inst.modeSrc = ((CurrentInst & 0xe00) >> 0x9);
+    current_inst.modeDest = ((CurrentInst & 0x38) >> 0x3);
+    
+    GPR[7] = (GPR[7] + 1);
+    current_inst.source = RAM[GPR[7]];
+    GPR[7] = (GPR[7] + 1);
+    current_inst.source = ((current_inst.source << 0x8) & (RAM[GPR[7]]));
+    GPR[7] = (GPR[7] + 1);
+    current_inst.destination = RAM[GPR[7]];
+    GPR[7] = (GPR[7] + 1);
+    current_inst.destination = ((current_inst.destination << 0x8) & RAM[GPR[7]]); 
   }
-	
+
+  GPR[7] = (GPR[7] + 1);	
+  
   //TODO Jordan implement decode and populate current_inst
   //Use OpCode Mnemonics
 }

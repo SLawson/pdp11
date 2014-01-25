@@ -147,13 +147,16 @@ using namespace std;
 //Decoded instruction and destination address
 struct instruction {
   int instSel;		//Identify the instruction type
+
   int byteSel;		//For byte instructions
   int opcode;           //Instruction OpCode
-  int operand1;         //Fetched Operand1
-  int operand2;         //Fetched Operand2
+  int source;           //Fetched Operand1
+  int destination;      //Fetched Operand2
   int modeSrc;		//Addressing mode of the src
   int modeDest;		//Addressing mode of the destination
-  int offset;		
+  int offset;
+  int regster;
+		
   int result;           //Result of Operation
   int write_flag;       //Write-result-to-RAM flag
 

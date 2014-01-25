@@ -37,7 +37,7 @@ string out_file("trace.txt");                         //output trace file name
 
   //Execute instructions
   while(current_inst.opcode) {
-      Fetch_Decode(RAM, current_inst);
+      Fetch_Decode(RAM, GPR, current_inst);
       Operation(current_inst, GPR, Status_word);
 
       if(current_inst.write_flag)       //Write to RAM if write_flag set
