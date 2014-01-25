@@ -144,50 +144,21 @@ using namespace std;
 #define stackID	 	76 //indexed deferred
 
 
-// -- I dont think this is correct
 //Decoded instruction and destination address
 struct instruction {
+  int instSel;		//Identify the instruction type
+  int byteSel;		//For byte instructions
   int opcode;           //Instruction OpCode
   int operand1;         //Fetched Operand1
   int operand2;         //Fetched Operand2
+  int modeSrc;		//Addressing mode of the src
+  int modeDest;		//Addressing mode of the destination
+  int offset;		
   int result;           //Result of Operation
   int write_flag;       //Write-result-to-RAM flag
 
   int dest_addr;        //Memory write address
   int dest_mode;        //Addressing mode
-};
-
-
-//Double-operand instruction
-struct doubleOpInst {
-  int byteSel;
-  int opCode;
-  int modeA;
-  int source;
-  int modeB;
-  int destination;
-};
-
-//Double-operand special instruction
-struct doubleOpSpInst {
-  int opCode;
-  int reg;
-  int mode;
-  int src_dest;
-};
-
-//Single-operand instruction
-struct singleOpInst {
-  int byteSel;
-  int opCode;
-  int mode;
-  int reg;
-};
-
-//Conditional branch instruction
-struct condBrInst {
-  int opCode;
-  int offset;
 };
 
 
