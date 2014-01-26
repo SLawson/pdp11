@@ -10,10 +10,10 @@
 #include "memory.h"
 
 //Function definitions
-int Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream & file) {
-  
+int Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream & file, bool I_or_D) {
+  I_or_D = true;
   int CurrentInst;
-  CurrentInst = fetch(RAM, GPR, file);
+  CurrentInst = Read_mem(RAM, GPR, file, I_or_D);
 
 	//Decode the current instruction
 	/* -- jump instruction -- */
@@ -24,19 +24,19 @@ int Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream & 
 	
   /* -- single operand instruction -- */
   else if (((CurrentInst & 0x7800) >> 0xb)  == 0x1) {
+    I_or_D = false;
     current_inst.instSel = SINGLE_OP;
 
     current_inst.byteSel = ((CurrentInst & 0x8000) >> 0xe);
     current_inst.opcode = ((CurrentInst & 0x7c0) >> 0x6);
     current_inst.modeDest = ((CurrentInst & 0x38) >> 0x3);    
 
-    current_inst.regster = Read_mem(RAM, GPR, file);
+    current_inst.regster = Read_mem(RAM, GPR, file, I_or_D);
   }
 
   /* -- Conditional branch instruction -- */
   else if (((CurrentInst & 0x7800) >> 0xb) == 0x0) {
     current_inst.instSel = CONDITIONAL_OP;
-    
     current_inst.opcode = ((CurrentInst & 0x700) >> 0x8);
     
     if ((CurrentInst & 0x80) == 0x80)
@@ -48,17 +48,19 @@ int Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream & 
 
   /* -- Double operand special operation -- */
   else if (((CurrentInst & 0x7000) >> 0xc) == 0x7) {
+    I_or_D = false;
     current_inst.instSel = DOUBLE_OP_SP;
 
     current_inst.opcode = ((CurrentInst & 0xe00) >> 0x9);
     current_inst.modeDest = ((CurrentInst & 0x38) >> 0x3);
 
-    current_inst.source = Read_mem(RAM, GPR, file);
-    current_inst.destination = Read_mem(RAM, GPR, file);    
+    current_inst.source = Read_mem(RAM, GPR, file, I_or_D);
+    current_inst.destination = Read_mem(RAM, GPR, file, I_or_D);    
   }
 
   /* -- Double operand instruction -- */
   else {
+    I_or_D = false;
     current_inst.instSel = DOUBLE_OP;
 
     current_inst.opcode = ((CurrentInst & 0x7000) >> 0xc);
@@ -66,37 +68,25 @@ int Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream & 
     current_inst.modeSrc = ((CurrentInst & 0xe00) >> 0x9);
     current_inst.modeDest = ((CurrentInst & 0x38) >> 0x3);
 
-    current_inst.source = Read_mem(RAM, GPR, file);
-    current_inst.destination = Read_mem(RAM, GPR, file); 
+    current_inst.source = Read_mem(RAM, GPR, file, I_or_D);
+    current_inst.destination = Read_mem(RAM, GPR, file, I_or_D); 
   }
 }
 
-//This function will be used to fetch the next instruction or data
-int fetch(int RAM [], int GPR [], ofstream & file) {
-
-  int Instruction;
+//This function will be used to fetch instructions or data from memory
+int Read_mem(int RAM [], int GPR [], ofstream & file, bool I_or_D) {
   
-  Instruction = RAM[(GPR[7])];
-  GPR[7] = (GPR[7] + 1);
-  Instruction = ((Instruction << 0x8) | RAM[GPR[7]]);
-  GPR[7] = (GPR[7] + 1);
-  
-  //file << "2" << "\t" << Instruction << '\n';
-  
-  return Instruction;
-}
-
-//This function will be used to fetch the data from memory
-int Read_mem(int RAM [], int GPR [], ofstream & file) {
-
   int Address;
-  
+
   Address = RAM[(GPR[7])];
   GPR[7] = (GPR[7] + 1);
   Address = ((Address << 0x8) | RAM[GPR[7]]);
   GPR[7] = (GPR[7] + 1);
   
-  //file << "0" << "\t" << Address << '\n';
+  if (I_or_D)
+    file << "2" << "\t" << Address << '\n';
+  else
+    file << "0" << "\t" << Address << '\n';
   
   return Address;
 }
@@ -107,7 +97,7 @@ int Write_mem(int RAM [], int & result, int & dest_addr, ofstream & file) {
   RAM[dest_addr] = (result & 0xff);
   RAM[(dest_addr + 1)] = (result & 0xff00);
   
-  //file << "1" << "\t" << dest_addr << '\n';
+  file << "1" << "\t" << dest_addr << '\n';
   
   return 1;
 }
