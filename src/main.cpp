@@ -16,9 +16,8 @@ int main(int argc, char * argv[]) {
 //Variables
 instruction current_inst = {0,0,0,0,0,0};       //Fetched/decoded instruction
 PSW Status_word = {0, false, false, false, false, false};       //Current PSW
-int RAM[MEM_SIZE] = {0};                        //Contents of main memory
-int GPR[REGISTERS] = {0};                       //General Purpose Registers
-
+int RAM[MEM_SIZE] = {0};                              //Contents of main memory
+int GPR[REGISTERS] = {0};                             //General Purpose Registers
 int init_status = 0;
 
   cout <<"PDP-11/20 Simulation\n\n";
@@ -27,7 +26,7 @@ int init_status = 0;
     cout <<"*************************DEBUG MODE*************************\n\n";
 
   //Initialize program
-  init_status = initialize(RAM, argc, argv, GPR[PC]); //Read ASCII file, write code and static data to memory
+  init_status = initialize(RAM, argc, argv, &GPR[PC]); //Read ASCII file, write code and static data to memory
 
   if (init_status) {
     //TODO initialization error messages
