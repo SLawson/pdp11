@@ -2,13 +2,13 @@
 // initialize.cpp
 //
 //  Created on: Jan 20, 2014
-//      Author: Rob Gaskell		PSU ID# 914464617
+//      Author: Scott Lawson
 // 	   Project: pdp11
 //******************************************************************************
 
 #include "initialize.h"
 
-int initialize(int RAM [], int argc, char * argv[], int* PC_Reg) {
+int initialize(int RAM [], int argc, char * argv[], int* PC_Reg, string &out_file) {
   
   // misc vars
   int status = 0;                  // status of initialization operations
@@ -21,16 +21,29 @@ int initialize(int RAM [], int argc, char * argv[], int* PC_Reg) {
 
   // default values if user doesn't provide them
   *PC_Reg = 010;                   // default PC if none specified
-  string fi_name("default.ascii"); // default memory map file name
+  string fi_name("default.ascii"); // default input file name
+  // out_file default name is set in main when constructed
 
   // option strings
   string fi_opt("-f");             // option for specifying file name
   string pc_opt("-c");             // option for specifying initial program counter
+  string out_fi("-o");             // option for specifying output trace file name/directory
+  string reg_fi("-r");             // option for specifying register dump file name/directory
 
   while (i < argc){
 
     if(!fi_opt.compare(argv[i])){
       fi_name.assign(argv[i+1]);
+      i += 1;
+    }
+
+    else if(!out_fi.compare(argv[i])){
+      out_file.assign(argv[i+1]);
+      i += 1;
+    }
+
+    else if(!reg_fi.compare(argv[i])){
+      reg_file = new string(argv[i+1]);
       i += 1;
     }
 
@@ -127,7 +140,7 @@ int initialize(int RAM [], int argc, char * argv[], int* PC_Reg) {
   
   fi.close();
   if(fi.is_open()){
-    cout << "\nWarning: input file " << fi_name << " did not close properly." << endl;
+    cout << "\nWarning: Input file " << fi_name << " did not close properly." << endl;
   }
 
   return (status);
@@ -157,3 +170,4 @@ command parse_line(string line_in){
 
   return result;
 }
+

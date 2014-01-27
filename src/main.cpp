@@ -10,6 +10,7 @@
 #include "memory.h"
 #include "initialize.h"
 #include "operations.h"
+#include "testing.h"
 
 int main(int argc, char * argv[]) {
 
@@ -18,7 +19,8 @@ instruction current_inst = {0,0,0,0,0,0};       //Fetched/decoded instruction
 PSW Status_word = {0, false, false, false, false, false};       //Current PSW
 int RAM[MEM_SIZE] = {0};                              //Contents of main memory
 int GPR[REGISTERS] = {0};                             //General Purpose Registers
-int init_status = 0;
+int init_status = 0;                                  //initialization routine return code
+string out_file("trace.txt");                         //output trace file name
 
   cout <<"PDP-11/20 Simulation\n\n";
 
@@ -26,7 +28,7 @@ int init_status = 0;
     cout <<"*************************DEBUG MODE*************************\n\n";
 
   //Initialize program
-  init_status = initialize(RAM, argc, argv, &GPR[PC]); //Read ASCII file, write code and static data to memory
+  init_status = initialize(RAM, argc, argv, &GPR[PC], out_file); //Read ASCII file, write code and static data to memory
 
   if (init_status) {
     //TODO initialization error messages
@@ -43,6 +45,8 @@ int init_status = 0;
   }
 
   cout <<"\nPDP-11/20 Simulation Complete\n";
+  reg_dump(GPR);
   cin.get();    //Pause before exiting
   return 0;
 }
+

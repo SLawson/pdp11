@@ -2,7 +2,7 @@
 // initialize.h
 //
 //  Created on: Jan 20, 2014
-//      Author: Rob Gaskell		PSU ID# 914464617
+//      Author: Scott Lawson
 // 	   Project: pdp11
 //******************************************************************************
 
@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include <fstream>
 #include "pdp11.h"
+#include "testing.h"
 
 // structure for line parsing
 struct command{
@@ -21,8 +22,9 @@ struct command{
 };
 
 //Function prototypes
-int initialize(int RAM [], int argc, char * argv[], int* PC_Reg);      //Reads ASCII, stores code/data sections in memory before execution begins
-command parse_line(string line_in);
+int initialize(int RAM [], int argc, char * argv[], int* PC_Reg, string& out_file);      //Reads ASCII, stores code/data sections in memory before execution begins
+command parse_line(string line_in);         // parses a line from the input file into a command and value
 
 
 #endif//INITIALIZE_H_
+
