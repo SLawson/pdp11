@@ -9,7 +9,7 @@
 #include "initialize.h"
 
 int initialize(int RAM [], int argc, char * argv[], int* PC_Reg, string &out_file) {
-  
+
   // misc vars
   int status = 0;                  // status of initialization operations
   int load_address = 0;           // pointer into RAM for storing file data
@@ -43,7 +43,7 @@ int initialize(int RAM [], int argc, char * argv[], int* PC_Reg, string &out_fil
     }
 
     else if(!reg_fi.compare(argv[i])){
-      reg_file = new string(argv[i+1]);
+gcc       reg_file = new string(argv[i+1]);
       i += 1;
     }
 
@@ -79,7 +79,7 @@ int initialize(int RAM [], int argc, char * argv[], int* PC_Reg, string &out_fil
         status = 1;
         break;
       }
-      
+
       switch (result.action){
 
         case '-': // storing value at load address
@@ -108,7 +108,7 @@ int initialize(int RAM [], int argc, char * argv[], int* PC_Reg, string &out_fil
                  << "on line " << i << endl;
             status = 1;
           }
-      
+
           else{
             *PC_Reg = result.value;
             address_flag = 1;
@@ -137,7 +137,7 @@ int initialize(int RAM [], int argc, char * argv[], int* PC_Reg, string &out_fil
     cout << "\nError: Could not open input file.\nFile name: " << fi_name << endl;
     status = 1;
   }
-  
+
   fi.close();
   if(fi.is_open()){
     cout << "\nWarning: Input file " << fi_name << " did not close properly." << endl;
@@ -156,14 +156,14 @@ command parse_line(string line_in){
                               // the command symbol that prepends each line)
 
   result.action = line_in[0]; // retrieve command character
-  
+
   buffer = new char[len];
 
   for(i=0; i<len; ++i){
     buffer[i] = line_in[i+1];
   }
   buffer[i+1] = '\0'; // append string terminator
-  
+
   result.value = (int) strtol(buffer, NULL, 8); // translate and store octal value
 
   delete [] buffer;

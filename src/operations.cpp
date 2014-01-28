@@ -16,47 +16,47 @@ int Operation(instruction & current_inst, int GPR [], PSW & Status_word) {
   //TODO Rob/Brett implement instruction ops, populate current_inst.result
 
     //We need some way to decode the double operand
-     doubleOpInst doubleOpInst = {0,0,0,0,0,0};
 
-    switch(doubleOpInst.opCode){
+
+    switch(current_inst.opcode){
 
         case MOV: //dest = src
         {
-            GPR[doubleOpInst.destination] = GPR[doubleOpInst.source];
-            Status_word = StatusFlags(Status_word,GPR[doubleOpInst.destination]);
+            GPR[current_inst.dest_addr] = GPR[current_inst.modeSrc];
+            Status_word = StatusFlags(Status_word,GPR[current_inst.dest_addr]);
         }
         case CMP://compute src - dest, set flags only
         {
-            GPR[doubleOpInst.destination] =- GPR[doubleOpInst.source];
-            Status_word = StatusFlags(Status_word,GPR[doubleOpInst.destination]);
+            GPR[current_inst.dest_addr] =- GPR[current_inst.modeSrc];
+            Status_word = StatusFlags(Status_word,GPR[current_inst.dest_addr]);
 
         }
         case BIT://compute dest & src set flags only
         {
-            GPR[doubleOpInst.destination]=GPR[doubleOpInst.destination] & GPR[doubleOpInst.source];
-            Status_word = StatusFlags(Status_word,GPR[doubleOpInst.destination]);
+            GPR[current_inst.dest_addr]=GPR[current_inst.dest_addr] & GPR[current_inst.modeSrc];
+            Status_word = StatusFlags(Status_word,GPR[current_inst.dest_addr]);
         }
         case BIC://dest &= ~src
         {
-            GPR[doubleOpInst.destination]=GPR[doubleOpInst.destination] & ~GPR[doubleOpInst.source];
-            Status_word = StatusFlags(Status_word,GPR[doubleOpInst.destination]);
+            GPR[current_inst.dest_addr]=GPR[current_inst.dest_addr] & ~GPR[current_inst.modeSrc];
+            Status_word = StatusFlags(Status_word,GPR[current_inst.dest_addr]);
 
         }
         case BIS://Logical OR dest|=src
         {
-            GPR[doubleOpInst.destination]=GPR[doubleOpInst.destination] |= GPR[doubleOpInst.source];
-            Status_word = StatusFlags(Status_word,GPR[doubleOpInst.destination]);
+            GPR[current_inst.dest_addr]=GPR[current_inst.dest_addr] |= GPR[current_inst.modeSrc];
+            Status_word = StatusFlags(Status_word,GPR[current_inst.dest_addr]);
 
         }
         case ADD://dest +=src
         {
-            GPR[doubleOpInst.destination] += GPR[doubleOpInst.source];
-            Status_word = StatusFlags(Status_word,GPR[doubleOpInst.destination]);
+            GPR[current_inst.dest_addr] += GPR[current_inst.modeSrc];
+            Status_word = StatusFlags(Status_word,GPR[current_inst.dest_addr]);
         }
         case SUB://dest -=src
         {
-            GPR[doubleOpInst.destination] -= GPR[doubleOpInst.source];
-            Status_word = StatusFlags(Status_word,GPR[doubleOpInst.destination]);
+            GPR[current_inst.dest_addr] -= GPR[current_inst.modeSrc];
+            Status_word = StatusFlags(Status_word,GPR[current_inst.dest_addr]);
         }
 
 
@@ -89,7 +89,7 @@ int Operation(instruction & current_inst, int GPR [], PSW & Status_word) {
             cout << "error unknown instruction/n";
     }
 
-    return GPR[doubleOpInst.destination];
+    return GPR[current_inst.dest_addr];
 }
 
 PSW StatusFlags(PSW & Status_word,int regDest)
