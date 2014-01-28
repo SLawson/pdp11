@@ -43,7 +43,7 @@ int initialize(int RAM [], int argc, char * argv[], int* PC_Reg, string &out_fil
     }
 
     else if(!reg_fi.compare(argv[i])){
-gcc       reg_file = new string(argv[i+1]);
+      reg_file = new string(argv[i+1]);
       i += 1;
     }
 
