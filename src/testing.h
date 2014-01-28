@@ -7,12 +7,13 @@
 //******************************************************************************
 
 #ifndef TESTING_H_
-#define TESTING_H_ 
+#define TESTING_H_
 
 #include <fstream>
 #include "pdp11.h"
 
-extern string* reg_file;
+
+extern string *reg_file;
 
 int reg_dump(int GPR[]); // dumps register values to a text file
 
