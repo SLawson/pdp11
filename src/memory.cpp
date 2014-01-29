@@ -12,11 +12,9 @@
 //Function definitions
 int Fetch_Decode(int RAM [], int GPR [], instruction & current_inst) {
   
-  int CurrentInstL = RAM[(GPR[7])];
+  int CurrentInst = RAM[(GPR[7])];
   GPR[7] = (GPR[7] + 1);
-  int CurrentInstU = RAM[(GPR[7])];
-  int CurrentInst = (CurrentInstU << 0x8); 
-  CurrentInst = (CurrentInst | CurrentInstL);
+  CurrentInst = ((CurrentInst << 0x8) | RAM[(GPR[7])]);
 
   //single operand instruction
   if (((CurrentInst >> 0xc) & 0x0f) == 0x1) {
@@ -29,14 +27,14 @@ int Fetch_Decode(int RAM [], int GPR [], instruction & current_inst) {
     GPR[7] = (GPR[7] + 1);
     current_inst.regster = RAM[GPR[7]];
     GPR[7] = (GPR[7] + 1);
-    current_inst.regster = ((current_inst.regster << 0x8) & (RAM[(GPR[7])]));
+    current_inst.regster = ((current_inst.regster << 0x8) | RAM[(GPR[7])]);
   }
 
   //conditional branch instruction
   else if (((CurrentInst >> 0xc) & 0x0f) == 0x0) {
     current_inst.instSel = 0;
     current_inst.opcode = ((CurrentInst & 0x700) >> 0xf);
-    //current_inst.offset = (CurrentInst & 0xff);
+    current_inst.offset = ((CurrentInst & 0xff) + RAM[7]);
     
   }
 
@@ -50,11 +48,11 @@ int Fetch_Decode(int RAM [], int GPR [], instruction & current_inst) {
     GPR[7] = (GPR[7] + 1);
     current_inst.source = RAM[GPR[7]];
     GPR[7] = (GPR[7] + 1);
-    current_inst.source = ((current_inst.source << 0x8) & (RAM[GPR[7]]));
+    current_inst.source = ((current_inst.source << 0x8) | RAM[GPR[7]]);
     GPR[7] = (GPR[7] + 1);
     current_inst.destination = RAM[GPR[7]];
     GPR[7] = (GPR[7] + 1);
-    current_inst.destination = ((current_inst.destination << 0x8) & RAM[GPR[7]]);    
+    current_inst.destination = ((current_inst.destination << 0x8) | RAM[GPR[7]]);    
   }
 
   //double operand instruction
@@ -69,11 +67,11 @@ int Fetch_Decode(int RAM [], int GPR [], instruction & current_inst) {
     GPR[7] = (GPR[7] + 1);
     current_inst.source = RAM[GPR[7]];
     GPR[7] = (GPR[7] + 1);
-    current_inst.source = ((current_inst.source << 0x8) & (RAM[GPR[7]]));
+    current_inst.source = ((current_inst.source << 0x8) | RAM[GPR[7]]);
     GPR[7] = (GPR[7] + 1);
     current_inst.destination = RAM[GPR[7]];
     GPR[7] = (GPR[7] + 1);
-    current_inst.destination = ((current_inst.destination << 0x8) & RAM[GPR[7]]); 
+    current_inst.destination = ((current_inst.destination << 0x8) | RAM[GPR[7]]); 
   }
 
   GPR[7] = (GPR[7] + 1);	
@@ -82,9 +80,13 @@ int Fetch_Decode(int RAM [], int GPR [], instruction & current_inst) {
   //Use OpCode Mnemonics
 }
 
-int Write_mem(int & result, int & dest_addr) {
+int Write_mem(int RAM [], int & result, int & dest_addr) {
 
   //TODO Jordan implement writes to memory
+  
+  RAM[dest_addr] = (result & 0xff);
+  RAM[dest_addr] = (RAM[dest_addr] + 1);
+  RAM[dest_addr] = (result & 0xff00);
 }
 
 

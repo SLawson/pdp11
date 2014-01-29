@@ -41,7 +41,7 @@ string out_file("trace.txt");                         //output trace file name
       Operation(current_inst, GPR, Status_word);
 
       if(current_inst.write_flag)       //Write to RAM if write_flag set
-        Write_mem(current_inst.result, current_inst.dest_addr);
+        Write_mem(RAM, current_inst.result, current_inst.dest_addr);
   }
 
   cout <<"\nPDP-11/20 Simulation Complete\n";
