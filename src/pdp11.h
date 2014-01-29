@@ -144,11 +144,11 @@ using namespace std;
 #define stackID	 	76 //indexed deferred
 
 //instruction type mnemonics
-#define jump						0
-#define singleOp				1
-#define doubleOp				2
-#define doubleOpSp			3
-#define conditionalOp		4
+#define JUMP							0
+#define SINGLE_OP					1
+#define DOUBLE_OP					2
+#define DOUBLE_OP_SP			3
+#define CONDITIONAL_OP		4
 
 //Decoded instruction and destination address
 struct instruction {
