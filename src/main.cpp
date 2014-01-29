@@ -31,18 +31,17 @@ string out_file("trace.txt");                         //output trace file name
   init_status = initialize(RAM, argc, argv, &GPR[PC], out_file); //Read ASCII file, write code and static data to memory
 
   if (init_status) {
-    //TODO initialization error messages
     return 0;
   }
 
   //Execute instructions
-  while(current_inst.opcode) {
+  do {
       Fetch_Decode(RAM, GPR, current_inst);
       Operation(current_inst, GPR, Status_word);
 
       if(current_inst.write_flag)       //Write to RAM if write_flag set
         Write_mem(RAM, current_inst.result, current_inst.dest_addr);
-  }
+  } while(current_inst.opcode);
 
   cout <<"\nPDP-11/20 Simulation Complete\n";
   reg_dump(GPR);
