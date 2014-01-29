@@ -12,15 +12,23 @@
 //Function definitions
 int Fetch_Decode(int RAM [], int GPR [], instruction & current_inst) {
   
+  //fetch the current instruction
   int CurrentInst = RAM[(GPR[7])];
   GPR[7] = (GPR[7] + 1);
   CurrentInst = ((CurrentInst << 0x8) | RAM[(GPR[7])]);
 
+	//decode the current instruction
+	if (((CurrentInst & 0x40) >> 0x6) == 0x1) {
+		current_inst.instSel = 4;
+		
+		current_inst.offset = ((CurrentInst & 0x3f) - 1);
+	}
+	
   //single operand instruction
-  if (((CurrentInst >> 0xc) & 0x0f) == 0x1) {
+  else if (((CurrentInst & 0x7800) >> 0xb)  == 0x1) {
     current_inst.instSel = 1;
 
-    current_inst.byteSel = ((CurrentInst & 0x8000) >> 0x9);
+    current_inst.byteSel = ((CurrentInst & 0x8000) >> 0xe);
     current_inst.opcode = ((CurrentInst & 0x7c0) >> 0x6);
     current_inst.modeDest = ((CurrentInst & 0x38) >> 0x3);    
     
@@ -31,15 +39,19 @@ int Fetch_Decode(int RAM [], int GPR [], instruction & current_inst) {
   }
 
   //conditional branch instruction
-  else if (((CurrentInst >> 0xc) & 0x0f) == 0x0) {
+  else if (((CurrentInst & 0x7800) >> 0xb) == 0x0) {
     current_inst.instSel = 0;
-    current_inst.opcode = ((CurrentInst & 0x700) >> 0xf);
-    current_inst.offset = ((CurrentInst & 0xff) + RAM[7]);
+    current_inst.opcode = ((CurrentInst & 0x700) >> 0x8);
+    
+    if ((CurrentInst & 0x80) == 0x80)
+    	current_inst.offset = (0 - (CurrentInst & 0xff) - 1);
+    else
+    	current_inst.offset = ((CurrentInst & 0xff) - 1);
     
   }
 
   //double operand special operation
-  else if (((CurrentInst >> 0xd) & 0x07) == 0x7) {
+  else if (((CurrentInst & 0x7000) >> 0xc) == 0x7) {
     current_inst.instSel = 3;
 
     current_inst.opcode = ((CurrentInst & 0xe00) >> 0x9);
@@ -60,7 +72,7 @@ int Fetch_Decode(int RAM [], int GPR [], instruction & current_inst) {
     current_inst.instSel = 2;
 
     current_inst.opcode = ((CurrentInst & 0x7000) >> 0xc);
-    current_inst.byteSel = ((CurrentInst & 0x8000) >> 0xf);
+    current_inst.byteSel = ((CurrentInst & 0x8000) >> 0xe);
     current_inst.modeSrc = ((CurrentInst & 0xe00) >> 0x9);
     current_inst.modeDest = ((CurrentInst & 0x38) >> 0x3);
     
