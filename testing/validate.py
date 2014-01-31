@@ -1,29 +1,24 @@
 # ************************************************************************************************
 # File:           validate.py
 # Author:         Scott Lawson
-# Version:        1.0
-# Date:           1/26/2014
+# Version:        1.1
+# Date:           1/30/2014
 # Python Version: 3.3
 #
 # The purpose of this script is to run a program multiple times with different input parameters
-# and compare the output files generated.
+# and compare the output files generated. The file "config.ini" is required to run the test suite.
 #
-# It requires two files to coordinate the testing:
-#   control.ini   Provides paths and test parameters
-#   map.txt       Maps input files to their expected outputs
+# This script is only intended for command-line based applications. It will copy the executable
+# to the current working directory and repeatedly run the program with different command-line
+# invocations specified in config.ini.
 #
-# This script should reside in a folder that also contains the following three folders:
-#   input         The target program's input files
-#   model         Example output files that the real output will be compared against
-#   output        Location to store the real output files
-#
-# Test results will be printed to stdout and logged in the file test_log.txt. See "control.ini"
-# and "map.ini" for details on those files' expected formats.
+# Test results will be printed to stdout and logged in the file test_log.txt.
 # ************************************************************************************************
 
 import os
 import sys
 import shlex
+import shutil
 import filecmp
 import datetime
 import subprocess
@@ -54,7 +49,7 @@ class TestCase(object):
 
 class TestSuite(object):
   def __init__(self, program, out_dir, model_dir, invocations, flags, files):
-    self._program = os.path.join(os.getcwd(), program)
+    self._program = program
     self._cases = []
     flags = [flag.strip() for flag in flags.split(',')]
     
@@ -67,7 +62,7 @@ class TestSuite(object):
       except KeyError:
         file_list = []
       
-      # now parse the invocation to extract file names for comparisons
+      # now parse the invocations to extract file names for comparisons
       inv = invocations[case_id]
       parsed = shlex.split(inv)
 
@@ -116,14 +111,27 @@ def main():
   config.read('config.ini')
   
   try:
-    program = config['PATHS']['name']
+    program_path = config['PATHS']['executable']
     out_dir = config['PATHS']['out_path']
     model_dir = config['PATHS']['model_path']
 
   except KeyError:
     print("\nValidation Error: The file 'config.ini' must exist and it must contain the section "
-          "'[PATHS]'. This section must define 'name', 'out_path', and 'model_path'.\n")
+          "'[PATHS]'. This section must define 'executable', 'out_path', and 'model_path'.\n")
     sys.exit(1)
+
+  try:
+    program = os.path.split(program_path)[1]
+    if not program:
+      print("\nProgram name not correctly parsed. Please confirm that there is a [PATHS] section in config.ini,"
+            "and that it defines the variable \"executable\". \"Executable\" should specify the complete "
+            "absolute path to the program to test, including the name of the program itself.")
+      sys.exit(1)
+
+    shutil.copyfile(program_path, os.path.join(os.getcwd(), program))
+
+  except OSError:
+    print("\nExecutable copy operation failed. Please confirm that you have write permissions to this directory.")
 
   suite = TestSuite(program, out_dir, model_dir, config['INVOCATIONS'], config['FLAGS']['flags'], config['FILES'])
   result_string = suite.execute()
