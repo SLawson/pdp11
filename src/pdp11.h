@@ -52,7 +52,7 @@ using namespace std;
 
 //Single-operand instructions
 #define SWAB    0003//swap bytes
-#define Jump    004r//Jumps to subroutine
+#define JMP     0001//Jumps to subroutine
 #define Emu     104x//Emulator trap
 #define CLR     0050//Clear: dest = 0
 #define CLRB    1050//Clear: dest = 0
@@ -105,6 +105,9 @@ using namespace std;
 #define BHIS    1030xx//Branch if higher or same (C=0)
 #define BCS     1034xx//Branch if carry set (C=1)
 #define BLO	    1034xx//Branch if lower than (C=1)
+
+
+
 
 
 //General Purpose Register names
@@ -163,7 +166,7 @@ struct instruction {
   int modeDest;		//Addressing mode of the destination
   int offset;
   int regster;
-		
+
   int result;           //Result of Operation
   int write_flag;       //Write-result-to-RAM flag
 
