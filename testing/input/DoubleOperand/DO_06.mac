@@ -1,0 +1,10 @@
+; File: DO_06.mac
+; Tests: Double operand add instruction
+.PSECT A, REL
+
+START:
+        MOV   #5, R1
+        MOV   #4, R2
+        ADD   R1, R2
+        HALT
+
