@@ -21,7 +21,7 @@ int Operation(int RAM[],instruction & current_inst, int GPR [], PSW & Status_wor
 
 
 
-  if(current_inst.instSel == DOUBLE_OP)
+  if(current_inst.instSel == DOUBLE_OP  && current_inst.byteSel == 0)
   {
     //Takes the destination address and fetches the correct value
     if(current_inst.modeDest == regID)//ID 7
@@ -88,8 +88,7 @@ int Operation(int RAM[],instruction & current_inst, int GPR [], PSW & Status_wor
         break;
 
       }
-      // -- fix this!!!
-      /*case ADD://dest +=src
+      case ADD://dest +=src
       {
         int16_t src16 = GPR[current_inst.source];
         int16_t dest16 = GPR[current_inst.destination];
@@ -99,16 +98,6 @@ int Operation(int RAM[],instruction & current_inst, int GPR [], PSW & Status_wor
         returnflag = 1;
         break;
       }
-      case SUB://dest -=src
-      {
-        int16_t src16 = GPR[current_inst.source];
-        int16_t dest16 = GPR[current_inst.destination];
-        GPR[current_inst.destination] -= GPR[current_inst.source];
-        dest16 -= src16;
-        StatusFlags(Status_word,GPR[current_inst.destination],dest16,1);
-        returnflag = 1;
-        break;
-      }*/
       default:
       {
         cout << "error in double op\n";
@@ -116,7 +105,24 @@ int Operation(int RAM[],instruction & current_inst, int GPR [], PSW & Status_wor
       }
     }
   }
-  else if(current_inst.instSel == SINGLE_OP)
+  else if(current_inst.instSel == DOUBLE_OP  && current_inst.byteSel == 1)
+  {
+	switch(current_inst.opcode){
+
+		case SUB://dest -=src
+		{
+		int16_t src16 = GPR[current_inst.source];
+		int16_t dest16 = GPR[current_inst.destination];
+		GPR[current_inst.destination] -= GPR[current_inst.source];
+		dest16 -= src16;
+		StatusFlags(Status_word,GPR[current_inst.destination],dest16,1);
+		returnflag = 1;
+		break;
+		}
+	}
+  }
+
+  else if(current_inst.instSel == SINGLE_OP && current_inst.byteSel == 0)
   {
     switch(current_inst.opcode)
     {
@@ -322,6 +328,9 @@ int Operation(int RAM[],instruction & current_inst, int GPR [], PSW & Status_wor
       }
     }
   }
+
+  //Conditional Branch Instructions
+  //byteSel = 0: BR_JMP, BEQ, BNE, and Signed Conditional Branches
   else if(current_inst.instSel == CONDITIONAL_OP && current_inst.byteSel == 0) {
 	switch(current_inst.opcode) {
 		case BR_JMP: {			//Unconditional Branch/Jump
@@ -378,6 +387,7 @@ int Operation(int RAM[],instruction & current_inst, int GPR [], PSW & Status_wor
 		}
 	}
   }
+  //byteSel = 1: BMI, BPL, BCS, BCC, BVS, BVC, and Unsigned Conditional Branches
   else if(current_inst.instSel == CONDITIONAL_OP && current_inst.byteSel == 1) {
 	switch(current_inst.opcode) {
 		case BPL: {				//Branch on PLus
@@ -443,6 +453,9 @@ int Operation(int RAM[],instruction & current_inst, int GPR [], PSW & Status_wor
 		}
 	}
   }
+
+  //Condition Code Operator Instructions
+  //Set or Clear Condition Codes (C,V,Z,N)
   else if(current_inst.instSel == COND_CODE_OP) {
 	switch(current_inst.opcode) {
 		case CLC: {		//Clear Carry Flag
