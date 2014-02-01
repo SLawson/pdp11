@@ -10,21 +10,24 @@
 #include "memory.h"
 
 //Function definitions
-int Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream & file, bool I_or_D) {
+int Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream & file, bool I_or_D, PSW & Status_word) {
   I_or_D = true;
   int CurrentInst;
   CurrentInst = Read_mem(RAM, GPR, file, I_or_D);
 
-  if (CurrentInst == 0x5){
+  //HALT op
+  if (CurrentInst == 0x0)
+    current_inst.opcode = 0x0;
+
+  //RESET op
+  else if (CurrentInst == 0x5){
       //RESET CODE HERE...
   }
   
-  // I dont believe mnemonics work for this op because there can be any 
-  // combo of the four being set or cleared...
-  /*
+  //Set status word op
   else if (((CurrentInst & 0xffe0) >> 0x5) == 0x5) {
     
-    if ((CurrentInst & 0x10) == 0x10){
+    if ((CurrentInst & 0x10) == 0x10) {
     
       if ((CurrentInst & 0x1) == 0x1)
         Status_word.C = true;
@@ -39,7 +42,7 @@ int Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream & 
         Status_word.N = true;
     }
       
-    else if ((CurrentInst & 0x10) == 0x0){
+    else if ((CurrentInst & 0x10) == 0x0) {
       
       if ((CurrentInst & 0x1) == 0x1)
         Status_word.C = false;
@@ -51,9 +54,9 @@ int Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream & 
         Status_word.Z = false;
         
       if ((CurrentInst & 0x8) == 0x8)
-        tatus_word.N = false;
+        Status_word.N = false;
     }
-  }*/
+  }
 
 	//Decode the current instruction
 	/* -- jump instruction -- */
@@ -163,6 +166,7 @@ int Write_mem(int RAM [], int & result, int & dest_addr, ofstream & file) {
   RAM[(dest_addr + 1)] = ((result & 0xff00) >> 0x8);
   
   file << "1" << "\t" << dest_addr << '\n';
+  
   
   return 1;
 }

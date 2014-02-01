@@ -12,7 +12,7 @@
 #include "pdp11.h"
 
 //Fetches an instruction, decodes and updates current_inst
-int Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream & file, bool I_or_D);
+int Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream & file, bool I_or_D, PSW & Status_word);
 
 //Perform a data fetch  
 int Read_mem(int RAM [], int GPR [], ofstream&, bool I_or_D); 

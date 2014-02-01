@@ -41,11 +41,13 @@ file.open("tracefile.txt");
 
   //Execute instructions
   do {
-      Fetch_Decode(RAM, GPR, current_inst, file, I_or_D);
+      Fetch_Decode(RAM, GPR, current_inst, file, I_or_D, Status_word);
       Operation(RAM,current_inst, GPR, Status_word);
 
-      if(current_inst.write_flag)       //Write to RAM if write_flag set
+      if(current_inst.write_flag) {      //Write to RAM if write_flag set
         Write_mem(RAM, current_inst.result, current_inst.dest_addr, file);
+        current_inst.write_flag = false;
+      }
   } while(current_inst.opcode || current_inst.byteSel);
 
   cout <<"\nPDP-11/20 Simulation Complete\n";
