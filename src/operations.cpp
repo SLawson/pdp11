@@ -273,7 +273,7 @@ int Operation(int RAM[],instruction & current_inst, int GPR [], PSW & Status_wor
         
         Status_word.C = (dest16 & 0x8000);
         if (Status_word.C)
-          dest16 = (0X8000 | ((dest16 & 0x7fff << 0x1));
+          dest16 = (0X8000 | ((dest16 & 0x7fff) << 0x1));
         else
           dest16 = ((dest16 & 0X7fff) & ((dest16 & 0x7fff) << 0x1));
         
@@ -336,49 +336,47 @@ int Operation(int RAM[],instruction & current_inst, int GPR [], PSW & Status_wor
 
 void StatusFlags(PSW & Status_word,int regDest, int16_t regDest16, int ignore)
 {
+  //if the result of the register is zero then set the flag otherwise set to false
+  if(regDest == 0)//setting the zero flag on the Status flags
+  {
+    Status_word.Z = true;
+  }
+  else
+  {
+    Status_word.Z = false;
+  }
 
+  //if the result is a negative number
+  if(regDest < 0) //setting the negative flag on the Status flags
+  {
+    Status_word.N = true;
+  }
+  else
+  {
+    Status_word.N = false;
+  }
 
-    //if the result of the register is zero then set the flag otherwise set to false
-    if(regDest == 0)//setting the zero flag on the Status flags
-    {
-        Status_word.Z = true;
-    }
-    else
-    {
-        Status_word.Z = false;
-    }
+  //if the result doesn't equal a 16 bit equivalent then overflow
+  if(regDest == regDest16 )
+  {
+    Status_word.V = false;
+  }
+  else
+  {
+    Status_word.V = true;
+  }
 
-    //if the result is a negative number
-    if(regDest < 0) //setting the negative flag on the Status flags
-    {
-        Status_word.N = true;
-    }
-    else
-    {
-        Status_word.N = false;
-    }
-
-    //if the result doesn't equal a 16 bit equivalent then overflow
-    if(regDest == regDest16 )
-    {
-        Status_word.V = false;
-    }
-    else
-    {
-        Status_word.V = true;
-    }
-
-    if(ignore == 1)//used to ignore carry modification
-       {
-            //check for carry bit
-            if(regDest >= 65536)
-            {
-                Status_word.C = true;
-            }
-            else
-            {
-                Status_word.C = false;
-            }
-       }
+  if(ignore == 1)//used to ignore carry modification
+   {
+      //check for carry bit
+      if(regDest >= 65536)
+      {
+        Status_word.C = true;
+      }
+      else
+      {
+        Status_word.C = false;
+      }
+   }
 
 }
