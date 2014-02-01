@@ -23,7 +23,7 @@ PSW Status_word = {0, false, false, false, false, false};     //Current PSW
 int RAM[MEM_SIZE] = {0};                                      //Contents of main memory
 int GPR[REGISTERS] = {0};                                     //General Purpose Registers
 int init_status = 0;                                          //initialization routine return code
-bool I_or_D;
+bool I_or_D = false;
 string out_file("trace.txt");                                 //output trace file name
 file.open("tracefile.txt");
 
