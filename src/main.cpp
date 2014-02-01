@@ -46,7 +46,7 @@ file.open("tracefile.txt");
 
       if(current_inst.write_flag)       //Write to RAM if write_flag set
         Write_mem(RAM, current_inst.result, current_inst.dest_addr, file);
-  } while(current_inst.opcode);
+  } while(current_inst.opcode || current_inst.byteSel);
 
   cout <<"\nPDP-11/20 Simulation Complete\n";
   reg_dump(GPR, Status_word);
