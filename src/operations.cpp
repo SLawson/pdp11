@@ -225,6 +225,8 @@ int Operation(int RAM[],instruction & current_inst, int GPR [], PSW & Status_wor
         else
           Status_word.N = false;
         Status_word.V = (Status_word.C ^ Status_word.N);
+        current_inst.result = dest16;
+        current_inst.write_flag = true;
         break;
       }
       case ROL:
@@ -247,6 +249,8 @@ int Operation(int RAM[],instruction & current_inst, int GPR [], PSW & Status_wor
         else
           Status_word.N = false;
         Status_word.V = (Status_word.C ^ Status_word.N);
+        current_inst.result = dest16;
+        current_inst.write_flag = true;
         break;
       }
       case ASR:
@@ -270,6 +274,8 @@ int Operation(int RAM[],instruction & current_inst, int GPR [], PSW & Status_wor
           Status_word.N = false;
           
         Status_word.V = (Status_word.C ^ Status_word.N);
+        current_inst.result = dest16;
+        current_inst.write_flag = true;
         break;
       }
       case ASL:
@@ -296,6 +302,8 @@ int Operation(int RAM[],instruction & current_inst, int GPR [], PSW & Status_wor
           Status_word.N = false;
         
         Status_word.V = (Status_word.C ^ Status_word.N);
+        current_inst.result = dest16;
+        current_inst.write_flag = true;
         break;
       }
       case SWAB:
@@ -319,6 +327,8 @@ int Operation(int RAM[],instruction & current_inst, int GPR [], PSW & Status_wor
           
         Status_word.C = false;
         Status_word.V = false;
+        current_inst.result = dest16;
+        current_inst.write_flag = true;
         break;
       }
       default:

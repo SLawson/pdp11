@@ -15,9 +15,49 @@ int Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream & 
   int CurrentInst;
   CurrentInst = Read_mem(RAM, GPR, file, I_or_D);
 
+  if (CurrentInst == 0x5){
+      //RESET CODE HERE...
+  }
+  
+  // I dont believe mnemonics work for this op because there can be any 
+  // combo of the four being set or cleared...
+  /*
+  else if (((CurrentInst & 0xffe0) >> 0x5) == 0x5) {
+    
+    if ((CurrentInst & 0x10) == 0x10){
+    
+      if ((CurrentInst & 0x1) == 0x1)
+        Status_word.C = true;
+    
+      if ((CurrentInst & 0x2) == 0x2)
+        Status_word.V = true;
+    
+      if ((CurrentInst & 0x4) == 0x4)
+        Status_word.Z = true;
+    
+      if ((CurrentInst & 0x8) == 0x8)
+        Status_word.N = true;
+    }
+      
+    else if ((CurrentInst & 0x10) == 0x0){
+      
+      if ((CurrentInst & 0x1) == 0x1)
+        Status_word.C = false;
+      
+      if ((CurrentInst & 0x2) == 0x2)
+      Status_word.V = false;
+      
+      if ((CurrentInst & 0x4) == 0x4)
+        Status_word.Z = false;
+        
+      if ((CurrentInst & 0x8) == 0x8)
+        tatus_word.N = false;
+    }
+  }*/
+
 	//Decode the current instruction
 	/* -- jump instruction -- */
-	if (((CurrentInst & 0x40) >> 0x6) == 0x1) {
+	else if (((CurrentInst & 0x40) >> 0x6) == 0x1) {
 		current_inst.instSel = JUMP;
 		current_inst.offset = ((CurrentInst & 0x3f) - 1);
 	}
@@ -31,7 +71,8 @@ int Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream & 
     current_inst.opcode = ((CurrentInst & 0x7c0) >> 0x6);
     current_inst.modeDest = ((CurrentInst & 0x38) >> 0x3);    
 
-    current_inst.regster = Read_mem(RAM, GPR, file, I_or_D);
+    if ((current_inst.modeDest == 0x6) || (current_inst.modeDest == 0x7))
+      current_inst.regster = Read_mem(RAM, GPR, file, I_or_D);
   }
 
   /* -- Conditional branch instruction -- */
@@ -54,8 +95,15 @@ int Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream & 
     current_inst.opcode = ((CurrentInst & 0xe00) >> 0x9);
     current_inst.modeDest = ((CurrentInst & 0x38) >> 0x3);
 
-    current_inst.source = Read_mem(RAM, GPR, file, I_or_D);
-    current_inst.destination = Read_mem(RAM, GPR, file, I_or_D);    
+    if ((current_inst.modeSrc == 0x6) || (current_inst.modeSrc == 0x7))
+      current_inst.source = Read_mem(RAM, GPR, file, I_or_D);
+    else
+      current_inst.source = ((CurrentInst & 0x1c0) >> 0x6);
+      
+    if ((current_inst.modeDest == 0x6) || (current_inst.modeDest == 0x7))
+      current_inst.destination = Read_mem(RAM, GPR, file, I_or_D); 
+    else
+      current_inst.destination = (CurrentInst & 0x3);   
   }
 
   /* -- Double operand instruction -- */
@@ -68,8 +116,15 @@ int Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream & 
     current_inst.modeSrc = ((CurrentInst & 0xe00) >> 0x9);
     current_inst.modeDest = ((CurrentInst & 0x38) >> 0x3);
 
-    current_inst.source = Read_mem(RAM, GPR, file, I_or_D);
-    current_inst.destination = Read_mem(RAM, GPR, file, I_or_D); 
+    if ((current_inst.modeSrc == 0x6) || (current_inst.modeSrc == 0x7))
+      current_inst.source = Read_mem(RAM, GPR, file, I_or_D);
+    else
+      current_inst.source = ((CurrentInst & 0x1c0) >> 0x6);
+      
+    if ((current_inst.modeDest == 0x6) || (current_inst.modeDest == 0x7))
+      current_inst.destination = Read_mem(RAM, GPR, file, I_or_D); 
+    else
+      current_inst.destination = (CurrentInst & 0x3); 
   }
 }
 
