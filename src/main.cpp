@@ -42,7 +42,7 @@ file.open("tracefile.txt");
   //Execute instructions
   do {
       Fetch_Decode(RAM, GPR, current_inst, file, I_or_D);
-      Operation(current_inst, GPR, Status_word);
+      Operation(RAM,current_inst, GPR, Status_word);
 
       if(current_inst.write_flag)       //Write to RAM if write_flag set
         Write_mem(RAM, current_inst.result, current_inst.dest_addr, file);

@@ -8,23 +8,48 @@
 
 #include "pdp11.h"
 #include "operations.h"
+#include "memory.h"
 
-int Operation(instruction & current_inst, int GPR [], PSW & Status_word) {
+int Operation(int RAM[],instruction & current_inst, int GPR [], PSW & Status_word) {
 
   //TODO Rob/Brett implement instruction ops, populate current_inst.result
 
+
         int returnflag = 0;
+        int opsource;
+        int opdestination;
+
+
 
         if(current_inst.instSel == DOUBLE_OP)
         {
+            //Takes the destination address and fetches the correct value
+            if(current_inst.modeDest == regID)//ID 7
+                opdestination = RAM[current_inst.destination];//Read_mem(RAM, GPR, file, I_or_D) trying to add
+            else if (current_inst.modeDest == regAI)//ID 2
+                opdestination = current_inst.destination;
+            //need to add the rest of the modes here for double op
+            else
+                cout << "not a valid mode\n";
+            //Takes the source address and fetches the correct value or uses the source value
+            if(current_inst.modeSrc == regID)
+                opsource = RAM[current_inst.source];
+            else if (current_inst.modeSrc == regAI)
+                opdestination = current_inst.source;
+            else
+                cout << "not a valid mode for source\n";
+
+
+            //once the correct destination and source the operation can occur
             switch(current_inst.opcode){
 
                 case MOV: //dest = src
                 {
-                    GPR[current_inst.destination] = GPR[current_inst.source];
-                    StatusFlags(Status_word,GPR[current_inst.destination],0,1);
+
+                    opdestination = opsource;
+                    StatusFlags(Status_word,opdestination,0,1);
                     Status_word.V = false;//sets the overflow flag to false
-                    returnflag = 1; //tells the program to return the modified register
+                    current_inst.result = opdestination;
                     break;
 
                 }
@@ -138,8 +163,6 @@ int Operation(instruction & current_inst, int GPR [], PSW & Status_word) {
                     dest16 = ~dest16 + 1;
                     StatusFlags(Status_word,GPR[current_inst.destination],dest16,1);//just sets the zero and negative
                     returnflag = 1;
-                    break;
-
                     break;
                 }
                 case ADC:
