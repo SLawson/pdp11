@@ -15,6 +15,6 @@
 
 extern string *reg_file;
 
-int reg_dump(int GPR[], PSW & Status_word); // dumps register values to a text file
+int reg_dump(int GPR[], PSW*  Status_word); // dumps register values to a text file
 
 #endif // TESTING_H_
