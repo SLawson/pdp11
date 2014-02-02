@@ -24,7 +24,21 @@ int Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream & 
       //RESET CODE HERE...
   }
   
-  //Set status word op
+  //JSR
+  else if ((CurrentInst & 0xfe00) == 0x0800) {
+    current_inst.instSel = JUMP;
+    current_inst.destMode = regAD;
+    current_inst.destReg = ((CurrentInst & 0x01c0) >> 0x6);
+    current_inst.destination = (CurrentInst & 0x003f); //this is the value of the 6 bit dst field...
+  }
+  
+  //RTS
+  else if ((CurrentInst & 0xfff8) == 0x0080) {
+    current_inst.modeSrc = regAI;
+    current_inst.sourceReg = (CurrentInst & 0x0007);
+  }
+  
+  //Set status word opertation
   else if (((CurrentInst & 0xffe0) >> 0x5) == 0x5) {
     
     if ((CurrentInst & 0x10) == 0x10) {
@@ -73,13 +87,15 @@ int Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream & 
     current_inst.byteSel = ((CurrentInst & 0x8000) >> 0xe);
     current_inst.opcode = ((CurrentInst & 0x7c0) >> 0x6);
     current_inst.modeDest = ((CurrentInst & 0x38) >> 0x3);    
-
+    current_inst.destReg = (CurrentInst & 0x7);
+    
     //PC operation
-    if (current_inst.modeDest == 0x7)
+    if ((current_inst.destReg == PC) || (current_inst.modeDest < 0x5))
       current_inst.destination = Read_mem(RAM, GPR, file, I_or_D);
+    
     //Register operation
     else
-      current_inst.destination = (CurrentInst & 0x7);
+      current_inst.destReg = (CurrentInst & 0x7);
   }
 
   /* -- Conditional branch instruction -- */
@@ -89,31 +105,10 @@ int Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream & 
     
     if ((CurrentInst & 0x80) == 0x80)
     	current_inst.offset = (0 - (CurrentInst & 0xff) - 1);
+    	
     else
     	current_inst.offset = ((CurrentInst & 0xff) - 1);
     
-  }
-
-  /* -- Double operand special operation -- */
-  else if (((CurrentInst & 0x7000) >> 0xc) == 0x7) {
-    I_or_D = false;
-    current_inst.instSel = DOUBLE_OP_SP;
-
-    current_inst.opcode = ((CurrentInst & 0xe00) >> 0x9);
-    current_inst.modeDest = ((CurrentInst & 0x38) >> 0x3);
-    
-    //PC operation
-    if (current_inst.modeSrc == 0x7)
-      current_inst.source = Read_mem(RAM, GPR, file, I_or_D);
-    //Register operation
-    else
-      current_inst.source = ((CurrentInst & 0x1c0) >> 0x6);
-    //PC operation
-    if (current_inst.modeDest == 0x7)
-      current_inst.destination = Read_mem(RAM, GPR, file, I_or_D); 
-    //Register operation
-    else
-      current_inst.destination = (CurrentInst & 0x7);   
   }
 
   /* -- Double operand instruction -- */
@@ -125,16 +120,21 @@ int Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream & 
     current_inst.byteSel = ((CurrentInst & 0x8000) >> 0xe);
     current_inst.modeSrc = ((CurrentInst & 0xe00) >> 0x9);
     current_inst.modeDest = ((CurrentInst & 0x38) >> 0x3);
+    current_inst.sourceReg = ((CurrentInst & 0x1c0) >> 0x6);
+    current_inst.destReg = (CurrentInst & 0x7);
 
-    //PC operation
-    if (current_inst.modeSrc == 0x7)
+    //PC operation -- src
+    if ((current_inst.sourceReg == PC) || (current_inst.modeSrc < 0x5))
       current_inst.source = Read_mem(RAM, GPR, file, I_or_D);
+      
     //Register operation
     else
       current_inst.source = ((CurrentInst & 0x1c0) >> 0x6);
-    //PC operation
-    if (current_inst.modeDest == 0x7)
+      
+    //PC operation -- dst
+    if ((current_inst.destReg == PC) || (current_inst.modeDest < 0x5))
       current_inst.destination = Read_mem(RAM, GPR, file, I_or_D); 
+      
     //Register operation
     else
       current_inst.destination = (CurrentInst & 0x7);  
@@ -156,7 +156,7 @@ int Read_mem(int RAM [], int GPR [], ofstream & file, bool I_or_D) {
   else
     file << "0" << "\t" << Address << '\n';
   
-  return Address;
+  return GPR[PC - 1];
 }
 
 
