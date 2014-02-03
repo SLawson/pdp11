@@ -19,7 +19,56 @@ int Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream & 
   if (CurrentInst == 0x0)
     current_inst.opcode = 0x0;
 
-  //RESET op
+  /* -- single operand instruction -- */
+  else if ((CurrentInst & 0x7800)  == 0x800) {
+    I_or_D = false;
+    current_inst.instSel = SINGLE_OP;
+
+    current_inst.byteSel = ((CurrentInst & 0x8000) >> 0xe);
+    current_inst.opcode = ((CurrentInst & 0x7c0) >> 0x6);
+    current_inst.modeDest = ((CurrentInst & 0x38) >> 0x3);
+    current_inst.destReg = (CurrentInst & 0x7);
+
+    //PC operation
+    if ((current_inst.destReg == PC) || (current_inst.modeDest > 0x5))
+      current_inst.destination = Read_mem(RAM, GPR, file, I_or_D);
+  }
+
+  /* -- Conditional branch instruction -- */
+  else if ((CurrentInst & 0x7800) == 0x0) {
+    current_inst.instSel = CONDITIONAL_OP;
+    current_inst.opcode = ((CurrentInst & 0x700) >> 0x8);
+
+    if ((CurrentInst & 0x80) == 0x80)
+    	current_inst.offset = (0 - (CurrentInst & 0xff) - 1);
+
+    else
+    	current_inst.offset = ((CurrentInst & 0xff) - 1);
+
+  }
+
+  /* -- Double operand instruction -- */
+  else if ((CurrentInst & 0x7000) >= 0x1000) {
+    I_or_D = false;
+    current_inst.instSel = DOUBLE_OP;
+
+    current_inst.opcode = ((CurrentInst & 0x7000) >> 0xc);
+    current_inst.byteSel = ((CurrentInst & 0x8000) >> 0xe);
+    current_inst.modeSrc = ((CurrentInst & 0xe00) >> 0x9);
+    current_inst.modeDest = ((CurrentInst & 0x38) >> 0x3);
+    current_inst.sourceReg = ((CurrentInst & 0x1c0) >> 0x6);
+    current_inst.destReg = (CurrentInst & 0x7);
+
+    //PC operation -- src
+    if ((current_inst.sourceReg == PC) || (current_inst.modeSrc > 0x5))
+      current_inst.source = Read_mem(RAM, GPR, file, I_or_D);
+
+    //PC operation -- dst
+    if ((current_inst.destReg == PC) || (current_inst.modeDest > 0x5))
+      current_inst.destination = Read_mem(RAM, GPR, file, I_or_D);
+  }
+  
+    //RESET op
   else if (CurrentInst == 0x5){
       //RESET CODE HERE...
   }
@@ -78,55 +127,6 @@ int Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream & 
 		current_inst.instSel = JUMP;
 		current_inst.offset = ((CurrentInst & 0x3f) - 1);
 	}
-
-  /* -- single operand instruction -- */
-  else if ((CurrentInst & 0x7800)  == 0x800) {
-    I_or_D = false;
-    current_inst.instSel = SINGLE_OP;
-
-    current_inst.byteSel = ((CurrentInst & 0x8000) >> 0xe);
-    current_inst.opcode = ((CurrentInst & 0x7c0) >> 0x6);
-    current_inst.modeDest = ((CurrentInst & 0x38) >> 0x3);
-    current_inst.destReg = (CurrentInst & 0x7);
-
-    //PC operation
-    if ((current_inst.destReg == PC) || (current_inst.modeDest > 0x5))
-      current_inst.destination = Read_mem(RAM, GPR, file, I_or_D);
-  }
-
-  /* -- Conditional branch instruction -- */
-  else if ((CurrentInst & 0x7800) == 0x0) {
-    current_inst.instSel = CONDITIONAL_OP;
-    current_inst.opcode = ((CurrentInst & 0x700) >> 0x8);
-
-    if ((CurrentInst & 0x80) == 0x80)
-    	current_inst.offset = (0 - (CurrentInst & 0xff) - 1);
-
-    else
-    	current_inst.offset = ((CurrentInst & 0xff) - 1);
-
-  }
-
-  /* -- Double operand instruction -- */
-  else if ((CurrentInst & 0x7000) >= 0x1000) {
-    I_or_D = false;
-    current_inst.instSel = DOUBLE_OP;
-
-    current_inst.opcode = ((CurrentInst & 0x7000) >> 0xc);
-    current_inst.byteSel = ((CurrentInst & 0x8000) >> 0xe);
-    current_inst.modeSrc = ((CurrentInst & 0xe00) >> 0x9);
-    current_inst.modeDest = ((CurrentInst & 0x38) >> 0x3);
-    current_inst.sourceReg = ((CurrentInst & 0x1c0) >> 0x6);
-    current_inst.destReg = (CurrentInst & 0x7);
-
-    //PC operation -- src
-    if ((current_inst.sourceReg == PC) || (current_inst.modeSrc > 0x5))
-      current_inst.source = Read_mem(RAM, GPR, file, I_or_D);
-
-    //PC operation -- dst
-    if ((current_inst.destReg == PC) || (current_inst.modeDest > 0x5))
-      current_inst.destination = Read_mem(RAM, GPR, file, I_or_D);
-  }
 }
 
 //This function will be used to fetch instructions or data from memory
