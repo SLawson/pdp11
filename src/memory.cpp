@@ -90,12 +90,8 @@ int Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream & 
     current_inst.destReg = (CurrentInst & 0x7);
 
     //PC operation
-    if ((current_inst.destReg == PC) || (current_inst.modeDest < 0x5))
+    if ((current_inst.destReg == PC) || (current_inst.modeDest > 0x5))
       current_inst.destination = Read_mem(RAM, GPR, file, I_or_D);
-
-    //Register operation
-    else
-      current_inst.destReg = (CurrentInst & 0x7);
   }
 
   /* -- Conditional branch instruction -- */
@@ -124,20 +120,12 @@ int Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream & 
     current_inst.destReg = (CurrentInst & 0x7);
 
     //PC operation -- src
-    if ((current_inst.sourceReg == PC) || (current_inst.modeSrc < 0x5))
+    if ((current_inst.sourceReg == PC) || (current_inst.modeSrc > 0x5))
       current_inst.source = Read_mem(RAM, GPR, file, I_or_D);
 
-    //Register operation
-    else
-      current_inst.source = ((CurrentInst & 0x1c0) >> 0x6);
-
     //PC operation -- dst
-    if ((current_inst.destReg == PC) || (current_inst.modeDest < 0x5))
+    if ((current_inst.destReg == PC) || (current_inst.modeDest > 0x5))
       current_inst.destination = Read_mem(RAM, GPR, file, I_or_D);
-
-    //Register operation
-    else
-      current_inst.destination = (CurrentInst & 0x7);
   }
 }
 
@@ -148,7 +136,7 @@ int Read_mem(int RAM [], int GPR [], ofstream & file, bool I_or_D) {
 
   Address = RAM[(GPR[PC])];
   GPR[PC] = (GPR[PC] + 1);
-  Address = ((Address << 0x8) | RAM[GPR[PC]]);
+  Address = ((Address) | (RAM[GPR[PC]] << 0x8));
   GPR[PC] = (GPR[PC] + 1);
 
   if (I_or_D)
@@ -156,7 +144,7 @@ int Read_mem(int RAM [], int GPR [], ofstream & file, bool I_or_D) {
   else
     file << "0" << "\t" << Address << '\n';
 
-  return GPR[PC - 1];
+  return Address;
 }
 
 
