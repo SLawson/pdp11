@@ -48,7 +48,7 @@ int Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream & 
   }
 
   /* -- Double operand instruction -- */
-  else if ((CurrentInst & 0x7000) >= 0x1000) {
+  else if ((CurrentInst & 0x7000) != 0x0) {
     I_or_D = false;
     current_inst.instSel = DOUBLE_OP;
 
