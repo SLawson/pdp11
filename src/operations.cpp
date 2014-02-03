@@ -345,48 +345,48 @@ int Operation(int RAM[],instruction & current_inst, int GPR [], PSW & Status_wor
 	switch(current_inst.opcode) {
 		case BR_JMP: {			//Unconditional Branch/Jump
 
-			GPR[PC] = GPR[PC] + current_inst.offset;
+			GPR[PC] = GPR[PC] + (2 * current_inst.offset);
 			break;
 		}
 		case BNE: {				//Branch on Not Equal(Zero)
 
 			if(Status_word.Z == false) {
-				GPR[PC] = GPR[PC] + current_inst.offset;
+				GPR[PC] = GPR[PC] + (2 * current_inst.offset);
 			}
 			break;
 		}
 		case BEQ: {				//Branch on Equal(Zero)
 
 			if(Status_word.Z == true) {
-				GPR[PC] = GPR[PC] + current_inst.offset;
+				GPR[PC] = GPR[PC] + (2 * current_inst.offset);
 			}
 			break;
 		}
 		case BGE: {				//Branch on Greater than or Equal(Zero)
 
 			if(Status_word.N == Status_word.V) {
-				GPR[PC] = GPR[PC] + current_inst.offset;
+				GPR[PC] = GPR[PC] + (2 * current_inst.offset);
 			}
 			break;
 		}
 		case BLT: {				//Branch on Less Than(Zero)
 
 			if(Status_word.N != Status_word.V) {
-				GPR[PC] = GPR[PC] + current_inst.offset;
+				GPR[PC] = GPR[PC] + (2 * current_inst.offset);
 			}
 			break;
 		}
 		case BGT: {				//Branch on Greater Than(Zero)
 
 			if((Status_word.N == Status_word.V) || Status_word.Z == false) {
-				GPR[PC] = GPR[PC] + current_inst.offset;
+				GPR[PC] = GPR[PC] + (2 * current_inst.offset);
 			}
 			break;
 		}
 		case BLE: {				//Branch on on Less than or Equal(Zero)
 
 			if((Status_word.N != Status_word.V) || Status_word.Z == true) {
-				GPR[PC] = GPR[PC] + current_inst.offset;
+				GPR[PC] = GPR[PC] + (2 * current_inst.offset);
 			}
 			break;
 		}
@@ -403,56 +403,56 @@ int Operation(int RAM[],instruction & current_inst, int GPR [], PSW & Status_wor
 		case BPL: {				//Branch on PLus
 
 			if(Status_word.N == false) {
-				GPR[PC] = GPR[PC] + current_inst.offset;
+				GPR[PC] = GPR[PC] + (2 * current_inst.offset);
 			}
 			break;
 		}
 		case BMI: {				//Branch on MInus
 
 			if(Status_word.N == true) {
-				GPR[PC] = GPR[PC] + current_inst.offset;
+				GPR[PC] = GPR[PC] + (2 * current_inst.offset);
 			}
 			break;
 		}
 		case BHI: {				//Branch on HIgher
 
 			if(Status_word.C == false && Status_word.Z == false) {
-				GPR[PC] = GPR[PC] + current_inst.offset;
+				GPR[PC] = GPR[PC] + (2 * current_inst.offset);
 			}
 			break;
 		}
 		case BLOS: {			//Branch on LOwer or Same
 
 			if(Status_word.C == true || Status_word.Z == true) {
-				GPR[PC] = GPR[PC] + current_inst.offset;
+				GPR[PC] = GPR[PC] + (2 * current_inst.offset);
 			}
 			break;
 		}
 		case BVC: {				//Branch on oVerflow Clear
 
 			if(Status_word.V == false) {
-				GPR[PC] = GPR[PC] + current_inst.offset;
+				GPR[PC] = GPR[PC] + (2 * current_inst.offset);
 			}
 			break;
 		}
 		case BVS: {				//Branch on oVerflow Set
 
 			if(Status_word.V == true) {
-				GPR[PC] = GPR[PC] + current_inst.offset;
+				GPR[PC] = GPR[PC] + (2 * current_inst.offset);
 			}
 			break;
 		}
 		case BCC_BHIS: {		//Branch on Carry Clear/Branch on HIgher or Same
 
 			if(Status_word.C == false) {
-				GPR[PC] = GPR[PC] + current_inst.offset;
+				GPR[PC] = GPR[PC] + (2 * current_inst.offset);
 			}
 			break;
 		}
 		case BCS_BLO: {			//Branch on Carry Set/Branch on LOwer
 
 			if(Status_word.C == true) {
-				GPR[PC] = GPR[PC] + current_inst.offset;
+				GPR[PC] = GPR[PC] + (2 * current_inst.offset);
 			}
 			break;
 		}
