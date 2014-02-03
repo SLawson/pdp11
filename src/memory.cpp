@@ -74,13 +74,13 @@ int Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream & 
 
 	//Decode the current instruction
 	/* -- jump instruction -- */
-	else if (((CurrentInst & 0x40) >> 0x6) == 0x1) {
+	else if (((CurrentInst & 0x40)) == 0x40) {
 		current_inst.instSel = JUMP;
 		current_inst.offset = ((CurrentInst & 0x3f) - 1);
 	}
 
   /* -- single operand instruction -- */
-  else if (((CurrentInst & 0x7800) >> 0xb)  == 0x1) {
+  else if ((CurrentInst & 0x7800)  == 0x800) {
     I_or_D = false;
     current_inst.instSel = SINGLE_OP;
 
@@ -95,7 +95,7 @@ int Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream & 
   }
 
   /* -- Conditional branch instruction -- */
-  else if (((CurrentInst & 0x7800) >> 0xb) == 0x0) {
+  else if ((CurrentInst & 0x7800) == 0x0) {
     current_inst.instSel = CONDITIONAL_OP;
     current_inst.opcode = ((CurrentInst & 0x700) >> 0x8);
 
@@ -108,7 +108,7 @@ int Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream & 
   }
 
   /* -- Double operand instruction -- */
-  else {
+  else if ((CurrentInst & 0x7000) >= 0x1000) {
     I_or_D = false;
     current_inst.instSel = DOUBLE_OP;
 
