@@ -55,13 +55,13 @@ using namespace std;
 #define SBC     056     //Subtract carry: dest −= C
 #define TST     057     //Test: Load src, set flags only
 #define ROR 	060     //Rotate right 1 bit
-#define ROL	061     //Rotate left 1 bit
-#define ASR	062     //Shift right: dest >>= 1
-#define ASL	063     //Shift left: dest <<= 1
-#define MARK    064     //Return from subroutine, skip 0..63 instruction words
+#define ROL		061     //Rotate left 1 bit
+#define ASR		062     //Shift right: dest >>= 1
+#define ASL		063     //Shift left: dest <<= 1
+#define MARK	064     //Return from subroutine, skip 0..63 instruction words
 #define MFPI	065     //Move from previous I space: −(SP) = src
 #define MTPI	066     //Move to previous I space: dest = (SP)+
-#define SXT	067     //Sign extend: dest = (16 copies of N flag)
+#define SXT		067     //Sign extend: dest = (16 copies of N flag)
 //byteSel = 1
 #define CLRB    050     //Clear: dest = 0
 #define COMB    051     //Complement dest = ~dest
@@ -165,7 +165,7 @@ struct instruction {
 	int destination;	//Fetched Operand2
 	int modeSrc;		//Addressing mode of the src
 	int modeDest;		//Addressing mode of the destination
-	int offset;
+	int offset;			//Branch target PC-relative offset (# of words, signed)
 	int regster;
 
 	int result;			//Result of Operation
