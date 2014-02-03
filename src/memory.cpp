@@ -18,37 +18,9 @@ int Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream & 
   //HALT op
   if (CurrentInst == 0x0)
     current_inst.opcode = 0x0;
-
-  /* -- single operand instruction -- */
-  else if ((CurrentInst & 0x7800)  == 0x800) {
-    I_or_D = false;
-    current_inst.instSel = SINGLE_OP;
-
-    current_inst.byteSel = ((CurrentInst & 0x8000) >> 0xe);
-    current_inst.opcode = ((CurrentInst & 0x7c0) >> 0x6);
-    current_inst.modeDest = ((CurrentInst & 0x38) >> 0x3);
-    current_inst.destReg = (CurrentInst & 0x7);
-
-    //PC operation
-    if ((current_inst.destReg == PC) || (current_inst.modeDest > 0x5))
-      current_inst.destination = Read_mem(RAM, GPR, file, I_or_D);
-  }
-
-  /* -- Conditional branch instruction -- */
-  else if ((CurrentInst & 0x7800) == 0x0) {
-    current_inst.instSel = CONDITIONAL_OP;
-    current_inst.opcode = ((CurrentInst & 0x700) >> 0x8);
-
-    if ((CurrentInst & 0x80) == 0x80)
-    	current_inst.offset = (0 - (CurrentInst & 0xff) - 1);
-
-    else
-    	current_inst.offset = ((CurrentInst & 0xff) - 1);
-
-  }
-
+    
   /* -- Double operand instruction -- */
-  else if ((CurrentInst & 0x7000) != 0x0) {
+  else if (CurrentInst & 0x7000) {
     I_or_D = false;
     current_inst.instSel = DOUBLE_OP;
 
@@ -67,28 +39,47 @@ int Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream & 
     if ((current_inst.destReg == PC) || (current_inst.modeDest > 0x5))
       current_inst.destination = Read_mem(RAM, GPR, file, I_or_D);
   }
-  
-    //RESET op
-  else if (CurrentInst == 0x5){
-      //RESET CODE HERE...
+
+  /* -- single operand instruction -- */
+  else if ((CurrentInst & 0x7800)  == 0x800) {
+    if (((CurrentInst & 0xfc0) >> 0x6) > 0x27) {
+      I_or_D = false;
+      current_inst.instSel = SINGLE_OP;
+
+      current_inst.byteSel = ((CurrentInst & 0x8000) >> 0xe);
+      current_inst.opcode = ((CurrentInst & 0x7c0) >> 0x6);
+      current_inst.modeDest = ((CurrentInst & 0x38) >> 0x3);
+      current_inst.destReg = (CurrentInst & 0x7);
+
+      //PC operation
+      if ((current_inst.destReg == PC) || (current_inst.modeDest > 0x5))
+        current_inst.destination = Read_mem(RAM, GPR, file, I_or_D);
+    }
+      
+      //JSR
+    else if (((CurrentInst & 0xfc0) >> 0x6) < 0x28) {
+      current_inst.instSel = JUMP;
+      current_inst.modeDest = regAD;
+      current_inst.destReg = ((CurrentInst & 0x01c0) >> 0x6);
+      current_inst.destination = (CurrentInst & 0x003f); //this is the value of the 6 bit dst field...
+    }
   }
 
-  //JSR
-  else if ((CurrentInst & 0xfe00) == 0x0800) {
-    current_inst.instSel = JUMP;
-    current_inst.modeDest = regAD;
-    current_inst.destReg = ((CurrentInst & 0x01c0) >> 0x6);
-    current_inst.destination = (CurrentInst & 0x003f); //this is the value of the 6 bit dst field...
-  }
+  /* -- Conditional branch instruction -- */
+  else if ((CurrentInst & 0x7800) == 0x0) {
+    current_inst.instSel = CONDITIONAL_OP;
+    current_inst.opcode = ((CurrentInst & 0x700) >> 0x8);
 
-  //RTS
-  else if ((CurrentInst & 0xfff8) == 0x0080) {
-    current_inst.modeSrc = regAI;
-    current_inst.sourceReg = (CurrentInst & 0x0007);
+    if ((CurrentInst & 0x80) == 0x80)
+    	current_inst.offset = (0 - (CurrentInst & 0xff) - 1);
+
+    else
+    	current_inst.offset = ((CurrentInst & 0xff) - 1);
+
   }
 
   //Set status word opertation
-  else if (((CurrentInst & 0xffe0) >> 0x5) == 0x5) {
+  else if ((CurrentInst & 0xffe0) == 0xa0) {
 
     if ((CurrentInst & 0x10) == 0x10) {
 
@@ -121,12 +112,23 @@ int Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream & 
     }
   }
 
+  //RTS
+  else if ((CurrentInst & 0xfff8) == 0x0080) {
+    current_inst.modeSrc = regAI;
+    current_inst.sourceReg = (CurrentInst & 0x0007);
+  }
+  
 	//Decode the current instruction
 	/* -- jump instruction -- */
 	else if (((CurrentInst & 0x40)) == 0x40) {
 		current_inst.instSel = JUMP;
 		current_inst.offset = ((CurrentInst & 0x3f) - 1);
 	}
+	
+  //RESET op
+  else if (CurrentInst == 0x5){
+      //RESET CODE HERE...
+  }
 }
 
 //This function will be used to fetch instructions or data from memory
