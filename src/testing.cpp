@@ -8,7 +8,9 @@
 
 #include "testing.h"
 
-string* reg_file = NULL; // name if register dump file - set in initialization function
+string* reg_file = NULL; // name of register dump file - set in initialization function
+bool display = 0;
+
 
 int reg_dump(int GPR[], PSW* Status_word){
 

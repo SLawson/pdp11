@@ -14,6 +14,7 @@
 
 
 extern string *reg_file;
+extern bool display;
 
 int reg_dump(int GPR[], PSW*  Status_word); // dumps register values to a text file
 

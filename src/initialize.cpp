@@ -29,6 +29,7 @@ int initialize(int RAM [], int argc, char * argv[], int* PC_Reg, string &out_fil
   string pc_opt("-c");             // option for specifying initial program counter
   string out_fi("-o");             // option for specifying output trace file name/directory
   string reg_fi("-r");             // option for specifying register dump file name/directory
+  string disp_en("-d");             // option for enabling register prints
 
   while (i < argc){
 
@@ -39,6 +40,11 @@ int initialize(int RAM [], int argc, char * argv[], int* PC_Reg, string &out_fil
 
     else if(!out_fi.compare(argv[i])){
       out_file.assign(argv[i+1]);
+      i += 1;
+    }
+
+    else if(!disp_en.compare(argv[i])){
+      display = 1;
       i += 1;
     }
 
