@@ -47,8 +47,8 @@ Take a source and destination memory location
       case CMP://compute src - dest, set flags only
       {
         int tempresult;
-		tempresult = opsource - opdestination;
-		StatusFlags(Status_word,tempresult,0);
+		    tempresult = opsource - opdestination;
+		    StatusFlags(Status_word,tempresult,0);
 
         break;
       }
@@ -183,7 +183,7 @@ Take a source and destination memory location
       {
         //load the 16 bit value
         int16_t dest16 = RAM[current_inst.destination];
-        dest16 = (dest16 << 0x8) | RAM[current_inst.destination + 1];
+        dest16 = (dest16) | (RAM[current_inst.destination + 1]  << 0x8);
 
         Status_word.C = (dest16 & 0x1);
         dest16 = (dest16 >> 0x1);
@@ -207,7 +207,7 @@ Take a source and destination memory location
       {
         //load the 16 bit value
         int16_t dest16 = RAM[current_inst.destination];
-        dest16 = (dest16 << 0x8) | RAM[current_inst.destination + 1];
+        dest16 = (dest16) | (RAM[current_inst.destination + 1]  << 0x8);
 
         Status_word.C = (dest16 & 0x8000);
         dest16 = (dest16 << 0x1);
@@ -231,7 +231,7 @@ Take a source and destination memory location
       {
         //load the 16 bit value
         int16_t dest16 = RAM[current_inst.destination];
-        dest16 = (dest16 << 0x8) | RAM[current_inst.destination + 1];
+        dest16 = (dest16) | (RAM[current_inst.destination + 1]  << 0x8);
 
         Status_word.C = (dest16 & 0x1);
         dest16 = ((dest16 & 0X8000) | ((dest16 & 0x7fff) >> 0x1));
@@ -256,7 +256,7 @@ Take a source and destination memory location
       {
         //load the 16 bit value
         int16_t dest16 = RAM[current_inst.destination];
-        dest16 = (dest16 << 0x8) | RAM[current_inst.destination + 1];
+        dest16 = (dest16) | (RAM[current_inst.destination + 1]  << 0x8);
 
         Status_word.C = (dest16 & 0x8000);
         if (Status_word.C)
@@ -284,7 +284,7 @@ Take a source and destination memory location
       {
         //load the 16 bit value
         int16_t dest16 = RAM[current_inst.destination];
-        dest16 = (dest16 << 0x8) | RAM[current_inst.destination + 1];
+        dest16 = (dest16) | (RAM[current_inst.destination + 1]  << 0x8);
 
         dest16 = ((dest16 >> 0x8) | ((dest16 & 0xff) << 0x8));
 
@@ -560,24 +560,24 @@ int address_location;
 
 			//PC-relative Deferred Mode
 			if(curr_Register == PC){
-                address_location = RAM[address_op];
-                address_location = ((address_location << 0x8) | RAM[address_location+1]);
+        address_location = RAM[address_op];
+        address_location = ((address_location) | (RAM[address_location+1] << 0x8));
 				address_location = address_location + GPR[PC]+1;//sets the address to the next address contents
 				opdata_8bits = RAM[address_location];//takes the upper 8 bits of data from RAM]
 				//joins the data with the lower 8 bits giving the address
-				address_location = ((opdata_8bits << 0x8) | RAM[address_location+1]);
+				address_location = ((opdata_8bits) | (RAM[address_location+1] << 0x8));
 				return address_location;//returns the address of the address
 			}
 
 			else {
 				opdata_8bits = RAM[address_op];
-				address_location = ((opdata_8bits << 0x8) | RAM[address_op+1]);
+				address_location = ((opdata_8bits) | (RAM[address_op+1] << 0x8));
 				opdata_8bits = RAM[address_location + GPR[curr_Register]];//Read_mem(RAM, GPR, file, I_or_D) trying to add
 				//This is an address
-				address_location = ((opdata_8bits << 0x8) | RAM[address_location + GPR[curr_Register]+1]);//joins the data with the lower 8 bits
+				address_location = ((opdata_8bits) | (RAM[address_location + GPR[curr_Register]+1] << 0x8));//joins the data with the lower 8 bits
 				opdata_8bits = RAM[address_location];//takes the upper 8 bits of data from RAM
 				//joins the data with the lower 8 bits giving the address
-				address_location = ((opdata_8bits << 0x8) | RAM[address_op+1]);
+				address_location = ((opdata_8bits) | (RAM[address_op+1] << 0x8));
 				return address_location;
 			}
 			break;
@@ -587,7 +587,7 @@ int address_location;
 			//PC-relative Mode
 			if(curr_Register == PC) {
 				address_location = RAM[address_op];
-                address_location = ((address_location << 0x8) | RAM[address_location+1]);
+        address_location = ((address_location) | (RAM[address_location+1] << 0x8));
 				address_location = address_location + GPR[PC]+1;//joins the data with the lower 8 bits
 				opdata_8bits = RAM[address_location];//takes the upper 8 bits of data from RAM]
 				//joins the data with the lower 8 bits giving the address
@@ -595,12 +595,12 @@ int address_location;
 				return address_location;
 			}
 			else {
-                opdata_8bits = RAM[address_op];
-				address_location = ((opdata_8bits << 0x8) | RAM[address_op+1]);
+        opdata_8bits = RAM[address_op];
+				address_location = ((opdata_8bits) | (RAM[address_op+1] << 0x8));
 				opdata_8bits = RAM[address_location + GPR[curr_Register]];//Read_mem(RAM, GPR, file, I_or_D) trying to add
-                address_location = ((opdata_8bits << 0x8) | RAM[address_location + GPR[curr_Register]+1]);//joins the data with the lower 8 bits
+        address_location = ((opdata_8bits) | (RAM[address_location + GPR[curr_Register]+1] << 0x8));//joins the data with the lower 8 bits
 				opdata_8bits = RAM[GPR[curr_Register]];	//Read_mem(RAM, GPR, file, I_or_D) trying to add
-				operand_data = ((opdata_8bits << 0x8) | RAM[GPR[curr_Register]+1]);
+				operand_data = ((opdata_8bits) | (RAM[GPR[curr_Register]+1] << 0x8));
 			}
 			break;
 		}
@@ -608,16 +608,16 @@ int address_location;
 
 			GPR[curr_Register] -= 2;		//Decrement before dereferencing
 			opdata_8bits = RAM[GPR[curr_Register]];
-			operand_data = ((opdata_8bits << 0x8) | RAM[GPR[curr_Register]+1]);
+			operand_data = ((opdata_8bits) | (RAM[GPR[curr_Register]+1] << 0x8));
 			opdata_8bits = RAM[operand_data];
-			operand_data = ((opdata_8bits << 0x8) | RAM[operand_data+1]);
+			operand_data = ((opdata_8bits) | (RAM[operand_data+1] << 0x8));
 			break;
 		}
 		case regAD: {	//Auto-Decrement Mode mode: 4
 
 			GPR[curr_Register] -= 2;		//Decrement before dereferencing
 			opdata_8bits = RAM[GPR[curr_Register]];
-			operand_data = ((opdata_8bits << 0x8) | RAM[GPR[curr_Register]+1]);
+			operand_data = ((opdata_8bits) | (RAM[GPR[curr_Register]+1] << 0x8));
 			break;
 		}
 		case regAID: {	//Auto-Increment Deferred Modes modeid:3
@@ -626,14 +626,14 @@ int address_location;
 			if(curr_Register == PC)
             {
                 opdata_8bits = RAM[address_op];
-                operand_data = ((opdata_8bits << 0x8) | RAM[GPR[curr_Register]+1]);
+                operand_data = ((opdata_8bits) | (RAM[GPR[curr_Register]+1] << 0x8));
             }
 			else
 			{
 				opdata_8bits = RAM[GPR[curr_Register]];
-				operand_data = ((opdata_8bits << 0x8) | RAM[GPR[curr_Register]+1]);
+				operand_data = ((opdata_8bits) | (RAM[GPR[curr_Register]+1] << 0x8));
 				opdata_8bits = RAM[operand_data];// Address of the address
-				operand_data = ((opdata_8bits << 0x8) | RAM[opdata_8bits+1]);
+				operand_data = ((opdata_8bits) | (RAM[opdata_8bits+1] << 0x8));
 				GPR[curr_Register] += 2;		//Increment after dereferencing
 			}
 			break;
@@ -646,14 +646,14 @@ int address_location;
 			else
 			{
 				opdata_8bits = RAM[GPR[curr_Register]];//fetches the address in the register and then increments by one
-				operand_data = ((opdata_8bits << 0x8) | RAM[GPR[curr_Register]+1]);
+				operand_data = ((opdata_8bits) | (RAM[GPR[curr_Register]+1] << 0x8));
 				GPR[curr_Register] += 2;
 			}
 			break;
 		}
 		case regD: {	//Register Deferred Mode mode: 1
 			opdata_8bits = RAM[GPR[curr_Register]];//Goes to the RAM address stored in the register location
-			operand_data = ((opdata_8bits << 0x8) | RAM[GPR[curr_Register]+1]);//Goes to the RAM address stored in the register location
+			operand_data = ((opdata_8bits) | (RAM[GPR[curr_Register]+1] << 0x8));//Goes to the RAM address stored in the register location
 			break;
 		}
 		case regS: {	//Register Mode mode: 0
@@ -668,10 +668,6 @@ int address_location;
 	}
     return operand_data;
 }
-
-
-
-
 
 /**************************************************************
 This function sets the status flags based on an operation
