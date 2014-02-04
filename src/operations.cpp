@@ -14,42 +14,85 @@ int Operation(int RAM[],instruction & current_inst, int GPR [], PSW & Status_wor
 
   //TODO Rob/Brett implement instruction ops, populate current_inst.result
 
+    //Internal scratch pad registers
+    int opsource;//this holds the value of the data (RAM or register)
+    int opdestination;//this holds the value of the data (RAM or register)
 
-   int opsource;//this holds the value of the data (RAM or register)
-  int opdestination;//this holds the value of the data (RAM or register)
-
-
-
-//Takes the destination address and fetches the data from the RAM for the destination value
-    if(current_inst.modeDest == regID)//ID 7 Read RAM data
+    //Takes the destination address and fetches the data from the RAM for the destination value
+    if(current_inst.modeDest == regID)//ID 7 Read RAM data also contains PC77
     {
-        opdestination = RAM[current_inst.destination];//Read_mem(RAM, GPR, file, I_or_D) trying to add
-        opdestination = ((opdestination << 0x8) | RAM[current_inst.destination]);
+        if(current_inst.regster == 7)
+        {
+            opdestination = RAM[current_inst.destination];//Read_mem(RAM, GPR, file, I_or_D) trying to add
+            opdestination = ((opdestination << 0x8) | RAM[current_inst.destination+1]);
+        }
+        else
+        {
+            opdestination = RAM[current_inst.destination];//Read_mem(RAM, GPR, file, I_or_D) trying to add
+            opdestination = ((opdestination << 0x8) | RAM[current_inst.destination+1]);
+        }
+
     }
-    //else if(current_inst.modeDest == regI)
-    //else if(current_inst.modeDest == regADD)
-    //else if(current_inst.modeDest == regAD)
-    //else if(current_inst.modeDest == regAID)
-    //else if(current_inst.modeDest == regI)
-    else if (current_inst.modeDest == regAI)//ID 2
-        opdestination = current_inst.destination;
-    //else if(current_inst.modeDest == regD)
-   //else if(current_inst.modeDest == regS)
-   //{
-        //use this to set opdestination to a register value
-        //opdestination = GPR[current_inst.regster]
-    //}
-    //need to add the rest of the modes here for double op
+    else if(current_inst.modeDest == regI)//ID 6 also contains PC67
+        if(current_inst.regster == 7)
+        {
+            opdestination = RAM[current_inst.destination];//Read_mem(RAM, GPR, file, I_or_D) trying to add
+            opdestination = ((opdestination << 0x8) | RAM[current_inst.destination+1]);
+        }
+        else
+        {
+            opdestination = RAM[current_inst.destination];//Read_mem(RAM, GPR, file, I_or_D) trying to add
+            opdestination = ((opdestination << 0x8) | RAM[current_inst.destination+1]);
+        }
+    else if(current_inst.modeDest == regADD)//ID 5
+        opdestination = 1;
+    else if(current_inst.modeDest == regAD)//ID 4
+        opdestination = 1;
+    else if(current_inst.modeDest == regAID)//ID 3 also contains PC37
+        if(current_inst.regster == 7)
+        {
+            opdestination = RAM[current_inst.destination];//Read_mem(RAM, GPR, file, I_or_D) trying to add
+            opdestination = ((opdestination << 0x8) | RAM[current_inst.destination+1]);
+        }
+        else
+        {
+            opdestination = RAM[current_inst.destination];//Read_mem(RAM, GPR, file, I_or_D) trying to add
+            opdestination = ((opdestination << 0x8) | RAM[current_inst.destination+1]);
+        }
+    else if (current_inst.modeDest == regAI)//ID 2 also contains PC27
+        if(current_inst.regster == 7)
+        {
+            opdestination = RAM[current_inst.destination];//Read_mem(RAM, GPR, file, I_or_D) trying to add
+            opdestination = ((opdestination << 0x8) | RAM[current_inst.destination+1]);
+        }
+        else
+        {
+            opdestination = RAM[current_inst.destination];//Read_mem(RAM, GPR, file, I_or_D) trying to add
+            opdestination = ((opdestination << 0x8) | RAM[current_inst.destination+1]);
+        }
+    else if(current_inst.modeDest == regD)//ID 1
+        opdestination = GPR[current_inst.destination];//Need to check this
+    else if(current_inst.modeDest == regS)//ID 0 Register op
+        opdestination = GPR[current_inst.destination];
     else
         cout << "not a valid mode\n";
 
 
 
+/*********************************************************************************
+Double Operation
+
+Take a source and destination memory location
+
+*********************************************************************************/
+  if(current_inst.instSel == DOUBLE_OP  && current_inst.byteSel == 0)
+  {
+
     //Takes the source address and fetches the correct value or uses the source value
     if(current_inst.modeSrc == regID)//ID 7 Read RAM data
     {
         opsource = RAM[current_inst.source];
-        opsource = ((opsource << 0x8) | RAM[current_inst.destination]);
+        opsource = ((opsource << 0x8) | RAM[current_inst.destination+1]);
     }
     //else if(current_inst.modeSrc == regI)
     //else if(current_inst.modeSrc == regADD)
@@ -62,15 +105,10 @@ int Operation(int RAM[],instruction & current_inst, int GPR [], PSW & Status_wor
     else if(current_inst.modeDest == regS)
     {
         //use this to set opsource to a register value
-        //opsource = GPR[current_inst.regster]
+        opsource = GPR[current_inst.source];
     }
     else
         cout << "not a valid mode for source\n";
-
-
-
-  if(current_inst.instSel == DOUBLE_OP  && current_inst.byteSel == 0)
-  {
 
    //once the correct destination and source the operation can occur
     switch(current_inst.opcode){
@@ -79,7 +117,7 @@ int Operation(int RAM[],instruction & current_inst, int GPR [], PSW & Status_wor
       {
 
         opdestination = opsource;
-        StatusFlags(Status_word,opdestination,0,1);
+        StatusFlags(Status_word,opdestination,1);
         Status_word.V = false;//sets the overflow flag to false
         break;
 
@@ -87,24 +125,21 @@ int Operation(int RAM[],instruction & current_inst, int GPR [], PSW & Status_wor
       case CMP://compute src - dest, set flags only
       {
         int regtemp;
-        int16_t src16 = opsource;
-        int16_t dest16 = opdestination;
-        regtemp = opsource - opdestination;
-        dest16= src16 - dest16;
-        StatusFlags(Status_word,regtemp,0,1);
+        regtemp = opsource + ~opdestination+1;
+        StatusFlags(Status_word,regtemp,1);
         break;
       }
       case BIT://compute dest & src set flags only
       {
         opdestination=opdestination & opsource;
-        StatusFlags(Status_word,opdestination,0,0);
+        StatusFlags(Status_word,opdestination,0);
         Status_word.V = false;//sets the overflow flag to false
         break;
       }
       case BIC://dest &= ~src
       {
         opdestination= ~opsource & opdestination;
-        StatusFlags(Status_word,opdestination,0,0);
+        StatusFlags(Status_word,opdestination,0);
         Status_word.V = false;//sets the overflow flag to false
         break;
 
@@ -112,18 +147,15 @@ int Operation(int RAM[],instruction & current_inst, int GPR [], PSW & Status_wor
       case BIS://Logical OR dest|=src
       {
         opdestination= opsource | opdestination;
-        StatusFlags(Status_word,opdestination,0,0);
+        StatusFlags(Status_word,opdestination,0);
         Status_word.V = false;//sets the overflow flag to false
         break;
 
       }
       case ADD://dest +=src
       {
-        int16_t src16 = opsource;
-        int16_t dest16 = opdestination;
         opdestination += opsource;
-        dest16 += src16;
-        StatusFlags(Status_word,opdestination,dest16,1);
+        StatusFlags(Status_word,opdestination,1);
         break;
       }
       default:
@@ -139,11 +171,8 @@ int Operation(int RAM[],instruction & current_inst, int GPR [], PSW & Status_wor
 
 		case SUB://dest -=src
 		{
-		int16_t src16 = opsource;
-		int16_t dest16 = opdestination;
 		opdestination -= opsource;
-		dest16 -= src16;
-		StatusFlags(Status_word,opdestination,dest16,1);
+		StatusFlags(Status_word,opdestination,1);
 		break;
 		}
 		default:
@@ -153,6 +182,13 @@ int Operation(int RAM[],instruction & current_inst, int GPR [], PSW & Status_wor
         }
 	}
   }
+
+  /*********************************************************************
+  Single operand instructions
+
+  Only takes destination
+
+  *********************************************************************/
 
   else if(current_inst.instSel == SINGLE_OP && current_inst.byteSel == 0)
   {
@@ -170,42 +206,34 @@ int Operation(int RAM[],instruction & current_inst, int GPR [], PSW & Status_wor
       case COM://sets the destinations complement
       {
         opdestination = ~opdestination;
-        StatusFlags(Status_word,GPR[current_inst.destination],0,0);//just sets the zero and negative
+        StatusFlags(Status_word,opdestination,0);//just sets the zero and negative
         Status_word.C = false;//sets the carry flag to false
         Status_word.V = false;//sets the overflow flag to false
         break;
       }
       case INC://increments the destination value by one
       {
-        int16_t dest16 = opdestination;
         opdestination = opdestination + 1;
-        dest16 = dest16 + 1;
-        StatusFlags(Status_word,opdestination,dest16,0);//just sets the zero and negative
+        StatusFlags(Status_word,opdestination,0);//just sets the zero and negative
         break;
       }
       case DEC://decrements the destination value by one
       {
-        int16_t dest16 = opdestination;
-        GPR[current_inst.destination] = GPR[current_inst.destination] - 1;
-        dest16 = dest16 - 1;
-        StatusFlags(Status_word,GPR[current_inst.destination],dest16,0);//just sets the zero and negative
+        opdestination = opdestination - 1;
+        StatusFlags(Status_word,opdestination,0);//just sets the zero and negative
         break;
       }
       case NEG://changes the value to negative
       {
-        int16_t dest16 = GPR[current_inst.destination];
-        GPR[current_inst.destination] = ~GPR[current_inst.destination] + 1;
-        dest16 = ~dest16 + 1;
-        StatusFlags(Status_word,GPR[current_inst.destination],dest16,1);//just sets the zero and negative
+        opdestination = ~opdestination + 1;
+        StatusFlags(Status_word,opdestination,1);//just sets the zero and negative
         break;
       }
       case ADC:
       {
-        int16_t dest16 = GPR[current_inst.destination];
-        GPR[current_inst.destination] = GPR[current_inst.destination] + Status_word.C;
-        dest16 = dest16 + Status_word.C;
-        StatusFlags(Status_word,GPR[current_inst.destination],dest16,0);//just sets the zero and negative
-        if(dest16 == -1)
+        opdestination = opdestination + Status_word.C;
+        StatusFlags(Status_word,opdestination,0);//just sets the zero and negative
+        if(opdestination == -1)
         {
           Status_word.C = true;//sets the carry flag to true
         }
@@ -213,11 +241,9 @@ int Operation(int RAM[],instruction & current_inst, int GPR [], PSW & Status_wor
       }
       case SBC:
       {
-        int16_t dest16 = GPR[current_inst.destination];
-        GPR[current_inst.destination] = GPR[current_inst.destination] - Status_word.C;
-        dest16 = dest16 - Status_word.C;
-        StatusFlags(Status_word,GPR[current_inst.destination],dest16,0);//just sets the zero and negative
-        if(dest16 == 0 && Status_word.C == true)
+        opdestination = opdestination - Status_word.C;
+        StatusFlags(Status_word,opdestination, 0);//just sets the zero and negative
+        if(opdestination == 0 && Status_word.C == true)
         {
             Status_word.C = false;//sets the carry flag to true
         }
@@ -225,7 +251,7 @@ int Operation(int RAM[],instruction & current_inst, int GPR [], PSW & Status_wor
       }
       case TST:
       {
-        StatusFlags(Status_word,GPR[current_inst.destination],0,0);//just sets the zero and negative
+        StatusFlags(Status_word,opdestination,0);//just sets the zero and negative
         Status_word.C = false;//sets the carry flag to false
         Status_word.V = false;//sets the overflow flag to false
         break;
@@ -362,6 +388,15 @@ int Operation(int RAM[],instruction & current_inst, int GPR [], PSW & Status_wor
           break;
       }
     }
+
+
+/*******************************************************************
+Write back to RAM or appropriate register
+Only modifies the Destination works for both Double operand
+and single operand
+
+*******************************************************************/
+
 
 
     //return function here for the different modes
@@ -566,7 +601,13 @@ int Operation(int RAM[],instruction & current_inst, int GPR [], PSW & Status_wor
 
 }
 
-void StatusFlags(PSW & Status_word,int regDest, int16_t regDest16, int ignore)
+/*
+This function sets the status flags based on an operation
+
+
+
+*/
+void StatusFlags(PSW & Status_word,int regDest, int ignore)
 {
   //if the result of the register is zero then set the flag otherwise set to false
   if(regDest == 0)//setting the zero flag on the Status flags
@@ -589,7 +630,7 @@ void StatusFlags(PSW & Status_word,int regDest, int16_t regDest16, int ignore)
   }
 
   //if the result doesn't equal a 16 bit equivalent then overflow
-  if(regDest == regDest16 )
+  if(regDest < -32768 || regDest > 32767 )
   {
     Status_word.V = false;
   }
@@ -600,8 +641,8 @@ void StatusFlags(PSW & Status_word,int regDest, int16_t regDest16, int ignore)
 
   if(ignore == 1)//used to ignore carry modification
    {
-      //check for carry bit
-      if(regDest >= 65536)
+      //check for a carry
+      if((regDest & (1 << 15)) || ((regDest < 0 &&(regDest & (1 << 15) != 0))))
       {
         Status_word.C = true;
       }
