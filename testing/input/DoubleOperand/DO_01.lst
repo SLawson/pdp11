@@ -2,11 +2,9 @@
        2                                ; Tests: Double operand move instruction
        3                                .PSECT A, REL
        4                                
-       5 000000 000001                  VAL1:  .WORD 1.
-       6                                
-       7                                START:
-       8 000002 012767  000005  177770          MOV   #5.,VAL1
-       9 000010 016701  177764                  MOV   VAL1, R1
-      10 000014 000000                          HALT
-      11                                
-      11                                
+       5                                START:
+       6 000000 012701  000005                  MOV   #5, R1
+       7 000004 000257                          CCC
+       8 000006 000000                          HALT
+       9                                
+       9                                

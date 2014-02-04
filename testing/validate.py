@@ -1,8 +1,8 @@
 # ************************************************************************************************
 # File:           validate.py
 # Author:         Scott Lawson
-# Version:        1.1
-# Date:           1/30/2014
+# Version:        1.2
+# Date:           2/3/2014
 # Python Version: 3.3
 #
 # The purpose of this script is to run a program multiple times with different input parameters
@@ -37,8 +37,18 @@ class TestCase(object):
 
     for file_pair in self._file_list:
       try:
-        if not filecmp.cmp(file_pair[0], file_pair[1], shallow=False):
+        if not os.path.exists(file_pair[0]):
+          result = 'Fail: The following output file was not found:\n\t\t\t{}'.format(file_pair[0])
+          break
+
+        elif not os.path.exists(file_pair[1]):
+          result = 'Fail: The following output file was not found:\n\t\t\t{}'.format(file_pair[1])
+          break
+
+        elif not filecmp.cmp(file_pair[0], file_pair[1], shallow=False):
           result = 'Fail'
+          break
+
       except FileNotFoundError as e:
           print(e)
           result = 'Fail: One of the following output files was not found:\n\t\t\t{}\n\t\t\t{}'.format(file_pair[0], file_pair[1])
@@ -129,6 +139,7 @@ def main():
       sys.exit(1)
 
     shutil.copyfile(program_path, os.path.join(os.getcwd(), program))
+    shutil.copymode(program_path, os.path.join(os.getcwd(), program))
 
   except OSError:
     print("\nExecutable copy operation failed. Please confirm that you have write permissions to this directory.")

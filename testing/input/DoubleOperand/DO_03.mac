@@ -8,5 +8,6 @@ START:
         MOV   #2, R3
         BIT   R3, R1
         BIT   R3, R2
+        CCC
         HALT
 

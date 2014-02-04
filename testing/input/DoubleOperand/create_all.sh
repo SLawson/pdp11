@@ -12,3 +12,4 @@
 ./obj2ascii DO_06.obj DO_06.ascii
 ./macro11 DO_07.mac -O DO_07.obj -l DO_07.lst
 ./obj2ascii DO_07.obj DO_07.ascii
+python3 ./set_address.py

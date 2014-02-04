@@ -2,10 +2,8 @@
 ; Tests: Double operand move instruction
 .PSECT A, REL
 
-VAL1:  .WORD 1.
-
 START:
-        MOV   #5.,VAL1
-        MOV   VAL1, R1
+        MOV   #5, R1
+        CCC
         HALT
 
