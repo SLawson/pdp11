@@ -1,0 +1,9 @@
+; File: CC_08.mac
+; Tests: Set zero bit
+.PSECT A, REL
+
+START:
+        CCC
+        SEZ
+        HALT
+

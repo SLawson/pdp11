@@ -28,3 +28,4 @@
 ./obj2ascii CB_14.obj CB_14.ascii
 ./macro11 CB_15.mac -O CB_15.obj -l CB_15.lst
 ./obj2ascii CB_15.obj CB_15.ascii
+python3 ./set_address.py

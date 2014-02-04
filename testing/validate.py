@@ -33,7 +33,12 @@ class TestCase(object):
 
   def execute(self):
     result = 'Pass'
-    subprocess.call("{}".format(self._inv), shell=True)
+
+    try:
+      subprocess.call("{}".format(self._inv), shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=4)
+    except subprocess.TimeoutExpired:
+      result = 'Fail: Program timed out'
+      return result
 
     for file_pair in self._file_list:
       try:
@@ -58,7 +63,7 @@ class TestCase(object):
 
 
 class TestSuite(object):
-  def __init__(self, program, out_dir, model_dir, invocations, flags, files):
+  def __init__(self, program_path, program, out_dir, model_dir, invocations, flags, files):
     self._program = program
     self._cases = []
     flags = [flag.strip() for flag in flags.split(',')]
@@ -87,34 +92,51 @@ class TestSuite(object):
           # append to list of files for comparison
           file_list.append([name.strip(), os.path.join(model_dir, os.path.relpath(name,start=out_dir).strip())])
 
+      # prepend argument list with program name
+      inv = "{} {}".format(program_path, inv)
       self._cases.append(TestCase(case_id, inv, file_list))
 
     return
 
   def execute(self):
     summary = 0
-    results = ["\nProgram Under Test: {}"
-               "\nTime: {}\n"
-               "\nTest ID\t\tResult"
-               .format(self._program, datetime.datetime.now())]
+    header = ["\nProgram Under Test: {}"
+              "\nTime: {}\n"
+              "\nTest ID\t\tResult"
+              .format(self._program, datetime.datetime.now())][0]
+
+    print(header)
+    with open('test_log.txt', 'a') as fi:
+      fi.write("{}\n".format(header))
 
     for test_case in self._cases:
       temp_result = test_case.execute()
-      results.append("{}\t\t{}".format(test_case.test_id, temp_result))
-
       if temp_result != "Pass":
         summary = 1
+
+      result_string = "{}\t\t{}".format(test_case.test_id, temp_result)
+
+      print(result_string)
+      with open('test_log.txt', 'a') as fi:
+        fi.write("{}\n".format(result_string))
+
     
     if summary:
-      results.append("\n\nTest Summary: Fail\n\n")
+      summary_string = ("\n\nTest Summary: Fail\n\n")
     else:
-      results.append("\n\nTest Summary: Pass\n\n")
+      summary_string = ("\n\nTest Summary: Pass\n\n")
 
-    return "\n".join(results)
+    print(summary_string)
+    with open('test_log.txt', 'a') as fi:
+      fi.write("{}\n".format(summary_string))
+
+    return
 
 
 
 def main():
+
+  print("\n\nExecuting test suite...\n")
 
   # get information from config file
   config = configparser.ConfigParser()
@@ -144,17 +166,16 @@ def main():
   except OSError:
     print("\nExecutable copy operation failed. Please confirm that you have write permissions to this directory.")
 
-  suite = TestSuite(program, out_dir, model_dir, config['INVOCATIONS'], config['FLAGS']['flags'], config['FILES'])
-  result_string = suite.execute()
-
-  print(result_string)
-  with open('test_log.txt', 'a') as fi:
-    fi.write(result_string)
+  suite = TestSuite(program_path, program, out_dir, model_dir, config['INVOCATIONS'], config['FLAGS']['flags'], config['FILES'])
+  suite.execute()
 
   sys.exit(0)
 
 
 
 if __name__ == "__main__":
-  main()
+  try:
+    main()
+  except KeyboardInterrupt:
+    print("\n\nTest suite halted by CTRL-C.\n")
 

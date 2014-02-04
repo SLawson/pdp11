@@ -1,0 +1,9 @@
+; File: CC_06.mac
+; Tests: Set carry bit
+.PSECT A, REL
+
+START:
+        CCC
+        SEC
+        HALT
+

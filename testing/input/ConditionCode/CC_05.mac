@@ -1,0 +1,9 @@
+; File: CC_05.mac
+; Tests: Clear all condition bits
+.PSECT A, REL
+
+START:
+        SCC
+        CCC
+        HALT
+

@@ -1,0 +1,9 @@
+; File: CC_01.mac
+; Tests: Clear carry bit
+.PSECT A, REL
+
+START:
+        SCC
+        CLC
+        HALT
+

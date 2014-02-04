@@ -1,0 +1,9 @@
+; File: CC_09.mac
+; Tests: Set negative bit
+.PSECT A, REL
+
+START:
+        CCC
+        SEN
+        HALT
+

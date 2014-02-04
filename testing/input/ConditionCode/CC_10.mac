@@ -1,0 +1,9 @@
+; File: CC_10.mac
+; Tests: Set all condition bits
+.PSECT A, REL
+
+START:
+        CCC
+        SCC
+        HALT
+
