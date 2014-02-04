@@ -64,17 +64,20 @@ Thumbs.db
 
 # Project Specific #
 ######################
-./testing/nul.cpp
-./testing/output
-./testing/pdp
-./testing/test_log.txt
-./testing/tracefile.txt
-./src/586.vim
-./testing/input/ConditionCode/macro11
-./testing/input/ConditionCode/obj2ascii
-./testing/input/ConditionalBranches/macro11
-./testing/input/ConditionalBranches/obj2ascii
-./testing/input/DoubleOperand/macro11
-./testing/input/DoubleOperand/obj2ascii
+testing/null.cpp
+testing/output
+testing/pdp
+testing/test_log.txt
+testing/tracefile.txt
+src/586.vim
+testing/input/ConditionCode/macro11
+testing/input/ConditionCode/obj2ascii
+testing/input/ConditionalBranches/macro11
+testing/input/ConditionalBranches/obj2ascii
+testing/input/DoubleOperand/macro11
+testing/input/DoubleOperand/obj2ascii
+testing/input/System/macro11
+testing/input/System/obj2ascii
+
 
 
