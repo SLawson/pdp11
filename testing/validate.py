@@ -1,7 +1,7 @@
 # ************************************************************************************************
 # File:           validate.py
 # Author:         Scott Lawson
-# Version:        1.2
+# Version:        1.3
 # Date:           2/3/2014
 # Python Version: 3.3
 #
@@ -35,7 +35,8 @@ class TestCase(object):
     result = 'Pass'
 
     try:
-      subprocess.call("{}".format(self._inv), shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=4)
+      with open('newlines.txt') as newlines:
+        subprocess.call("{}".format(self._inv), shell=True, stdin=newlines, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=4)
     except subprocess.TimeoutExpired:
       result = 'Fail: Program timed out'
       return result
