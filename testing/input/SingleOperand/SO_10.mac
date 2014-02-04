@@ -1,0 +1,11 @@
+; File: SO_10.mac
+; Tests: Rotate Left
+.PSECT A, REL
+
+START:
+         MOV      #0, R6
+         SEC
+         ROL      R6
+         CCC
+         HALT
+

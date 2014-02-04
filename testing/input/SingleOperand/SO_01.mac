@@ -1,0 +1,10 @@
+; File: SO_01.mac
+; Tests: Clear
+.PSECT A, REL
+
+START:
+         MOV      #3, R6
+         CLR      R6
+         CCC
+         HALT
+

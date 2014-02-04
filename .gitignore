@@ -78,6 +78,8 @@ testing/input/DoubleOperand/macro11
 testing/input/DoubleOperand/obj2ascii
 testing/input/System/macro11
 testing/input/System/obj2ascii
-
+testing/input/SingleOperand/macro11
+testing/input/SingleOperand/obj2ascii
+*.obj
 
 

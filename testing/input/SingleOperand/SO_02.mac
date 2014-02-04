@@ -1,0 +1,10 @@
+; File: SO_02.mac
+; Tests: Complement
+.PSECT A, REL
+
+START:
+         MOV      #1, R6
+         COM      R6
+         CCC
+         HALT
+

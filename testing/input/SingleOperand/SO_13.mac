@@ -1,0 +1,12 @@
+; File: SO_13.mac
+; Tests: Jump
+.PSECT A, REL
+
+DEST:
+         MOV      #7, R5
+         CCC
+         HALT
+
+START:
+         JMP      DEST
+

@@ -1,5 +1,5 @@
 ./macro11 CB_01.mac -O CB_01.obj -l CB_01.lst
-./obj2ascii CB_01.obj DO_01.ascii
+./obj2ascii CB_01.obj CB_01.ascii
 ./macro11 CB_02.mac -O CB_02.obj -l CB_02.lst
 ./obj2ascii CB_02.obj CB_02.ascii
 ./macro11 CB_03.mac -O CB_03.obj -l CB_03.lst

@@ -1,0 +1,12 @@
+; File: SO_14.mac
+; Tests: Swap Bytes
+.PSECT A, REL
+
+BY:   .WORD    127.
+
+START:
+         MOV      BY, R1
+         SWAB     R1
+         CCC
+         HALT
+
