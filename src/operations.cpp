@@ -92,7 +92,7 @@ Take a source and destination memory location
     if(current_inst.modeSrc == regID)//ID 7 Read RAM data
     {
         opsource = RAM[current_inst.source];
-        opsource = ((opsource << 0x8) | RAM[current_inst.destination+1]);
+        opsource = ((opsource << 0x8) | RAM[current_inst.source+1]);
     }
     //else if(current_inst.modeSrc == regI)
     //else if(current_inst.modeSrc == regADD)
@@ -126,6 +126,21 @@ Take a source and destination memory location
       {
         int regtemp;
         regtemp = opsource + ~opdestination+1;
+        /*if opsource == opdestination
+            Status_word.Z = true;
+          else
+            Status_word.Z = false;
+
+          if(regtemp < 0)
+            Status_word.N = true;
+          else
+            Status_word.N = true;
+
+          if(opsource != opdestination)
+            Status_word.V = true;
+          else
+            Status_word.V = false;
+        */
         StatusFlags(Status_word,regtemp,1);
         break;
       }
