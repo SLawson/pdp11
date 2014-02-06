@@ -482,44 +482,196 @@ and single operand
   //I dont think this will work you will only be able to set one condition code at once
   else if(current_inst.instSel == COND_CODE_OP) {
 	switch(current_inst.opcode) {
-		case CLC: {		//Clear Carry Flag
+		case C_NOP: {		//NOP version of clear COND_CODE_OP
+
+			break;
+		}
+		case CLC: {			//Clear Carry Flag
 
 			Status_word.C = false;
 			break;
 		}
-		case CLV: {		//Clear Overflow Flag
+		case CLV: {			//Clear Overflow Flag
 
 			Status_word.V = false;
 			break;
 		}
-		case CLZ: {		//Clear Zero Flag
+		case CLC_V: {		//Clear Carry and Overflow Flag
+
+			Status_word.C = false;
+			Status_word.V = false;
+			break;
+		}
+		case CLZ: {			//Clear Zero Flag
 
 			Status_word.Z = false;
 			break;
 		}
-		case CLN: {		//Clear Negative Flag
+		case CLC_Z: {		//Clear Carry and Zero Flag
+
+			Status_word.C = false;
+			Status_word.Z = false;
+			break;
+		}
+		case CLV_Z: {		//Clear Overflow and Zero Flag
+
+			Status_word.V = false;
+			Status_word.Z = false;
+			break;
+		}
+		case CLC_V_Z: {		//Clear Carry, Overflow and Zero Flag
+
+			Status_word.C = false;
+			Status_word.V = false;
+			Status_word.Z = false;
+			break;
+		}
+		case CLN: {			//Clear Negative Flag
 
 			Status_word.N = false;
 			break;
 		}
-		case SEC: {		//Set Carry Flag
+		case CLC_N: {		//Clear Carry and Negative Flag
 
-			Status_word.C = true;
+			Status_word.C = false;
+			Status_word.N = false;
 			break;
 		}
-		case SEV: {		//Set Overflow Flag
+		case CLV_N: {		//Clear Overflow and Negative Flag
 
-			Status_word.V = true;
+			Status_word.V = false;
+			Status_word.N = false;
 			break;
 		}
-		case SEZ: {		//Set Zero Flag
+		case CLC_V_N: {		//Clear Carry, Overflow and Negative Flag
 
-			Status_word.Z = true;
+			Status_word.C = false;
+			Status_word.V = false;
+			Status_word.N = false;
 			break;
 		}
-		case SEN: {		//Set Negative Flag
+		case CLZ_N: {		//Clear Zero and Negative Flag
 
-			Status_word.N = true;
+			Status_word.Z = false;
+			Status_word.N = false;
+			break;
+		}
+		case CLC_Z_N: {		//Clear Carry, Zero and Negative Flag
+
+			Status_word.C = false;
+			Status_word.Z = false;
+			Status_word.N = false;
+			break;
+		}
+		case CLV_Z_N: {		//Clear Overflow, Zero and Negative Flag
+
+			Status_word.V = false;
+			Status_word.Z = false;
+			Status_word.N = false;
+			break;
+		}
+		case CLC_V_Z_N: {	//Clear Carry, Overflow, Zero and Negative Flag
+
+			Status_word.C = false;
+			Status_word.V = false;
+			Status_word.Z = false;
+			Status_word.N = false;
+			break;
+		}
+		case S_NOP: {		//NOP version of set COND_CODE_OP
+
+			break;
+		}
+		case SEC: {			//Set Carry Flag
+
+			Status_word.C = false;
+			break;
+		}
+		case SEV: {			//Set Overflow Flag
+
+			Status_word.V = false;
+			break;
+		}
+		case SEC_V: {		//Set Carry and Overflow Flag
+
+			Status_word.C = false;
+			Status_word.V = false;
+			break;
+		}
+		case SEZ: {			//Set Zero Flag
+
+			Status_word.Z = false;
+			break;
+		}
+		case SEC_Z: {		//Set Carry and Zero Flag
+
+			Status_word.C = false;
+			Status_word.Z = false;
+			break;
+		}
+		case SEV_Z: {		//Set Overflow and Zero Flag
+
+			Status_word.V = false;
+			Status_word.Z = false;
+			break;
+		}
+		case SEC_V_Z: {		//Set Carry, Overflow and Zero Flag
+
+			Status_word.C = false;
+			Status_word.V = false;
+			Status_word.Z = false;
+			break;
+		}
+		case SEN: {			//Set Negative Flag
+
+			Status_word.N = false;
+			break;
+		}
+		case SEC_N: {		//Set Carry and Negative Flag
+
+			Status_word.C = false;
+			Status_word.N = false;
+			break;
+		}
+		case SEV_N: {		//Set Overflow and Negative Flag
+
+			Status_word.V = false;
+			Status_word.N = false;
+			break;
+		}
+		case SEC_V_N: {		//Set Carry, Overflow and Negative Flag
+
+			Status_word.C = false;
+			Status_word.V = false;
+			Status_word.N = false;
+			break;
+		}
+		case SEZ_N: {		//Set Zero and Negative Flag
+
+			Status_word.Z = false;
+			Status_word.N = false;
+			break;
+		}
+		case SEC_Z_N: {		//Set Carry, Zero and Negative Flag
+
+			Status_word.C = false;
+			Status_word.Z = false;
+			Status_word.N = false;
+			break;
+		}
+		case SEV_Z_N: {		//Set Overflow, Zero and Negative Flag
+
+			Status_word.V = false;
+			Status_word.Z = false;
+			Status_word.N = false;
+			break;
+		}
+		case SEC_V_Z_N: {	//Set Carry, Overflow, Zero and Negative Flag
+
+			Status_word.C = false;
+			Status_word.V = false;
+			Status_word.Z = false;
+			Status_word.N = false;
 			break;
 		}
 	}
