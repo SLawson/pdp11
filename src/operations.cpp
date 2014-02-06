@@ -17,69 +17,9 @@ int Operation(int RAM[],instruction & current_inst, int GPR [], PSW & Status_wor
     //Internal scratch pad registers
     int opsource;//this holds the value of the data (RAM or register)
     int opdestination;//this holds the value of the data (RAM or register)
+    int regAddress = current_inst.destination;
 
-    //Takes the destination address and fetches the data from the RAM for the destination value
-    if(current_inst.modeDest == regID)//ID 7 Read RAM data also contains PC77
-    {
-        if(current_inst.regster == 7)
-        {
-            //fix this
-			opdestination = RAM[current_inst.destination];//Read_mem(RAM, GPR, file, I_or_D) trying to add
-            opdestination = ((opdestination << 0x8) | RAM[current_inst.destination+1]);
-			
-        }
-        else
-        {
-			opdestination = RAM[current_inst.destination];//Read_mem(RAM, GPR, file, I_or_D) trying to add
-            opdestination = ((opdestination << 0x8) | RAM[current_inst.destination+1]);
-        }
-
-    }
-    else if(current_inst.modeDest == regI)//ID 6 also contains PC67
-        if(current_inst.regster == 7)
-        {
-            opdestination = RAM[current_inst.destination];//Read_mem(RAM, GPR, file, I_or_D) trying to add
-            opdestination = ((opdestination << 0x8) | RAM[current_inst.destination+1]);
-        }
-        else
-        {
-            opdestination = RAM[current_inst.destination];//Read_mem(RAM, GPR, file, I_or_D) trying to add
-            opdestination = ((opdestination << 0x8) | RAM[current_inst.destination+1]);
-        }
-    else if(current_inst.modeDest == regADD)//ID 5
-        opdestination = 1;
-    else if(current_inst.modeDest == regAD)//ID 4
-        opdestination = 1;
-    else if(current_inst.modeDest == regAID)//ID 3 also contains PC37
-        if(current_inst.regster == 7)
-        {
-            opdestination = RAM[current_inst.destination];//Read_mem(RAM, GPR, file, I_or_D) trying to add
-            opdestination = ((opdestination << 0x8) | RAM[current_inst.destination+1]);
-        }
-        else
-        {
-            opdestination = RAM[current_inst.destination];//Read_mem(RAM, GPR, file, I_or_D) trying to add
-            opdestination = ((opdestination << 0x8) | RAM[current_inst.destination+1]);
-        }
-    else if (current_inst.modeDest == regAI)//ID 2 also contains PC27
-        if(current_inst.regster == 7)
-        {
-            opdestination = RAM[current_inst.destination];//Read_mem(RAM, GPR, file, I_or_D) trying to add
-            opdestination = ((opdestination << 0x8) | RAM[current_inst.destination+1]);
-        }
-        else
-        {
-            opdestination = RAM[current_inst.destination];//Read_mem(RAM, GPR, file, I_or_D) trying to add
-            opdestination = ((opdestination << 0x8) | RAM[current_inst.destination+1]);
-        }
-    else if(current_inst.modeDest == regD)//ID 1
-        opdestination = GPR[current_inst.destination];//Need to check this
-    else if(current_inst.modeDest == regS)//ID 0 Register op
-        opdestination = GPR[current_inst.destination];
-    else
-        cout << "not a valid mode\n";
-
-
+    opdestination = AddressmodesDecode(RAM, current_inst, GPR);
 
 /*********************************************************************************
 Double Operation
@@ -90,29 +30,9 @@ Take a source and destination memory location
   if(current_inst.instSel == DOUBLE_OP  && current_inst.byteSel == 0)
   {
 
-    //Takes the source address and fetches the correct value or uses the source value
-    if(current_inst.modeSrc == regID)//ID 7 Read RAM data
-    {
-        opsource = RAM[current_inst.source];
-        opsource = ((opsource << 0x8) | RAM[current_inst.source+1]);
-    }
-    //else if(current_inst.modeSrc == regI)
-    //else if(current_inst.modeSrc == regADD)
-    //else if(current_inst.modeSrc == regAD)
-    //else if(current_inst.modeSrc == regAID)
-    //else if(current_inst.modeSrc == regI)
-    else if (current_inst.modeSrc == regAI)
-        opsource = current_inst.source;
-    //else if(current_inst.modeDest == regD)
-    else if(current_inst.modeDest == regS)
-    {
-        //use this to set opsource to a register value
-        opsource = GPR[current_inst.source];
-    }
-    else
-        cout << "not a valid mode for source\n";
+    opsource = AddressmodesDecode(RAM, current_inst, GPR);
 
-   //once the correct destination and source the operation can occur
+    //once the correct destination and source the operation can occur
     switch(current_inst.opcode){
 
       case MOV: //dest = src
@@ -408,19 +328,23 @@ and single operand
         current_inst.write_flag = true;
         current_inst.result = opdestination;
     }
-    //else if(current_inst.modeDest == regI)
-    //else if(current_inst.modeDest == regADD)
-    //else if(current_inst.modeDest == regAD)
-    //else if(current_inst.modeDest == regAID)
-    //else if(current_inst.modeDest == regI)
-    else if (current_inst.modeDest == regAI)//ID 2
-        opdestination = current_inst.destination;
-    //else if(current_inst.modeDest == regD)
-    else if(current_inst.modeDest == regS)
+    else if(current_inst.modeDest == regI)//ID6
     {
-        //use this to set opdestination to a register value
-        //GPR[current_inst.regster] = opdestination
+        current_inst.write_flag = true;
+        current_inst.result = opdestination;
     }
+    else if(current_inst.modeDest == regADD)//ID5
+        opdestination;
+    else if(current_inst.modeDest == regAD)//ID4
+        opdestination;
+    else if(current_inst.modeDest == regAID)//ID3
+        opdestination;
+    else if (current_inst.modeDest == regAI)//ID 2
+        opdestination;
+    else if(current_inst.modeDest == regD)//ID1
+        GPR[regAddress] = opdestination;
+    else if(current_inst.modeDest == regS)//ID0
+        GPR[regAddress] = opdestination;
     //need to add the rest of the modes here for double op
     else
         cout << "not a valid mode\n";
@@ -600,16 +524,97 @@ and single operand
 		}
 	}
   }
-
-
 }
 
-/*
+/***************************************************************
+Address modes handler
+
+
+
+***************************************************************/
+
+int AddressmodesDecode(int RAM[],instruction & current_inst, int GPR[])
+{
+ int address_value;
+
+ //Takes the destination address and fetches the data from the RAM for the destination value
+    if(current_inst.modeDest == regID)//ID 7 Read RAM data also contains PC77
+    {
+        if(current_inst.regster == 7)//I need a register value to check this with
+		{
+		    GPR[PC] = current_inst.destination+2;
+		}
+        else
+        {
+			address_value = RAM[current_inst.destination];//Read_mem(RAM, GPR, file, I_or_D) trying to add
+            address_value = ((address_value << 0x8) | RAM[current_inst.destination+1]);
+        }
+    }
+    else if(current_inst.modeDest == regI)//ID 6 also contains PC67
+        if(current_inst.regster == 7)
+            GPR[PC] = current_inst.destination+2;
+        else
+        {
+            address_value = RAM[current_inst.destination];//Read_mem(RAM, GPR, file, I_or_D) trying to add
+            address_value = ((address_value << 0x8) | RAM[current_inst.destination+1]);
+        }
+    else if(current_inst.modeDest == regADD)//ID 5
+    {
+        address_value = RAM[GPR[current_inst.destination]];//
+        address_value = ((address_value << 0x8) | RAM[GPR[current_inst.destination]+1]);
+        address_value = RAM[address_value];//
+        address_value = ((address_value << 0x8) | RAM[GPR[address_value]+1]);
+        GPR[current_inst.destination] -= 4;
+    }
+    else if(current_inst.modeDest == regAD)//ID 4
+    {
+        address_value = RAM[GPR[current_inst.destination]];//
+        address_value = ((address_value << 0x8) | RAM[GPR[current_inst.destination]+1]);
+        GPR[current_inst.destination] -= 2;
+    }
+    else if(current_inst.modeDest == regAID)//ID 3 also contains PC37
+        if(current_inst.regster == 7)
+            address_value = current_inst.destination;
+        else
+        {
+            address_value = RAM[GPR[current_inst.destination]];//
+            address_value = ((address_value << 0x8) | RAM[GPR[current_inst.destination]+1]);
+            address_value = RAM[address_value];//
+            address_value = ((address_value << 0x8) | RAM[GPR[address_value]+1]);
+            GPR[current_inst.destination] += 4;
+        }
+    else if (current_inst.modeDest == regAI)//ID 2 also contains PC27
+        if(current_inst.regster == 7)
+            address_value = current_inst.destination;
+        else
+        {
+            address_value = RAM[GPR[current_inst.destination]];//fetches the address in the register and then increments by one
+            address_value = ((address_value << 0x8) | RAM[GPR[current_inst.destination]+1]);
+            GPR[current_inst.destination] += 2;
+        }
+    else if(current_inst.modeDest == regD)//ID 1 Indirect/Deferred register addressing
+    {
+        address_value = RAM[GPR[current_inst.destination]];//Goes to the RAM address stored in the register location
+        address_value = ((address_value << 0x8) | RAM[GPR[current_inst.destination]+1]);//Goes to the RAM address stored in the register location
+    }
+    else if(current_inst.modeDest == regS)//ID 0 General Register op
+        address_value = GPR[current_inst.destination];//loads the contents of Rx based on destination
+    else
+        cout << "not a valid mode\n";
+
+    return address_value;
+}
+
+
+
+
+
+/**************************************************************
 This function sets the status flags based on an operation
 
 
 
-*/
+**************************************************************/
 void StatusFlags(PSW & Status_word,int regDest, int ignore)
 {
   //if the result of the register is zero then set the flag otherwise set to false
