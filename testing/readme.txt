@@ -6,7 +6,7 @@ Hey Guys:
     2) Open "config.ini"
     3) Look for the "executable =" line in the [PATHS] section (line 29)
     4) After the equals sign, enter the complete absolute path to the executable your compiler outputs
-    5) Run the script
+    5) Run the script: "python3 ./validate.py"
 
 
   Possible Problems:
