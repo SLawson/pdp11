@@ -23,12 +23,14 @@ int Operation(int RAM[],instruction & current_inst, int GPR [], PSW & Status_wor
     {
         if(current_inst.regster == 7)
         {
-            opdestination = RAM[current_inst.destination];//Read_mem(RAM, GPR, file, I_or_D) trying to add
+            //fix this
+			opdestination = RAM[current_inst.destination];//Read_mem(RAM, GPR, file, I_or_D) trying to add
             opdestination = ((opdestination << 0x8) | RAM[current_inst.destination+1]);
+			
         }
         else
         {
-            opdestination = RAM[current_inst.destination];//Read_mem(RAM, GPR, file, I_or_D) trying to add
+			opdestination = RAM[current_inst.destination];//Read_mem(RAM, GPR, file, I_or_D) trying to add
             opdestination = ((opdestination << 0x8) | RAM[current_inst.destination+1]);
         }
 
@@ -124,24 +126,10 @@ Take a source and destination memory location
       }
       case CMP://compute src - dest, set flags only
       {
-        int regtemp;
-        regtemp = opsource + ~opdestination+1;
-        /*if opsource == opdestination
-            Status_word.Z = true;
-          else
-            Status_word.Z = false;
+        int tempresult;
+		tempresult = opsource - opdestination;
+		StatusFlags(Status_word,tempresult,0);
 
-          if(regtemp < 0)
-            Status_word.N = true;
-          else
-            Status_word.N = true;
-
-          if(opsource != opdestination)
-            Status_word.V = true;
-          else
-            Status_word.V = false;
-        */
-        StatusFlags(Status_word,regtemp,1);
         break;
       }
       case BIT://compute dest & src set flags only
