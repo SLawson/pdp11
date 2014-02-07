@@ -313,9 +313,40 @@ Take a source and destination memory location
     }
   }
 
+  //Subroutine Jump Instructions
+  else if(current_inst.instSel == JUMP) {
+
+	  if(current_inst.opcode == JSR) {		//Jump to Subroutine
+
+		  //Push specified Link Register's contents onto stack
+		  //opdestination = AddressmodesDecode();
+
+		  //Copy PC's contents to specified Link Register (pre-incremented PC)
+		  GPR[current_inst.destReg] = GPR[PC];
+
+		  //Copy Jump Destination to PC
+		  GPR[PC] = current_inst.destination;
+	  }
+	  else if(current_inst.opcode == RTS) {	//ReTurn from Subroutine
+
+		  //Copy specified Link Register's contents to PC
+		  GPR[PC] = GPR[current_inst.sourceReg];
+
+		  //Pop top of stack to specified Link Register
+		  //opdestination = AddressmodesDecode();
+	  }
+	  else
+		  cout <<"Invalid Subroutine Instruction";
+
+	  if(current_inst.byteSel == 1) {
+
+		  cout <<"Erroneous B-bit";
+	  }
+  }
+
   //Conditional Branch Instructions
   //byteSel = 0: BR_JMP, BEQ, BNE, and Signed Conditional Branches
-  else if(current_inst.instSel == CONDITIONAL_OP && current_inst.byteSel == 0) {
+  if(current_inst.instSel == CONDITIONAL_OP && current_inst.byteSel == 0) {
 	switch(current_inst.opcode) {
 		case BR_JMP: {			//Unconditional Branch/Jump
 
@@ -437,6 +468,7 @@ Take a source and destination memory location
 		}
 	}
   }
+
 
 /*******************************************************************
 Write back to RAM or appropriate register

@@ -99,6 +99,10 @@ using namespace std;
 #define BCC_BHIS		06      //Branch if carry clear (C=0)
 #define BCS_BLO			07      //Branch if carry set (C=1)
 
+//Subroutine instructions
+#define JSR		04		//Jump to Subroutine
+#define RTS		020		//Return from Subroutine
+
 //General Purpose Register names
 #define R0		0
 #define R1		1
@@ -122,20 +126,6 @@ using namespace std;
 #define regI    	06 //index
 #define regID   	07 //index deferred
 
-//Program counter addressing modes
-#define pcImm		027 //immediate
-#define pcAbs		037 //absolute
-#define pcRel		067 //relative
-#define pcRelD		077 //relative deferred
-
-//Stack addressing modes
-#define stackD		016 //deferred
-#define stackAI		026 //auto increment
-#define stackAID  	036 //auto increment deferred
-#define stackAD	 	046 //auto decrement
-#define stackI	  	066 //indexed
-#define stackID	 	076 //indexed deferred
-
 //instruction type categories
 #define JUMP			0
 #define SINGLE_OP		1
@@ -156,7 +146,7 @@ struct instruction {
 	int destReg;		//Destination Operand Register
 	int modeSrc;		//Addressing mode of the src
 	int modeDest;		//Addressing mode of the destination
-	int offset;			//Branch target PC-relative offset (# of words, signed
+	int offset;			//Branch target PC-relative offset (# of words, signed)
 
 	int result;			//Result of Operation
 	int write_flag;		//Write-result-to-RAM flag
