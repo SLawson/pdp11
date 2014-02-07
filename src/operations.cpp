@@ -17,9 +17,9 @@ int Operation(int RAM[],instruction & current_inst, int GPR [], PSW & Status_wor
     //Internal scratch pad registers
     int opsource;//this holds the value of the data (RAM or register)
     int opdestination;//this holds the value of the data (RAM or register)
-    int regAddress = current_inst.destination;//
+    //int regAddress = current_inst.destination;//
 
-    opdestination = AddressmodesDecode(RAM, current_inst, GPR);
+    opdestination = AddressmodesDecode(RAM, current_inst, GPR, current_inst.destReg);
 
 /*********************************************************************************
 Double Operation
@@ -30,7 +30,7 @@ Take a source and destination memory location
   if(current_inst.instSel == DOUBLE_OP  && current_inst.byteSel == 0)
   {
 
-    opsource = AddressmodesDecode(RAM, current_inst, GPR);
+    opsource = AddressmodesDecode(RAM, current_inst, GPR, current_inst.sourceReg);
 
     //once the correct destination and source the operation can occur
     switch(current_inst.opcode){
@@ -480,31 +480,55 @@ and single operand
 
 
   //return function here for the different modes
-    if(current_inst.modeDest == regID)//ID 7 Read RAM data
-    {
+  switch (current_inst.modeDest) {
+
+    case regID:{//ID 7 Index deferred
         current_inst.write_flag = true;
         current_inst.result = opdestination;
+        break;
     }
-    else if(current_inst.modeDest == regI)//ID6
-    {
+    case regI:{//ID6 Index
         current_inst.write_flag = true;
         current_inst.result = opdestination;
+        break;
     }
-    else if(current_inst.modeDest == regADD)//ID5
-        opdestination;
-    else if(current_inst.modeDest == regAD)//ID4
-        opdestination;
-    else if(current_inst.modeDest == regAID)//ID3
-        opdestination;
-    else if (current_inst.modeDest == regAI)//ID 2
-        opdestination;
-    else if(current_inst.modeDest == regD)//ID1
-        GPR[regAddress] = opdestination;
-    else if(current_inst.modeDest == regS)//ID0
-        GPR[regAddress] = opdestination;
+    case regADD:{//ID5 Autodecrement deferred
+        GPR[current_inst.destReg] = opdestination;
+        break;
+    }
+    case regAD:{//ID4 Autodecrement
+        GPR[current_inst.destReg] = opdestination;
+        break;
+        }
+    case regAID:{//ID3 Autoincrement deferred
+        GPR[current_inst.destReg] = opdestination;
+        break;
+        }
+    case regAI:{//ID 2 Autoincrement
+        GPR[current_inst.destReg] = opdestination;
+        break;
+    }
+    case regD://ID1 Register Deferred
+    {
+        GPR[current_inst.destReg] = opdestination;
+        break;
+    }
+
+    case regS://ID0 Register
+    {
+        GPR[current_inst.destReg] = opdestination;
+        break;
+    }
     //need to add the rest of the modes here for double op
-    else
+    default:
+    {
         cout << "not a valid mode\n";
+        break;
+    }
+
+  }
+
+}
 
 /***************************************************************
 Address modes handler
@@ -513,87 +537,90 @@ Address modes handler
 
 ***************************************************************/
 
-int AddressmodesDecode(int RAM[],instruction & current_inst, int GPR[]) {
+int AddressmodesDecode(int RAM[],instruction & current_inst, int GPR[], int curr_Register) {
 
 int address_value;
 int operand_data;
 
 	//Takes the destination address and fetches the data from the RAM for the destination value
 	switch (current_inst.modeDest) {
-		case regID: {	//Index Deferred Modes
+		case regID: {	//Index Deferred Modes modeid:7
 
 			//PC-relative Deferred Mode
-			if(current_inst.regster == 7)
-				operand_data = RAM[current_inst.destination];
+			if(curr_Register == PC){
+				address_value = RAM[current_inst.destination];
+				operand_data =  RAM[address_value];//check this
+			}
+
 			else {
-				address_value = RAM[GPR[current_inst.destination]];//Read_mem(RAM, GPR, file, I_or_D) trying to add
-				operand_data = ((address_value << 0x8) | RAM[address_value+1]);
+				address_value = RAM[GPR[curr_Register]];//Read_mem(RAM, GPR, file, I_or_D) trying to add
+				operand_data = ((address_value << 0x8) | RAM[GPR[curr_Register]+1]);
 			}
 			break;
 		}
-		case regI: {	//Index Modes
+		case regI: {	//Index Modes modeid:6
 
 			//PC-relative Mode
-			if(current_inst.regster == 7) {
-				operand_data = current_inst.destination;
+			if(curr_Register == PC) {
+				operand_data = RAM[current_inst.destination];
 			}
 			else {
-				address_value = RAM[current_inst.destination];	//Read_mem(RAM, GPR, file, I_or_D) trying to add
-				operand_data = ((address_value << 0x8) | RAM[current_inst.destination+1]);
+				address_value = RAM[GPR[curr_Register]];	//Read_mem(RAM, GPR, file, I_or_D) trying to add
+				operand_data = ((address_value << 0x8) | RAM[GPR[curr_Register]+1]);
 			}
 			break;
 		}
 		case regADD: {	//Auto-Decrement Deferred Mode
 
-			GPR[current_inst.destination] -= 2;		//Decrement before dereferencing
-			address_value = RAM[GPR[current_inst.destination]];
-			address_value = ((address_value << 0x8) | RAM[GPR[current_inst.destination]+1]);
-			address_value = RAM[address_value];
+			GPR[curr_Register] -= 2;		//Decrement before dereferencing
+			address_value = RAM[GPR[curr_Register]];
+			address_value = ((address_value << 0x8) | RAM[GPR[curr_Register]+1]);
+			address_value = RAM[GPR[address_value]];
 			operand_data = ((address_value << 0x8) | RAM[GPR[address_value]+1]);
 			break;
 		}
 		case regAD: {	//Auto-Decrement Mode
 
-			GPR[current_inst.destination] -= 2;		//Decrement before dereferencing
-			address_value = RAM[GPR[current_inst.destination]];
-			operand_data = ((address_value << 0x8) | RAM[GPR[current_inst.destination]+1]);
+			GPR[curr_Register] -= 2;		//Decrement before dereferencing
+			address_value = RAM[GPR[curr_Register]];
+			operand_data = ((address_value << 0x8) | RAM[GPR[curr_Register]+1]);
 			break;
 		}
 		case regAID: {	//Auto-Increment Deferred Modes
 
 			//PC-relative Absolute Mode
-			if(current_inst.regster == 7)
+			if(curr_Register == PC)
 				operand_data = current_inst.destination;
 			else
 			{
-				address_value = RAM[GPR[current_inst.destination]];
-				address_value = ((address_value << 0x8) | RAM[GPR[current_inst.destination]+1]);
+				address_value = RAM[GPR[curr_Register]];
+				address_value = ((address_value << 0x8) | RAM[GPR[curr_Register]+1]);
 				address_value = RAM[address_value];//
-				operand_data = ((address_value << 0x8) | RAM[GPR[address_value]+1]);
-				GPR[current_inst.destination] += 2;		//Increment after dereferencing
+				operand_data = ((address_value << 0x8) | RAM[address_value+1]);
+				GPR[curr_Register] += 2;		//Increment after dereferencing
 			}
 			break;
 		}
 		case regAI: {	//Register Auto-Increment Modes
 
 			//PC-relative Immediate Addressing Mode
-			if(current_inst.regster == 7)
+			if(curr_Register == PC)
 				operand_data = current_inst.destination;
 			else
 			{
-				address_value = RAM[GPR[current_inst.destination]];//fetches the address in the register and then increments by one
-				operand_data = ((address_value << 0x8) | RAM[GPR[current_inst.destination]+1]);
+				address_value = RAM[GPR[curr_Register]];//fetches the address in the register and then increments by one
+				operand_data = ((address_value << 0x8) | RAM[GPR[curr_Register]+1]);
 				GPR[current_inst.destination] += 2;
 			}
 			break;
 		}
 		case regD: {	//Register Deferred Mode
-			address_value = RAM[GPR[current_inst.destination]];//Goes to the RAM address stored in the register location
-			operand_data = ((address_value << 0x8) | RAM[GPR[current_inst.destination]+1]);//Goes to the RAM address stored in the register location
+			address_value = RAM[GPR[curr_Register]];//Goes to the RAM address stored in the register location
+			operand_data = ((address_value << 0x8) | RAM[GPR[curr_Register]+1]);//Goes to the RAM address stored in the register location
 			break;
 		}
 		case regS: {	//Register Mode
-			operand_data = GPR[current_inst.destination];	//Read value in specified register
+			operand_data = GPR[curr_Register];	//Read value in specified register
 			break;
 		}
 		default: {		//Invalid Addressing Mode
