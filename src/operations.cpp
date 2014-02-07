@@ -17,7 +17,7 @@ int Operation(int RAM[],instruction & current_inst, int GPR [], PSW & Status_wor
     //Internal scratch pad registers
     int opsource;//this holds the value of the data (RAM or register)
     int opdestination;//this holds the value of the data (RAM or register)
-    int regAddress = current_inst.destination;
+    int regAddress = current_inst.destination;//
 
     opdestination = AddressmodesDecode(RAM, current_inst, GPR);
 
@@ -688,11 +688,11 @@ int AddressmodesDecode(int RAM[],instruction & current_inst, int GPR[])
  int address_value;
 
  //Takes the destination address and fetches the data from the RAM for the destination value
-    if(current_inst.modeDest == regID)//ID 7 Read RAM data also contains PC77
+    if(current_inst.modeDest == regID)//ID 7 Index defered Read RAM data also contains PC77
     {
         if(current_inst.regster == 7)//I need a register value to check this with
 		{
-		    GPR[PC] = current_inst.destination+2;
+		    GPR[PC] += current_inst.destination;//destination is what pc points to.
 		}
         else
         {
@@ -735,7 +735,7 @@ int AddressmodesDecode(int RAM[],instruction & current_inst, int GPR[])
         }
     else if (current_inst.modeDest == regAI)//ID 2 also contains PC27
         if(current_inst.regster == 7)
-            address_value = current_inst.destination;
+            address_value = current_inst.destination;//this is not address_value it is a immediate
         else
         {
             address_value = RAM[GPR[current_inst.destination]];//fetches the address in the register and then increments by one
