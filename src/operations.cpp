@@ -683,76 +683,97 @@ Address modes handler
 
 ***************************************************************/
 
-int AddressmodesDecode(int RAM[],instruction & current_inst, int GPR[])
-{
- int address_value;
+int AddressmodesDecode(int RAM[],instruction & current_inst, int GPR[]) {
 
- //Takes the destination address and fetches the data from the RAM for the destination value
-    if(current_inst.modeDest == regID)//ID 7 Index defered Read RAM data also contains PC77
-    {
-        if(current_inst.regster == 7)//I need a register value to check this with
-		{
-		    GPR[PC] += current_inst.destination;//destination is what pc points to.
+int address_value;
+int operand_data;
+
+	//Takes the destination address and fetches the data from the RAM for the destination value
+	switch (current_inst.modeDest) {
+		case regID: {	//Index Deferred Modes
+
+			//PC-relative Deferred Mode
+			if(current_inst.regster == 7)
+				operand_data = current_inst.destination;
+			else {
+				address_value = RAM[current_inst.destination];//Read_mem(RAM, GPR, file, I_or_D) trying to add
+				operand_data = ((address_value << 0x8) | RAM[current_inst.destination+1]);
+			}
+			break;
 		}
-        else
-        {
-			address_value = RAM[current_inst.destination];//Read_mem(RAM, GPR, file, I_or_D) trying to add
-            address_value = ((address_value << 0x8) | RAM[current_inst.destination+1]);
-        }
-    }
-    else if(current_inst.modeDest == regI)//ID 6 also contains PC67
-        if(current_inst.regster == 7)
-            GPR[PC] = current_inst.destination+2;
-        else
-        {
-            address_value = RAM[current_inst.destination];//Read_mem(RAM, GPR, file, I_or_D) trying to add
-            address_value = ((address_value << 0x8) | RAM[current_inst.destination+1]);
-        }
-    else if(current_inst.modeDest == regADD)//ID 5
-    {
-        address_value = RAM[GPR[current_inst.destination]];//
-        address_value = ((address_value << 0x8) | RAM[GPR[current_inst.destination]+1]);
-        address_value = RAM[address_value];//
-        address_value = ((address_value << 0x8) | RAM[GPR[address_value]+1]);
-        GPR[current_inst.destination] -= 4;
-    }
-    else if(current_inst.modeDest == regAD)//ID 4
-    {
-        address_value = RAM[GPR[current_inst.destination]];//
-        address_value = ((address_value << 0x8) | RAM[GPR[current_inst.destination]+1]);
-        GPR[current_inst.destination] -= 2;
-    }
-    else if(current_inst.modeDest == regAID)//ID 3 also contains PC37
-        if(current_inst.regster == 7)
-            address_value = current_inst.destination;
-        else
-        {
-            address_value = RAM[GPR[current_inst.destination]];//
-            address_value = ((address_value << 0x8) | RAM[GPR[current_inst.destination]+1]);
-            address_value = RAM[address_value];//
-            address_value = ((address_value << 0x8) | RAM[GPR[address_value]+1]);
-            GPR[current_inst.destination] += 4;
-        }
-    else if (current_inst.modeDest == regAI)//ID 2 also contains PC27
-        if(current_inst.regster == 7)
-            address_value = current_inst.destination;//this is not address_value it is a immediate
-        else
-        {
-            address_value = RAM[GPR[current_inst.destination]];//fetches the address in the register and then increments by one
-            address_value = ((address_value << 0x8) | RAM[GPR[current_inst.destination]+1]);
-            GPR[current_inst.destination] += 2;
-        }
-    else if(current_inst.modeDest == regD)//ID 1 Indirect/Deferred register addressing
-    {
-        address_value = RAM[GPR[current_inst.destination]];//Goes to the RAM address stored in the register location
-        address_value = ((address_value << 0x8) | RAM[GPR[current_inst.destination]+1]);//Goes to the RAM address stored in the register location
-    }
-    else if(current_inst.modeDest == regS)//ID 0 General Register op
-        address_value = GPR[current_inst.destination];//loads the contents of Rx based on destination
-    else
-        cout << "not a valid mode\n";
+		case regI: {	//Index Modes
 
-    return address_value;
+			//PC-relative Mode
+			if(current_inst.regster == 7) {
+				operand_data = current_inst.destination;
+			}
+			else {
+				address_value = RAM[current_inst.destination];	//Read_mem(RAM, GPR, file, I_or_D) trying to add
+				operand_data = ((address_value << 0x8) | RAM[current_inst.destination+1]);
+			}
+			break;
+		}
+		case regADD: {	//Auto-Decrement Deferred Mode
+
+			GPR[current_inst.destination] -= 2;		//Decrement before dereferencing
+			address_value = RAM[GPR[current_inst.destination]];
+			address_value = ((address_value << 0x8) | RAM[GPR[current_inst.destination]+1]);
+			address_value = RAM[address_value];
+			operand_data = ((address_value << 0x8) | RAM[GPR[address_value]+1]);
+			break;
+		}
+		case regAD: {	//Auto-Decrement Mode
+
+			GPR[current_inst.destination] -= 2;		//Decrement before dereferencing
+			address_value = RAM[GPR[current_inst.destination]];
+			operand_data = ((address_value << 0x8) | RAM[GPR[current_inst.destination]+1]);
+			break;
+		}
+		case regAID: {	//Auto-Increment Deferred Modes
+
+			//PC-relative Absolute Mode
+			if(current_inst.regster == 7)
+				operand_data = current_inst.destination;
+			else
+			{
+				address_value = RAM[GPR[current_inst.destination]];
+				address_value = ((address_value << 0x8) | RAM[GPR[current_inst.destination]+1]);
+				address_value = RAM[address_value];//
+				operand_data = ((address_value << 0x8) | RAM[GPR[address_value]+1]);
+				GPR[current_inst.destination] += 2;		//Increment after dereferencing
+				return operand_data;
+			}
+			break;
+		}
+		case regAI: {	//Register Auto-Increment Modes
+
+			//PC-relative Immediate Addressing Mode
+			if(current_inst.regster == 7)
+				operand_data = current_inst.destination;
+			else
+			{
+				address_value = RAM[GPR[current_inst.destination]];//fetches the address in the register and then increments by one
+				operand_data = ((address_value << 0x8) | RAM[GPR[current_inst.destination]+1]);
+				GPR[current_inst.destination] += 2;
+			}
+			break;
+		}
+		case regD: {	//Register Deferred Mode
+			address_value = RAM[GPR[current_inst.destination]];//Goes to the RAM address stored in the register location
+			operand_data = ((address_value << 0x8) | RAM[GPR[current_inst.destination]+1]);//Goes to the RAM address stored in the register location
+			break;
+		}
+		case regS: {	//Register Mode
+			operand_data = GPR[current_inst.destination];	//Read value in specified register
+			break;
+		}
+		default: {		//Invalid Addressing Mode
+
+			cout << "Invalid Addressing Mode\n";
+			break;
+		}
+	}
+    return operand_data;
 }
 
 

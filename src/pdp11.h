@@ -148,28 +148,28 @@ using namespace std;
 //TODO Jordan use #define's here
 
 //General register addressing modes
-#define regS      	0 //register
-#define regD     	1 //register deferred
-#define regAI	  	2 //auto increment
-#define regAID	 	3 //auto increment deferred
-#define regAD	  	4 //auto decrement
-#define regADD	 	5 //auto decrement deferred
-#define regI    	6 //index
-#define regID   	7 //index deferred
+#define regS      	00 //register
+#define regD     	01 //register deferred
+#define regAI	  	02 //auto increment
+#define regAID	 	03 //auto increment deferred
+#define regAD	  	04 //auto decrement
+#define regADD	 	05 //auto decrement deferred
+#define regI    	06 //index
+#define regID   	07 //index deferred
 
 //Program counter addressing modes
-#define pcImm		27 //immediate
-#define pcAbs		37 //absolute
-#define pcRel		67 //relative
-#define pcRelD		77 //relative deferred
+#define pcImm		027 //immediate
+#define pcAbs		037 //absolute
+#define pcRel		067 //relative
+#define pcRelD		077 //relative deferred
 
 //Stack addressing modes
-#define stackD		16 //deferred
-#define stackAI		26 //auto increment
-#define stackAID  	36 //auto increment deferred
-#define stackAD	 	46 //auto decrement
-#define stackI	  	66 //indexed
-#define stackID	 	76 //indexed deferred
+#define stackD		016 //deferred
+#define stackAI		026 //auto increment
+#define stackAID  	036 //auto increment deferred
+#define stackAD	 	046 //auto decrement
+#define stackI	  	066 //indexed
+#define stackID	 	076 //indexed deferred
 
 //instruction type categories
 #define JUMP			0
