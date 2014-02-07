@@ -311,44 +311,6 @@ Take a source and destination memory location
           break;
       }
     }
-
-
-/*******************************************************************
-Write back to RAM or appropriate register
-Only modifies the Destination works for both Double operand
-and single operand
-
-*******************************************************************/
-
-
-
-    //return function here for the different modes
-    if(current_inst.modeDest == regID)//ID 7 Read RAM data
-    {
-        current_inst.write_flag = true;
-        current_inst.result = opdestination;
-    }
-    else if(current_inst.modeDest == regI)//ID6
-    {
-        current_inst.write_flag = true;
-        current_inst.result = opdestination;
-    }
-    else if(current_inst.modeDest == regADD)//ID5
-        opdestination;
-    else if(current_inst.modeDest == regAD)//ID4
-        opdestination;
-    else if(current_inst.modeDest == regAID)//ID3
-        opdestination;
-    else if (current_inst.modeDest == regAI)//ID 2
-        opdestination;
-    else if(current_inst.modeDest == regD)//ID1
-        GPR[regAddress] = opdestination;
-    else if(current_inst.modeDest == regS)//ID0
-        GPR[regAddress] = opdestination;
-    //need to add the rest of the modes here for double op
-    else
-        cout << "not a valid mode\n";
-
   }
 
   //Conditional Branch Instructions
@@ -476,205 +438,41 @@ and single operand
 	}
   }
 
-  //Condition Code Operator Instructions
-  //Set or Clear Condition Codes (C,V,Z,N)
-  else if(current_inst.instSel == COND_CODE_OP) {
-	switch(current_inst.opcode) {
-		case C_NOP: {		//NOP version of clear COND_CODE_OP
+/*******************************************************************
+Write back to RAM or appropriate register
+Only modifies the Destination works for both Double operand
+and single operand
 
-			break;
-		}
-		case CLC: {			//Clear Carry Flag
+*******************************************************************/
 
-			Status_word.C = false;
-			break;
-		}
-		case CLV: {			//Clear Overflow Flag
 
-			Status_word.V = false;
-			break;
-		}
-		case CLC_V: {		//Clear Carry and Overflow Flag
 
-			Status_word.C = false;
-			Status_word.V = false;
-			break;
-		}
-		case CLZ: {			//Clear Zero Flag
-
-			Status_word.Z = false;
-			break;
-		}
-		case CLC_Z: {		//Clear Carry and Zero Flag
-
-			Status_word.C = false;
-			Status_word.Z = false;
-			break;
-		}
-		case CLV_Z: {		//Clear Overflow and Zero Flag
-
-			Status_word.V = false;
-			Status_word.Z = false;
-			break;
-		}
-		case CLC_V_Z: {		//Clear Carry, Overflow and Zero Flag
-
-			Status_word.C = false;
-			Status_word.V = false;
-			Status_word.Z = false;
-			break;
-		}
-		case CLN: {			//Clear Negative Flag
-
-			Status_word.N = false;
-			break;
-		}
-		case CLC_N: {		//Clear Carry and Negative Flag
-
-			Status_word.C = false;
-			Status_word.N = false;
-			break;
-		}
-		case CLV_N: {		//Clear Overflow and Negative Flag
-
-			Status_word.V = false;
-			Status_word.N = false;
-			break;
-		}
-		case CLC_V_N: {		//Clear Carry, Overflow and Negative Flag
-
-			Status_word.C = false;
-			Status_word.V = false;
-			Status_word.N = false;
-			break;
-		}
-		case CLZ_N: {		//Clear Zero and Negative Flag
-
-			Status_word.Z = false;
-			Status_word.N = false;
-			break;
-		}
-		case CLC_Z_N: {		//Clear Carry, Zero and Negative Flag
-
-			Status_word.C = false;
-			Status_word.Z = false;
-			Status_word.N = false;
-			break;
-		}
-		case CLV_Z_N: {		//Clear Overflow, Zero and Negative Flag
-
-			Status_word.V = false;
-			Status_word.Z = false;
-			Status_word.N = false;
-			break;
-		}
-		case CLC_V_Z_N: {	//Clear Carry, Overflow, Zero and Negative Flag
-
-			Status_word.C = false;
-			Status_word.V = false;
-			Status_word.Z = false;
-			Status_word.N = false;
-			break;
-		}
-		case S_NOP: {		//NOP version of set COND_CODE_OP
-
-			break;
-		}
-		case SEC: {			//Set Carry Flag
-
-			Status_word.C = false;
-			break;
-		}
-		case SEV: {			//Set Overflow Flag
-
-			Status_word.V = false;
-			break;
-		}
-		case SEC_V: {		//Set Carry and Overflow Flag
-
-			Status_word.C = false;
-			Status_word.V = false;
-			break;
-		}
-		case SEZ: {			//Set Zero Flag
-
-			Status_word.Z = false;
-			break;
-		}
-		case SEC_Z: {		//Set Carry and Zero Flag
-
-			Status_word.C = false;
-			Status_word.Z = false;
-			break;
-		}
-		case SEV_Z: {		//Set Overflow and Zero Flag
-
-			Status_word.V = false;
-			Status_word.Z = false;
-			break;
-		}
-		case SEC_V_Z: {		//Set Carry, Overflow and Zero Flag
-
-			Status_word.C = false;
-			Status_word.V = false;
-			Status_word.Z = false;
-			break;
-		}
-		case SEN: {			//Set Negative Flag
-
-			Status_word.N = false;
-			break;
-		}
-		case SEC_N: {		//Set Carry and Negative Flag
-
-			Status_word.C = false;
-			Status_word.N = false;
-			break;
-		}
-		case SEV_N: {		//Set Overflow and Negative Flag
-
-			Status_word.V = false;
-			Status_word.N = false;
-			break;
-		}
-		case SEC_V_N: {		//Set Carry, Overflow and Negative Flag
-
-			Status_word.C = false;
-			Status_word.V = false;
-			Status_word.N = false;
-			break;
-		}
-		case SEZ_N: {		//Set Zero and Negative Flag
-
-			Status_word.Z = false;
-			Status_word.N = false;
-			break;
-		}
-		case SEC_Z_N: {		//Set Carry, Zero and Negative Flag
-
-			Status_word.C = false;
-			Status_word.Z = false;
-			Status_word.N = false;
-			break;
-		}
-		case SEV_Z_N: {		//Set Overflow, Zero and Negative Flag
-
-			Status_word.V = false;
-			Status_word.Z = false;
-			Status_word.N = false;
-			break;
-		}
-		case SEC_V_Z_N: {	//Set Carry, Overflow, Zero and Negative Flag
-
-			Status_word.C = false;
-			Status_word.V = false;
-			Status_word.Z = false;
-			Status_word.N = false;
-			break;
-		}
-	}
-  }
-}
+  //return function here for the different modes
+    if(current_inst.modeDest == regID)//ID 7 Read RAM data
+    {
+        current_inst.write_flag = true;
+        current_inst.result = opdestination;
+    }
+    else if(current_inst.modeDest == regI)//ID6
+    {
+        current_inst.write_flag = true;
+        current_inst.result = opdestination;
+    }
+    else if(current_inst.modeDest == regADD)//ID5
+        opdestination;
+    else if(current_inst.modeDest == regAD)//ID4
+        opdestination;
+    else if(current_inst.modeDest == regAID)//ID3
+        opdestination;
+    else if (current_inst.modeDest == regAI)//ID 2
+        opdestination;
+    else if(current_inst.modeDest == regD)//ID1
+        GPR[regAddress] = opdestination;
+    else if(current_inst.modeDest == regS)//ID0
+        GPR[regAddress] = opdestination;
+    //need to add the rest of the modes here for double op
+    else
+        cout << "not a valid mode\n";
 
 /***************************************************************
 Address modes handler
@@ -694,10 +492,10 @@ int operand_data;
 
 			//PC-relative Deferred Mode
 			if(current_inst.regster == 7)
-				operand_data = current_inst.destination;
+				operand_data = RAM[current_inst.destination];
 			else {
-				address_value = RAM[current_inst.destination];//Read_mem(RAM, GPR, file, I_or_D) trying to add
-				operand_data = ((address_value << 0x8) | RAM[current_inst.destination+1]);
+				address_value = RAM[GPR[current_inst.destination]];//Read_mem(RAM, GPR, file, I_or_D) trying to add
+				operand_data = ((address_value << 0x8) | RAM[address_value+1]);
 			}
 			break;
 		}
@@ -741,7 +539,6 @@ int operand_data;
 				address_value = RAM[address_value];//
 				operand_data = ((address_value << 0x8) | RAM[GPR[address_value]+1]);
 				GPR[current_inst.destination] += 2;		//Increment after dereferencing
-				return operand_data;
 			}
 			break;
 		}

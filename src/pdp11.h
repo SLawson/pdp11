@@ -99,41 +99,6 @@ using namespace std;
 #define BCC_BHIS		06      //Branch if carry clear (C=0)
 #define BCS_BLO			07      //Branch if carry set (C=1)
 
-//Condition Code instructions (COND_CODE_OP)
-//byteSel = 0
-#define C_NOP		0240	//NOP version of clear COND_CODE_OP
-#define CLC			0241    //Clear C (Carry)
-#define CLV			0242    //Clear V (Overflow)
-#define CLC_V		0243    //Clear C and V
-#define CLZ			0244    //Clear Z (Zero)
-#define CLC_Z		0245	//Clear C and Z
-#define CLV_Z		0246	//Clear C and V
-#define CLC_V_Z		0247	//Clear C, V and Z
-#define CLN			0250    //Clear N (Negative)
-#define CLC_N		0251    //Clear C and N
-#define CLV_N		0252    //Clear V and N
-#define CLC_V_N		0253    //Clear C, V and N
-#define CLZ_N		0254    //Clear Z and N
-#define CLC_Z_N		0255    //Clear C, Z and N
-#define CLV_Z_N		0256    //Clear V, Z and N
-#define CLC_V_Z_N	0257    //Clear C, V, Z and N
-#define S_NOP		0260    //NOP version of set COND_CODE_OP
-#define SEC			0261    //Set C (Carry)
-#define SEV			0262    //Set V (Overflow)
-#define SEC_V		0263    //Set C and V
-#define SEZ			0264    //Set Z (Zero)
-#define SEC_Z		0265	//Set C and Z
-#define SEV_Z		0266	//Set C and V
-#define SEC_V_Z		0267	//Set C, V and Z
-#define SEN			0270    //Set N (Negative)
-#define SEC_N		0271    //Set C and N
-#define SEV_N		0272    //Set V and N
-#define SEC_V_N		0273    //Set C, V and N
-#define SEZ_N		0274    //Set Z and N
-#define SEC_Z_N		0275    //Set C, Z and N
-#define SEV_Z_N		0276    //Set V, Z and N
-#define SEC_V_Z_N	0277    //Set C, V, Z and N
-
 //General Purpose Register names
 #define R0		0
 #define R1		1
@@ -185,12 +150,13 @@ struct instruction {
 
 	int byteSel;		//For byte instructions
 	int opcode;			//Instruction OpCode
-	int source;			//Fetched Operand1
-	int destination;	//Fetched Operand2
+	int source;			//Source Address
+	int destination;	//Destination Address
+	int sourceReg;		//Source Operand Register
+	int destReg;		//Destination Operand Register
 	int modeSrc;		//Addressing mode of the src
 	int modeDest;		//Addressing mode of the destination
-	int offset;			//Branch target PC-relative offset (# of words, signed)
-	int regster;
+	int offset;			//Branch target PC-relative offset (# of words, signed
 
 	int result;			//Result of Operation
 	int write_flag;		//Write-result-to-RAM flag
