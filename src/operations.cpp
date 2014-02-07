@@ -478,8 +478,6 @@ and single operand
 
   //Condition Code Operator Instructions
   //Set or Clear Condition Codes (C,V,Z,N)
-
-  //I dont think this will work you will only be able to set one condition code at once
   else if(current_inst.instSel == COND_CODE_OP) {
 	switch(current_inst.opcode) {
 		case C_NOP: {		//NOP version of clear COND_CODE_OP
