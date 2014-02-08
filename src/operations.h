@@ -14,5 +14,5 @@
 //Function prototypes
 int Operation(int RAM[],instruction & current_inst, int GPR [], PSW & Status_word);        //Perform operation on current_inst operands
 void StatusFlags(PSW & Status_word,int regDest, int ignore);
-int AddressmodesDecode(int RAM[],instruction & current_inst, int GPR[],int curr_Register);
+int AddressmodesDecode(int RAM[],int mode, int address_op, int GPR[],int curr_Register);
 #endif//OPERATIONS_H_
