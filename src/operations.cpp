@@ -319,7 +319,7 @@ Take a source and destination memory location
 	  if(current_inst.opcode == JSR) {		//Jump to Subroutine
 
 		  //Push specified Link Register's contents onto stack
-		  //opdestination = AddressmodesDecode();
+		  opdestination = AddressmodesDecode(RAM, current_inst.modeDest, current_inst.destination, GPR, current_inst.destReg);
 
 		  //Copy PC's contents to specified Link Register (pre-incremented PC)
 		  GPR[current_inst.destReg] = GPR[PC];
@@ -333,7 +333,7 @@ Take a source and destination memory location
 		  GPR[PC] = GPR[current_inst.sourceReg];
 
 		  //Pop top of stack to specified Link Register
-		  //opdestination = AddressmodesDecode();
+		  opdestination = AddressmodesDecode(RAM, current_inst.modeSrc, current_inst.source, GPR, current_inst.sourceReg);
 	  }
 	  else
 		  cout <<"Invalid Subroutine Instruction";
