@@ -642,10 +642,7 @@ int address_location;
 
 			//PC-relative Immediate Addressing Mode
 			if(curr_Register == PC)
-            {
-                opdata_8bits = RAM[address_op];
-				operand_data = ((opdata_8bits << 0x8) | RAM[address_op+1]);
-            }
+				operand_data = address_op;
 			else
 			{
 				opdata_8bits = RAM[GPR[curr_Register]];//fetches the address in the register and then increments by one
