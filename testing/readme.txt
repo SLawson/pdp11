@@ -3,22 +3,22 @@ Hey Guys:
   To use the test script:
 
     1) Make sure you have the entire testing folder pulled
-    2) Open "config.ini"
-    3) Look for the "executable =" line in the [PATHS] section (line 29)
-    4) After the equals sign, enter the complete absolute path to the executable your compiler outputs
-    5) Run the script: "python3 ./validate.py"
+    2) Create output directories:
+         Our program cannot create folders to dump files into, so the output paths must be manually created
+         before running the test. Your /testing/output directory should contain the following subdirectories:
+            ConditionalBranches
+            ConditionCode
+            DoubleOperand
+            Other
+            SingleOperand
+            System
+            AddressingModes
+            SubroutineCall
+    3) Open "config.ini"
+    4) Look for the "executable =" line in the [PATHS] section (line 29)
+    5) After the equals sign, enter the complete absolute path to the executable your compiler outputs
+    6) Run the script: "python3 ./validate.py"
     
-    Our program cannot create folders to dump files into, so the output paths must exist before running the test.
-    Your /testing/output directory should contain the following subdirectories:
-      ConditionalBranches
-      ConditionCode
-      DoubleOperand
-      Other
-      SingleOperand
-      System
-      AddressingModes
-      SubroutineCall
-
   Possible Problems:
 
     If you get an error that says: "ImportError: No module named configparser" you're running the script under an 
