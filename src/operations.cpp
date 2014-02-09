@@ -30,7 +30,7 @@ Take a source and destination memory location
   if(current_inst.instSel == DOUBLE_OP  && current_inst.byteSel == 0)
   {
 
-    opsource = AddressmodesDecode(RAM, current_inst.modeDest, current_inst.source, GPR, current_inst.sourceReg);
+    opsource = AddressmodesDecode(RAM, current_inst.modeSrc, current_inst.source, GPR, current_inst.sourceReg);
 
     //once the correct destination and source the operation can occur
     switch(current_inst.opcode){
