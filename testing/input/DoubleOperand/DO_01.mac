@@ -4,6 +4,5 @@
 
 START:
         MOV   #5, R1
-        CCC
         HALT
 
