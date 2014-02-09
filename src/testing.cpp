@@ -12,32 +12,44 @@ string* reg_file = NULL; // name of register dump file - set in initialization f
 bool display = 0;
 
 
-int reg_dump(int GPR[], PSW* Status_word){
+int reg_dump(int GPR[], PSW* Status_word, bool file_out, bool std_out){
 
   ofstream fi;                     // output file stream
   int status = 0;                  // return code
 
-  if (reg_file != NULL){
+  if (file_out){
 
-    fi.open((*(reg_file)).c_str());
+    if (reg_file != NULL){
 
-    if (fi.is_open()){
+      fi.open((*(reg_file)).c_str());
+
+      if (fi.is_open()){
+        for (int i=0; i<REGISTERS; ++i){
+          fi << "R" << i << "," << GPR[i] << endl;
+        }
+        // dump PSW also
+        fi << Status_word -> priority << Status_word -> T << Status_word -> Z << Status_word -> N
+           << Status_word -> C << Status_word -> V << endl;
+      }
+
+      // handle file that couldn't be opened
+      else{
+        cout << "\nError: Register dump to file failed." << endl;
+        status = 1;
+      }
+      
+      fi.close();
+      delete reg_file;
+    }
+  }
+
+  if (std_out){
       for (int i=0; i<REGISTERS; ++i){
-        fi << "R" << i << "," << GPR[i] << endl;
+        cout << "R" << i << "," << GPR[i] << endl;
       }
       // dump PSW also
-      fi << Status_word -> priority << Status_word -> T << Status_word -> N << Status_word -> Z
-         << Status_word -> V << Status_word -> C << endl;
-    }
-
-    // handle file that couldn't be opened
-    else{
-      cout << "\nError: Register dump failed." << endl;
-      status = 1;
-    }
-    
-    fi.close();
-    delete reg_file;
+      cout << Status_word -> priority << Status_word -> T << Status_word -> Z << Status_word -> N
+         << Status_word -> C << Status_word -> V << endl;
   }
 
   return (status);

@@ -16,6 +16,6 @@
 extern string *reg_file;
 extern bool display;
 
-int reg_dump(int GPR[], PSW*  Status_word); // dumps register values to a text file
+int reg_dump(int GPR[], PSW*  Status_word, bool file_out, bool std_out); // dumps register values to a text file
 
 #endif // TESTING_H_

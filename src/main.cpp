@@ -51,7 +51,7 @@ file.open("tracefile.txt");
   } while(current_inst.opcode || current_inst.byteSel);
 
   cout <<"\nPDP-11/20 Simulation Complete\n";
-  reg_dump(GPR, &Status_word);
+  reg_dump(GPR, &Status_word, 1, 0);
   file.close();
   cin.get();    //Pause before exiting
   return 0;

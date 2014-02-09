@@ -1,0 +1,12 @@
+; File: CB_01.mac
+; Tests: Branch Unconditionally
+.PSECT A, REL
+
+L1:
+        MOV   #1, R3
+        HALT
+
+START:
+        BR    L1
+        HALT
+

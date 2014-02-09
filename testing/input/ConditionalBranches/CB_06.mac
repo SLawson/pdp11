@@ -1,0 +1,42 @@
+; File: CB_06.mac
+; Tests: Branch if > 0
+.PSECT A, REL
+
+; L4 should not execute
+L4:
+        MOV   #4, R3
+        HALT
+
+; L3 should execute
+L3:
+        MOV   #3, R3
+        HALT
+
+; L2 should execute
+L2:
+        MOV   #2, R3
+        CCC
+        SEZ
+        BGT   L3
+        HALT
+
+; L1 should execute
+L1: 
+        MOV   #1, R3
+        CCC
+        SEZ
+        SEV
+        BGT   L2
+        HALT
+
+START:
+        CCC
+        SEV
+        BGT   L4
+        CLV
+        SEN
+        BGT   L4
+        CLN
+        BGT   L1
+        HALT
+

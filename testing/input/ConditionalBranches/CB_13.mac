@@ -1,0 +1,21 @@
+; File: CB_13.mac
+; Tests: Branch if V == 1 
+.PSECT A, REL
+
+; L2 should not execute
+L2:
+        MOV   #2, R3
+        HALT
+
+; L1 should execute
+L1:
+        MOV   #1, R3
+        HALT
+
+START:
+        CCC
+        BVC   L2
+        SEV
+        BVC   L1
+        HALT
+
