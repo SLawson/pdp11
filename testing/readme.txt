@@ -7,7 +7,17 @@ Hey Guys:
     3) Look for the "executable =" line in the [PATHS] section (line 29)
     4) After the equals sign, enter the complete absolute path to the executable your compiler outputs
     5) Run the script: "python3 ./validate.py"
-
+    
+    Our program cannot create folders to dump files into, so the output paths must exist before running the test.
+    Your /testing/output directory should contain the following subdirectories:
+      ConditionalBranches
+      ConditionCode
+      DoubleOperand
+      Other
+      SingleOperand
+      System
+      AddressingModes
+      SubroutineCall
 
   Possible Problems:
 
@@ -21,4 +31,5 @@ Hey Guys:
     The script will COPY your executable from the path you name into the testing directory and execute from there.
     It will do this every time you run the script, so you should be able to set the path once in the config file
     and forget about it, but remember to update it if you change where your compiler places its output.
+    
 
