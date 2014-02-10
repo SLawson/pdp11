@@ -155,7 +155,8 @@ int initialize(int RAM [], int argc, char * argv[], int* PC_Reg, string &out_fil
 // function for splitting and formatting each line of the input file
 command parse_line(string line_in){
   command result;             // return container
-  char* buffer;               // character buffer to convert the octal value properly
+  //char* buffer;
+  char buffer[100];               // character buffer to convert the octal value properly
   int i = 0;                  // loop control variable
   int len = line_in.length(); // length of input string in characters (space for string
                               // terminator is not added because the buffer will not contain
@@ -163,7 +164,7 @@ command parse_line(string line_in){
 
   result.action = line_in[0]; // retrieve command character
 
-  buffer = new char[len];
+  //buffer = new char[len];
 
   for(i=0; i<len; ++i){
     buffer[i] = line_in[i+1];
@@ -172,7 +173,7 @@ command parse_line(string line_in){
 
   result.value = (int) strtol(buffer, NULL, 8); // translate and store octal value
 
-  delete [] buffer;
+  //delete[] buffer;
 
   return result;
 }

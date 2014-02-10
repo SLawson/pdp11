@@ -711,11 +711,11 @@ void StatusFlags(PSW & Status_word,int regDest, int ignore)
   //if the result doesn't equal a 16 bit equivalent then overflow
   if(regDest < -32768 || regDest > 32767 )
   {
-    Status_word.V = false;
+    Status_word.V = true;
   }
   else
   {
-    Status_word.V = true;
+    Status_word.V = false;
   }
 
   if(ignore == 1)//used to ignore carry modification
