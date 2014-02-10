@@ -89,6 +89,7 @@ void Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream &
     //Set status word opertation
     else if ((CurrentInst & 0xffe0) == 0xa0) {
       current_inst.Op_flag = false;
+      current_inst.opcode = 0x1;
       if ((CurrentInst & 0x10) == 0x10) {
 
         if ((CurrentInst & 0x1) == 0x1)
