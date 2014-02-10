@@ -34,13 +34,13 @@ void Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream &
     //PC operation -- src
     if ((current_inst.sourceReg == PC) || (current_inst.modeSrc > 0x5)) {
       current_inst.source = Read_mem(RAM, GPR, file, I_or_D);
-      current_inst.destPC = (GPR[PC] - 1);
+      current_inst.srcPC = (GPR[PC]);
     }
 
     //PC operation -- dst
     if ((current_inst.destReg == PC) || (current_inst.modeDest > 0x5)) {
       current_inst.destination = Read_mem(RAM, GPR, file, I_or_D);
-      current_inst.destPC = (GPR[PC] - 1);
+      current_inst.destPC = (GPR[PC]);
     }
   }
 
