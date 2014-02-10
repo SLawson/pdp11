@@ -39,7 +39,7 @@ Take a source and destination memory location
       {
 
         opdestination = opsource;
-        StatusFlags(Status_word,opdestination,1);opdestination
+        StatusFlags(Status_word,opdestination,1);
         Status_word.V = false;//sets the overflow flag to false
         break;
 
@@ -546,7 +546,7 @@ writeflag is used to check for a write for both memory or register
         case regS://ID0 Register
         {
             GPR[current_inst.destReg] = opdestination;
-            break;GPR[current_inst.destReg] = opdestination;
+            break;
         }
         //need to add the rest of the modes here for double op
         default:

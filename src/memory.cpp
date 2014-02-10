@@ -18,14 +18,14 @@ int Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream & 
   //HALT op
   if (CurrentInst == 0x0)
     current_inst.opcode = 0x0;
-    
+
   /* -- Double operand instruction -- */
   else if (CurrentInst & 0x7000) {
     I_or_D = false;
     current_inst.instSel = DOUBLE_OP;
 
     current_inst.opcode = ((CurrentInst & 0x7000) >> 0xc);
-    current_inst.byteSel = ((CurrentInst & 0x8000) >> 0xe);
+    current_inst.byteSel = ((CurrentInst & 0x8000) >> 0xf);
     current_inst.modeSrc = ((CurrentInst & 0xe00) >> 0x9);
     current_inst.modeDest = ((CurrentInst & 0x38) >> 0x3);
     current_inst.sourceReg = ((CurrentInst & 0x1c0) >> 0x6);
@@ -46,7 +46,7 @@ int Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream & 
       I_or_D = false;
       current_inst.instSel = SINGLE_OP;
 
-      current_inst.byteSel = ((CurrentInst & 0x8000) >> 0xe);
+      current_inst.byteSel = ((CurrentInst & 0x8000) >> 0xf);
       current_inst.opcode = ((CurrentInst & 0x7c0) >> 0x6);
       current_inst.modeDest = ((CurrentInst & 0x38) >> 0x3);
       current_inst.destReg = (CurrentInst & 0x7);
@@ -55,7 +55,7 @@ int Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream & 
       if ((current_inst.destReg == PC) || (current_inst.modeDest > 0x5))
         current_inst.destination = Read_mem(RAM, GPR, file, I_or_D);
     }
-      
+
       //JSR
     else if (((CurrentInst & 0xfc0) >> 0x6) < 0x28) {
       current_inst.instSel = JUMP;
@@ -117,14 +117,14 @@ int Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream & 
     current_inst.modeSrc = regAI;
     current_inst.sourceReg = (CurrentInst & 0x0007);
   }
-  
+
 	//Decode the current instruction
 	/* -- jump instruction -- */
 	else if (((CurrentInst & 0x40)) == 0x40) {
 		current_inst.instSel = JUMP;
 		current_inst.offset = ((CurrentInst & 0x3f) - 1);
 	}
-	
+
   //RESET op
   else if (CurrentInst == 0x5){
       //RESET CODE HERE...
