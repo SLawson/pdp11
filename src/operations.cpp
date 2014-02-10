@@ -10,14 +10,14 @@
 #include "operations.h"
 #include "memory.h"
 
-int Operation(int RAM[],instruction & current_inst, int GPR [], PSW & Status_word) {
+void Operation(int RAM[],instruction & current_inst, int GPR [], PSW & Status_word) {
 
   //TODO Rob/Brett implement instruction ops, populate current_inst.result
 
     //Internal scratch pad registers
     int opsource;//this holds the value of the data (RAM or register)
     int opdestination;//this holds the value of the data (RAM or register)
-    //int regAddress = current_inst.destination;//
+    bool writeflag = true;//sets writeflag to alway write
 
     opdestination = AddressmodesDecode(RAM, current_inst.modeDest, current_inst.destination, GPR, current_inst.destReg);
 
@@ -49,14 +49,16 @@ Take a source and destination memory location
         int tempresult;
 		    tempresult = opsource - opdestination;
 		    StatusFlags(Status_word,tempresult,0);
+		    writeflag = false;//does not modify memory/registers
 
         break;
       }
       case BIT://compute dest & src set flags only
       {
-        opdestination=opdestination & opsource;
-        StatusFlags(Status_word,opdestination,0);
+        int tempresult=opdestination & opsource;
+        StatusFlags(Status_word,tempresult,0);
         Status_word.V = false;//sets the overflow flag to false
+        writeflag = false;//does not modify memory/registers
         break;
       }
       case BIC://dest &= ~src
@@ -90,6 +92,7 @@ Take a source and destination memory location
   }
   else if(current_inst.instSel == DOUBLE_OP  && current_inst.byteSel == 1)
   {
+	opsource = AddressmodesDecode(RAM, current_inst.modeSrc, current_inst.source, GPR, current_inst.sourceReg);
 	switch(current_inst.opcode){
 
 		case SUB://dest -=src
@@ -342,6 +345,7 @@ Take a source and destination memory location
 
 		  cout <<"Erroneous B-bit";
 	  }
+	  writeflag = false;
   }
 
   //Conditional Branch Instructions
@@ -401,6 +405,7 @@ Take a source and destination memory location
 		  break;
 		}
 	}
+	writeflag = false;
   }
   //byteSel = 1: BMI, BPL, BCS, BCC, BVS, BVC, and Unsigned Conditional Branches
   else if(current_inst.instSel == CONDITIONAL_OP && current_inst.byteSel == 1) {
@@ -467,6 +472,7 @@ Take a source and destination memory location
 		  break;
 		}
 	}
+	writeflag = false;
   }
 
 
@@ -475,68 +481,73 @@ Write back to RAM or appropriate register
 Only modifies the Destination works for both Double operand
 and single operand
 
+writeflag is used to check for a write for both memory or register
+
 *******************************************************************/
 
 
 
   //return function here for the different modes
-  switch (current_inst.modeDest) {
+  if(writeflag)//checks if op requires write to memory or register
+  {
+      switch (current_inst.modeDest) {
 
-    case regID:{//ID 7 Index deferred
-        current_inst.write_flag = true;
-        current_inst.result = opdestination;
-        current_inst.destination = opdestination;
-        break;
-    }
-    case regI:{//ID6 Index
-        current_inst.write_flag = true;
-        current_inst.result = opdestination;
-        current_inst.destination = GPR[current_inst.destReg]; //operand
-        break;
-    }
-    case regADD:{//ID5 Autodecrement deferred
-        current_inst.write_flag = true;
-        current_inst.result = opdestination;
-        current_inst.destination = opdestination;
-        break;
-    }
-    case regAD:{//ID4 Autodecrement
-        current_inst.write_flag = true;
-        current_inst.result = opdestination;
-        current_inst.destination = GPR[current_inst.destReg]; //operand
-        break;
+        case regID:{//ID 7 Index deferred
+            current_inst.write_flag = true;
+            current_inst.result = opdestination;
+            current_inst.destination = opdestination;
+            break;
         }
-    case regAID:{//ID3 Autoincrement deferred
-        current_inst.write_flag = true;
-        current_inst.result = opdestination;
-        current_inst.destination = opdestination;
-        break;
+        case regI:{//ID6 Index
+            current_inst.write_flag = true;
+            current_inst.result = opdestination;
+            current_inst.destination = GPR[current_inst.destReg]; //operand
+            break;
         }
-    case regAI:{//ID 2 Autoincrement
-        current_inst.write_flag = true;
-        current_inst.result = opdestination;
-        current_inst.destination = GPR[current_inst.destReg]; //operand
-        break;
-    }
-    case regD://ID1 Register Deferred
-    {
-        current_inst.write_flag = true;
-        current_inst.result = opdestination;
-        current_inst.destination = GPR[current_inst.destReg];//operand
-        break;
-    }
-    case regS://ID0 Register
-    {
-        GPR[current_inst.destReg] = opdestination;
-        break;
-    }
-    //need to add the rest of the modes here for double op
-    default:
-    {
-        cout << "not a valid mode\n";
-        break;
-    }
+        case regADD:{//ID5 Autodecrement deferred
+            current_inst.write_flag = true;
+            current_inst.result = opdestination;
+            current_inst.destination = opdestination;
+            break;
+        }
+        case regAD:{//ID4 Autodecrement
+            current_inst.write_flag = true;
+            current_inst.result = opdestination;
+            current_inst.destination = GPR[current_inst.destReg]; //operand
+            break;
+            }
+        case regAID:{//ID3 Autoincrement deferred
+            current_inst.write_flag = true;
+            current_inst.result = opdestination;
+            current_inst.destination = opdestination;
+            break;
+            }
+        case regAI:{//ID 2 Autoincrement
+            current_inst.write_flag = true;
+            current_inst.result = opdestination;
+            current_inst.destination = GPR[current_inst.destReg]; //operand
+            break;
+        }
+        case regD://ID1 Register Deferred
+        {
+            current_inst.write_flag = true;
+            current_inst.result = opdestination;
+            current_inst.destination = GPR[current_inst.destReg];//operand
+            break;
+        }
+        case regS://ID0 Register
+        {
+            GPR[current_inst.destReg] = opdestination;
+            break;
+        }
+        //need to add the rest of the modes here for double op
+        default:
+        {
+            cout << "not a valid mode\n";
+            break;
+        }
 
+      }
   }
 
 }
@@ -710,7 +721,7 @@ void StatusFlags(PSW & Status_word,int regDest, int ignore)
   if(ignore == 1)//used to ignore carry modification
    {
       //check for a carry
-      if((regDest & (1 << 15)) || ((regDest < 0 &&(regDest & (1 << 15) != 0))))
+      if(((regDest) & (1 << 15)) || (((regDest < 0) && (((regDest) & (1 << 15)) != 0))))
       {
         Status_word.C = true;
       }
