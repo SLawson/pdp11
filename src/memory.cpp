@@ -10,7 +10,7 @@
 #include "memory.h"
 
 //Function definitions
-int Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream & file, bool I_or_D, PSW & Status_word) {
+void Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream & file, bool I_or_D, PSW & Status_word) {
   I_or_D = true;
   int CurrentInst;
   CurrentInst = Read_mem(RAM, GPR, file, I_or_D);
