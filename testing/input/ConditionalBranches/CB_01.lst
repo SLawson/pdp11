@@ -1,0 +1,13 @@
+       1                                ; File: CB_01.mac
+       2                                ; Tests: Branch Unconditionally
+       3                                
+       4                                
+       5                                L1:
+       6 000000 012703  000001                  MOV   #1, R3
+       7 000004 000000                          HALT
+       8                                
+       9                                START:
+      10 000006 000774                          BR    L1
+      11 000010 000000                          HALT
+      12                                
+      12                                

@@ -1,6 +1,6 @@
 ; File: SO_05.mac
 ; Tests: Negation (2's complement)
-.PSECT A, REL
+
 
 START:
          MOV      #2, R6

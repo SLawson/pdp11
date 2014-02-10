@@ -1,6 +1,6 @@
 ; File: CC_03.mac
 ; Tests: Clear zero bit
-.PSECT A, REL
+
 
 START:
         SCC

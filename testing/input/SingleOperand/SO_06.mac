@@ -1,6 +1,6 @@
 ; File: SO_06.mac
 ; Tests: Add carry
-.PSECT A, REL
+
 
 START:
          MOV      #2, R6

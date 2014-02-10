@@ -1,6 +1,6 @@
 ; File: SO_03.mac
 ; Tests: Increment
-.PSECT A, REL
+
 
 START:
          MOV      #2, R6

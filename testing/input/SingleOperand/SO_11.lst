@@ -1,0 +1,11 @@
+       1                                ; File: SO_11.mac
+       2                                ; Tests: Arithmetic shift right
+       3                                
+       4                                
+       5                                START:
+       6 000000 012767  177774  000000G          MOV      #-4, R6
+       7 000006 006267  000000G                  ASR      R6
+       8 000012 000257                           CCC
+       9 000014 000000                           HALT
+      10                                
+      10                                

@@ -1,6 +1,6 @@
 ; File: CB_13.mac
 ; Tests: Branch if V == 1 
-.PSECT A, REL
+
 
 ; L2 should not execute
 L2:

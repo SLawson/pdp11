@@ -1,6 +1,6 @@
 ; File: SY_01.mac
 ; Tests: Halt instruction
-.PSECT A, REL
+
 
 START:
         MOV    #5, R1

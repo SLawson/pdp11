@@ -1,6 +1,6 @@
 ; File: SO_14.mac
 ; Tests: Swap Bytes
-.PSECT A, REL
+
 
 BY:   .WORD    127.
 

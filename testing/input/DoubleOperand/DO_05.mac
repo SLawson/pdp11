@@ -1,6 +1,6 @@
 ; File: DO_05.mac
 ; Tests: Double operand bit set instruction
-.PSECT A, REL
+
 
 START:
         MOV   #1, R1

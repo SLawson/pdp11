@@ -1,6 +1,6 @@
 ; File: SO_07.mac
 ; Tests: Subtract carry
-.PSECT A, REL
+
 
 START:
          MOV      #2, R6

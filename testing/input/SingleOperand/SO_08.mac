@@ -1,6 +1,6 @@
 ; File: SO_08.mac
 ; Tests: Test
-.PSECT A, REL
+
 
 START:
          MOV      #2, R6

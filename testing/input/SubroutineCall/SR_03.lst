@@ -1,0 +1,23 @@
+       1                                ; File: SR_03.mac
+       2                                ; Tests: Subroutine call and return, nested 3 recursive subroutine calls deep
+       3                                
+       4                                
+       5                                
+       6                                SUB:
+       7 000000 005201                        INC   R1
+       8 000002 022701  000004                CMP   #4, R1
+       9 000006 001402                        BEQ   END
+      10 000010 004067  177764                JSR   R0, SUB
+      11                                END:
+      12 000014 000200                        RTS   R0
+      13 000016 012704  000004                MOV   #4, R4
+      14 000022 000000                        HALT
+      15                                
+      16                                START:
+      17 000024 012700  000010                MOV   #10, R0
+      18 000030 012701  000001                MOV   #1, R1
+      19 000034 004067  177740                JSR   R0, SUB
+      20 000040 012703  000003                MOV   #3, R3
+      21 000044 000000                        HALT
+      22                                      
+      22                                

@@ -1,0 +1,10 @@
+       1                                ; File: CC_04.mac
+       2                                ; Tests: Clear negative bit
+       3                                
+       4                                
+       5                                START:
+       6 000000 000277                          SCC
+       7 000002 000250                          CLN
+       8 000004 000000                          HALT
+       9                                
+       9                                

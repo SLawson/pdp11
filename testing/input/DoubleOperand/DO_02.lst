@@ -1,6 +1,6 @@
        1                                ; File: DO_02.mac
        2                                ; Tests: Double operand compare instruction
-       3                                .PSECT A, REL
+       3                                
        4                                
        5                                START:
        6                                

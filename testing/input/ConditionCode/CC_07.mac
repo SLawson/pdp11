@@ -1,6 +1,6 @@
 ; File: CC_07.mac
 ; Tests: Set overflow bit
-.PSECT A, REL
+
 
 START:
         CCC

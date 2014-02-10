@@ -1,6 +1,6 @@
 ; File: CC_02.mac
 ; Tests: Clear overflow bit
-.PSECT A, REL
+
 
 START:
         SCC

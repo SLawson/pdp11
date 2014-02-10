@@ -1,0 +1,10 @@
+       1                                ; File: CC_08.mac
+       2                                ; Tests: Set zero bit
+       3                                
+       4                                
+       5                                START:
+       6 000000 000257                          CCC
+       7 000002 000264                          SEZ
+       8 000004 000000                          HALT
+       9                                
+       9                                

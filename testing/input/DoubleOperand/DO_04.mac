@@ -1,6 +1,6 @@
 ; File: DO_04.mac
 ; Tests: Double operand bit clear instruction
-.PSECT A, REL
+
 
 START:
         MOV   #1, R1

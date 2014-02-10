@@ -1,6 +1,6 @@
 ; File: CC_04.mac
 ; Tests: Clear negative bit
-.PSECT A, REL
+
 
 START:
         SCC

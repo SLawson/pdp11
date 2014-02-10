@@ -1,6 +1,6 @@
 ; File: CB_07.mac
 ; Tests: Branch if > 0
-.PSECT A, REL
+
 
 ; L4 should not execute
 L4:

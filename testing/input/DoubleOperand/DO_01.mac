@@ -1,6 +1,6 @@
 ; File: DO_01.mac
 ; Tests: Double operand move instruction
-.PSECT A, REL
+
 
 START:
         MOV   #5, R1

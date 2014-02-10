@@ -1,0 +1,10 @@
+       1                                ; File: CC_03.mac
+       2                                ; Tests: Clear zero bit
+       3                                
+       4                                
+       5                                START:
+       6 000000 000277                          SCC
+       7 000002 000244                          CLZ
+       8 000004 000000                          HALT
+       9                                
+       9                                

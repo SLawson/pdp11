@@ -1,6 +1,6 @@
 ; File: SO_04.mac
 ; Tests: Decrement
-.PSECT A, REL
+
 
 START:
          MOV      #2, R6

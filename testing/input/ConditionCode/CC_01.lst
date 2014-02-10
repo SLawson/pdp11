@@ -1,0 +1,9 @@
+       1                                ; File: CC_01.mac
+       2                                ; Tests: Clear carry bit
+       3                                
+       4                                
+       5                                START:
+       6 000000 000277                          SCC
+       7 000002 000241                          CLC
+       8 000004 000000                          HALT
+       8                                

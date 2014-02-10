@@ -1,0 +1,10 @@
+       1                                ; File: CC_07.mac
+       2                                ; Tests: Set overflow bit
+       3                                
+       4                                
+       5                                START:
+       6 000000 000257                          CCC
+       7 000002 000262                          SEV
+       8 000004 000000                          HALT
+       9                                
+       9                                

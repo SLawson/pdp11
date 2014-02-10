@@ -1,6 +1,6 @@
 ; File: SO_11.mac
 ; Tests: Arithmetic shift right
-.PSECT A, REL
+
 
 START:
          MOV      #-4, R6

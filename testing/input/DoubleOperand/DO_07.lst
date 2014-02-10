@@ -1,6 +1,6 @@
        1                                ; File: DO_07.mac
        2                                ; Tests: Double operand subtract instruction
-       3                                .PSECT A, REL
+       3                                
        4                                
        5                                START:
        6 000000 012701  000005                  MOV   #5, R1
