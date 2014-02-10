@@ -32,12 +32,16 @@ void Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream &
     current_inst.destReg = (CurrentInst & 0x7);
 
     //PC operation -- src
-    if ((current_inst.sourceReg == PC) || (current_inst.modeSrc > 0x5))
+    if ((current_inst.sourceReg == PC) || (current_inst.modeSrc > 0x5)) {
       current_inst.source = Read_mem(RAM, GPR, file, I_or_D);
+      current_inst.destPC = (GPR[PC] - 1);
+    }
 
     //PC operation -- dst
-    if ((current_inst.destReg == PC) || (current_inst.modeDest > 0x5))
+    if ((current_inst.destReg == PC) || (current_inst.modeDest > 0x5)) {
       current_inst.destination = Read_mem(RAM, GPR, file, I_or_D);
+      current_inst.destPC = (GPR[PC] - 1);
+    }
   }
 
   /* -- single operand instruction -- */
@@ -52,8 +56,10 @@ void Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream &
       current_inst.destReg = (CurrentInst & 0x7);
 
       //PC operation
-      if ((current_inst.destReg == PC) || (current_inst.modeDest > 0x5))
+      if ((current_inst.destReg == PC) || (current_inst.modeDest > 0x5)) {
         current_inst.destination = Read_mem(RAM, GPR, file, I_or_D);
+        current_inst.srcPC = (GPR[PC] - 1);
+      }
     }
 
       //JSR
