@@ -39,7 +39,7 @@ Take a source and destination memory location
       {
 
         opdestination = opsource;
-        StatusFlags(Status_word,opdestination,1);
+        StatusFlags(Status_word,opdestination,1);opdestination
         Status_word.V = false;//sets the overflow flag to false
         break;
 
@@ -322,7 +322,8 @@ Take a source and destination memory location
 	  if(current_inst.opcode == JSR) {		//Jump to Subroutine
 
 		  //Push specified Link Register's contents onto stack
-		  opdestination = AddressmodesDecode(RAM, current_inst.modeDest, current_inst.destination, GPR, current_inst.destReg);
+		  //modeSrc = 00, sourceReg = Link Register
+		  opdestination = AddressmodesDecode(RAM, current_inst.modeSrc, current_inst.source, GPR, current_inst.sourceReg);
 
 		  //Copy PC's contents to specified Link Register (pre-incremented PC)
 		  GPR[current_inst.destReg] = GPR[PC];
@@ -333,7 +334,7 @@ Take a source and destination memory location
 	  else if(current_inst.opcode == RTS) {	//ReTurn from Subroutine
 
 		  //Copy specified Link Register's contents to PC
-		  GPR[PC] = GPR[current_inst.sourceReg];
+		  GPR[PC] = GPR[current_inst.destReg];
 
 		  //Pop top of stack to specified Link Register
 		  opdestination = AddressmodesDecode(RAM, current_inst.modeSrc, current_inst.source, GPR, current_inst.sourceReg);
