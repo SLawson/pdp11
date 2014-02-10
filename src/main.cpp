@@ -18,7 +18,7 @@ ofstream file;
 int main(int argc, char * argv[]) {
 
 //Variables
-instruction current_inst = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};       //Fetched/decoded instruction
+instruction current_inst = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};       //Fetched/decoded instruction
 PSW Status_word = {0, false, false, false, false, false};     //Current PSW
 int RAM[MEM_SIZE] = {0};                                      //Contents of main memory
 int GPR[REGISTERS] = {0};                                     //General Purpose Registers
@@ -42,7 +42,8 @@ file.open("tracefile.txt");
   //Execute instructions
   do {
       Fetch_Decode(RAM, GPR, current_inst, file, I_or_D, Status_word);
-      Operation(RAM,current_inst, GPR, Status_word);
+      if (current_inst.Op_flag)
+        Operation(RAM,current_inst, GPR, Status_word);
 
       if(current_inst.write_flag) {      //Write to RAM if write_flag set
         Write_mem(RAM, current_inst.result, current_inst.dest_addr, file);

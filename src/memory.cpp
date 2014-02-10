@@ -11,13 +11,16 @@
 
 //Function definitions
 void Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream & file, bool I_or_D, PSW & Status_word) {
+  current_inst.Op_flag = true;
   I_or_D = true;
   int CurrentInst;
   CurrentInst = Read_mem(RAM, GPR, file, I_or_D);
 
   //HALT op
-  if (CurrentInst == 0x0)
+  if (CurrentInst == 0x0) {
     current_inst.opcode = 0x0;
+    current_inst.Op_flag = false;
+  }
 
   /* -- Double operand instruction -- */
   else if (CurrentInst & 0x7000) {
@@ -73,67 +76,68 @@ void Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream &
 
   /* -- Conditional branch instruction -- */
   else if ((CurrentInst & 0x7800) == 0x0) {
-    current_inst.instSel = CONDITIONAL_OP;
-    current_inst.opcode = ((CurrentInst & 0x700) >> 0x8);
+    if (((CurrentInst & 0x700) >> 0x8) > 0x0) {
+      current_inst.instSel = CONDITIONAL_OP;
+      current_inst.opcode = ((CurrentInst & 0x700) >> 0x8);
 
-    if ((CurrentInst & 0x80) == 0x80)
-    	current_inst.offset = (0 - (CurrentInst & 0xff) - 1);
+      if ((CurrentInst & 0x80) == 0x80)
+      	current_inst.offset = (0 - (CurrentInst & 0xff) - 1);
 
-    else
-    	current_inst.offset = ((CurrentInst & 0xff) - 1);
+      else
+      	current_inst.offset = ((CurrentInst & 0xff) - 1);
+    }
+    //Set status word opertation
+    else if ((CurrentInst & 0xffe0) == 0xa0) {
+      current_inst.Op_flag = false;
+      if ((CurrentInst & 0x10) == 0x10) {
 
-  }
+        if ((CurrentInst & 0x1) == 0x1)
+          Status_word.C = true;
 
-  //Set status word opertation
-  else if ((CurrentInst & 0xffe0) == 0xa0) {
+        if ((CurrentInst & 0x2) == 0x2)
+          Status_word.V = true;
 
-    if ((CurrentInst & 0x10) == 0x10) {
+        if ((CurrentInst & 0x4) == 0x4)
+          Status_word.Z = true;
 
-      if ((CurrentInst & 0x1) == 0x1)
-        Status_word.C = true;
+        if ((CurrentInst & 0x8) == 0x8)
+          Status_word.N = true;
+      }
 
-      if ((CurrentInst & 0x2) == 0x2)
-        Status_word.V = true;
+      else if ((CurrentInst & 0x10) == 0x0) {
 
-      if ((CurrentInst & 0x4) == 0x4)
-        Status_word.Z = true;
+        if ((CurrentInst & 0x1) == 0x1)
+          Status_word.C = false;
 
-      if ((CurrentInst & 0x8) == 0x8)
-        Status_word.N = true;
+        if ((CurrentInst & 0x2) == 0x2)
+          Status_word.V = false;
+
+        if ((CurrentInst & 0x4) == 0x4)
+          Status_word.Z = false;
+
+        if ((CurrentInst & 0x8) == 0x8)
+          Status_word.N = false;
+      }
     }
 
-    else if ((CurrentInst & 0x10) == 0x0) {
-
-      if ((CurrentInst & 0x1) == 0x1)
-        Status_word.C = false;
-
-      if ((CurrentInst & 0x2) == 0x2)
-        Status_word.V = false;
-
-      if ((CurrentInst & 0x4) == 0x4)
-        Status_word.Z = false;
-
-      if ((CurrentInst & 0x8) == 0x8)
-        Status_word.N = false;
+    //RTS
+    else if ((CurrentInst & 0xfff8) == 0x0080) {
+      current_inst.modeSrc = regAI;
+      current_inst.sourceReg = (CurrentInst & 0x0007);
     }
-  }
 
-  //RTS
-  else if ((CurrentInst & 0xfff8) == 0x0080) {
-    current_inst.modeSrc = regAI;
-    current_inst.sourceReg = (CurrentInst & 0x0007);
-  }
+	  //Decode the current instruction
+	  /* -- jump instruction -- */
+	  else if (((CurrentInst & 0x40)) == 0x40) {
+		  current_inst.instSel = JUMP;
+		  current_inst.offset = ((CurrentInst & 0x3f) - 1);
+	  }
 
-	//Decode the current instruction
-	/* -- jump instruction -- */
-	else if (((CurrentInst & 0x40)) == 0x40) {
-		current_inst.instSel = JUMP;
-		current_inst.offset = ((CurrentInst & 0x3f) - 1);
-	}
+    //RESET op
+    else if (CurrentInst == 0x5){
+        //RESET CODE HERE...
+    }
 
-  //RESET op
-  else if (CurrentInst == 0x5){
-      //RESET CODE HERE...
   }
 }
 

@@ -153,7 +153,8 @@ struct instruction {
 
 	int result;			//Result of Operation
 	int write_flag;		//Write-result-to-RAM flag
-
+  bool Op_flag;
+  
     int src_addr;       //Source memory location
 	int dest_addr;		//Memory write address
 	int dest_mode;		//Addressing mode
