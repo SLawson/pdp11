@@ -11,13 +11,16 @@
 
 //Function definitions
 void Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream & file, bool I_or_D, PSW & Status_word) {
+  current_inst.Op_flag = true;
   I_or_D = true;
   int CurrentInst;
   CurrentInst = Read_mem(RAM, GPR, file, I_or_D);
 
   //HALT op
-  if (CurrentInst == 0x0)
+  if (CurrentInst == 0x0) {
     current_inst.opcode = 0x0;
+    current_inst.Op_flag = false;
+  }
 
   /* -- Double operand instruction -- */
   else if (CurrentInst & 0x7000) {
@@ -73,7 +76,7 @@ void Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream &
 
   /* -- Conditional branch instruction -- */
   else if ((CurrentInst & 0x7800) == 0x0) {
-    if (((CurrentInst & 0x700) >> 0x8) < 0x8) {
+    if (((CurrentInst & 0x700) >> 0x8) > 0x0) {
       current_inst.instSel = CONDITIONAL_OP;
       current_inst.opcode = ((CurrentInst & 0x700) >> 0x8);
 
@@ -85,6 +88,7 @@ void Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream &
     }
     //Set status word opertation
     else if ((CurrentInst & 0xffe0) == 0xa0) {
+      current_inst.Op_flag = false;
       if ((CurrentInst & 0x10) == 0x10) {
 
         if ((CurrentInst & 0x1) == 0x1)
