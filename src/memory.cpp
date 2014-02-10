@@ -38,6 +38,8 @@ int Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream & 
     //PC operation -- dst
     if ((current_inst.destReg == PC) || (current_inst.modeDest > 0x5))
       current_inst.destination = Read_mem(RAM, GPR, file, I_or_D);
+
+
   }
 
   /* -- single operand instruction -- */

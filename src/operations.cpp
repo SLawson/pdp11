@@ -19,7 +19,7 @@ void Operation(int RAM[],instruction & current_inst, int GPR [], PSW & Status_wo
     int opdestination;//this holds the value of the data (RAM or register)
     bool writeflag = true;//sets writeflag to alway write
 
-    opdestination = AddressmodesDecode(RAM, current_inst.modeDest, current_inst.destination, GPR, current_inst.destReg);
+    opdestination = AddressmodesDecode(RAM, current_inst.modeDest, current_inst.destination, GPR, current_inst.destReg,current_inst.dest_addr);
 
 /*********************************************************************************
 Double Operation
@@ -30,7 +30,7 @@ Take a source and destination memory location
   if(current_inst.instSel == DOUBLE_OP  && current_inst.byteSel == 0)
   {
 
-    opsource = AddressmodesDecode(RAM, current_inst.modeSrc, current_inst.source, GPR, current_inst.sourceReg);
+    opsource = AddressmodesDecode(RAM, current_inst.modeSrc, current_inst.source, GPR, current_inst.sourceReg,current_inst.dest_addr);
 
     //once the correct destination and source the operation can occur
     switch(current_inst.opcode){
@@ -92,7 +92,7 @@ Take a source and destination memory location
   }
   else if(current_inst.instSel == DOUBLE_OP  && current_inst.byteSel == 1)
   {
-	opsource = AddressmodesDecode(RAM, current_inst.modeSrc, current_inst.source, GPR, current_inst.sourceReg);
+	opsource = AddressmodesDecode(RAM, current_inst.modeSrc, current_inst.source, GPR, current_inst.sourceReg,current_inst.dest_addr);
 	switch(current_inst.opcode){
 
 		case SUB://dest -=src
@@ -323,7 +323,7 @@ Take a source and destination memory location
 
 		  //Push specified Link Register's contents onto stack
 		  //modeSrc = 00, sourceReg = Link Register
-		  opdestination = AddressmodesDecode(RAM, current_inst.modeSrc, current_inst.source, GPR, current_inst.sourceReg);
+		  opdestination = AddressmodesDecode(RAM, current_inst.modeSrc, current_inst.source, GPR, current_inst.sourceReg,current_inst.dest_addr);
 
 		  //Copy PC's contents to specified Link Register (pre-incremented PC)
 		  GPR[current_inst.destReg] = GPR[PC];
@@ -337,7 +337,7 @@ Take a source and destination memory location
 		  GPR[PC] = GPR[current_inst.destReg];
 
 		  //Pop top of stack to specified Link Register
-		  opdestination = AddressmodesDecode(RAM, current_inst.modeSrc, current_inst.source, GPR, current_inst.sourceReg);
+		  opdestination = AddressmodesDecode(RAM, current_inst.modeSrc, current_inst.source, GPR, current_inst.sourceReg,current_inst.dest_addr);
 	  }
 	  else
 		  cout <<"Invalid Subroutine Instruction";
@@ -503,7 +503,7 @@ writeflag is used to check for a write for both memory or register
         case regI:{//ID6 Index
             current_inst.write_flag = true;
             current_inst.result = opdestination;
-            current_inst.dest_addr = GPR[current_inst.destReg]; //operand
+            //current_inst.dest_addr = opaddress; //operand
             break;
         }
         case regADD:{//ID5 Autodecrement deferred
@@ -567,11 +567,11 @@ Address modes handler
 
 ***************************************************************/
 
-int AddressmodesDecode(int RAM[],int mode,int address_op, int GPR[], int curr_Register) {
+int AddressmodesDecode(int RAM[],int mode,int address_op, int GPR[], int curr_Register,int &address_loc) {
 
 int opdata_8bits;
 int operand_data;
-int address_location;
+int16_t address_location;
 
 	//Takes the destination address and fetches the data from the RAM for the destination value
 	switch (mode) {
@@ -605,13 +605,11 @@ int address_location;
 
 			//PC-relative Mode
 			if(curr_Register == PC) {
-				address_location = RAM[address_op];
-                address_location = ((address_location) | (RAM[address_location+1] << 0x8));
-				address_location = address_location + GPR[PC]+1;//joins the data with the lower 8 bits
-				opdata_8bits = RAM[address_location];//takes the upper 8 bits of data from RAM]
+				address_location = address_op + GPR[PC]+2;//adds the PC to the address we are currently on
+				address_loc = address_location;
+				opdata_8bits = RAM[address_loc];//takes the upper 8 bits of data from RAM]
 				//joins the data with the lower 8 bits giving the address
-				address_location = ((opdata_8bits << 0x8) | RAM[address_op+1]);
-				return address_location;
+				operand_data = ((opdata_8bits << 0x8) | RAM[address_op+1]);
 			}
 			else {
         opdata_8bits = RAM[address_op];
