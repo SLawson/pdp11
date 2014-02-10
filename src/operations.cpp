@@ -346,7 +346,7 @@ Take a source and destination memory location
 
 		  cout <<"Erroneous B-bit";
 	  }
-	  writeflag = false;
+
   }
 
   //Conditional Branch Instructions
@@ -497,50 +497,56 @@ writeflag is used to check for a write for both memory or register
         case regID:{//ID 7 Index deferred
             current_inst.write_flag = true;
             current_inst.result = opdestination;
-            current_inst.destination = opdestination;
+            current_inst.dest_addr = opdestination;
             break;
         }
         case regI:{//ID6 Index
             current_inst.write_flag = true;
             current_inst.result = opdestination;
-            current_inst.destination = GPR[current_inst.destReg]; //operand
+            current_inst.dest_addr = GPR[current_inst.destReg]; //operand
             break;
         }
         case regADD:{//ID5 Autodecrement deferred
             current_inst.write_flag = true;
-            current_inst.result = opdestination;
-            current_inst.destination = opdestination;
+            current_inst.result = opdestination;//DATA
+            current_inst.dest_addr = GPR[current_inst.destReg];
             break;
         }
         case regAD:{//ID4 Autodecrement
             current_inst.write_flag = true;
             current_inst.result = opdestination;
-            current_inst.destination = GPR[current_inst.destReg]; //operand
+            current_inst.dest_addr = GPR[current_inst.destReg]; //operand
             break;
             }
         case regAID:{//ID3 Autoincrement deferred
-            current_inst.write_flag = true;
-            current_inst.result = opdestination;
-            current_inst.destination = opdestination;
-            break;
+                if(current_inst.destReg == SP)
+                    GPR[current_inst.destReg] = opdestination;
+                else
+                {
+                    current_inst.write_flag = true;
+                    current_inst.result = opdestination;
+                    current_inst.dest_addr = GPR[current_inst.destReg];
+                    break;
+                }
+
             }
         case regAI:{//ID 2 Autoincrement
             current_inst.write_flag = true;
             current_inst.result = opdestination;
-            current_inst.destination = GPR[current_inst.destReg]; //operand
+            current_inst.dest_addr = GPR[current_inst.destReg]; //operand
             break;
         }
         case regD://ID1 Register Deferred
         {
             current_inst.write_flag = true;
             current_inst.result = opdestination;
-            current_inst.destination = GPR[current_inst.destReg];//operand
+            current_inst.dest_addr = GPR[current_inst.destReg];//operand
             break;
         }
         case regS://ID0 Register
         {
             GPR[current_inst.destReg] = opdestination;
-            break;
+            break;GPR[current_inst.destReg] = opdestination;
         }
         //need to add the rest of the modes here for double op
         default:
@@ -600,7 +606,7 @@ int address_location;
 			//PC-relative Mode
 			if(curr_Register == PC) {
 				address_location = RAM[address_op];
-        address_location = ((address_location) | (RAM[address_location+1] << 0x8));
+                address_location = ((address_location) | (RAM[address_location+1] << 0x8));
 				address_location = address_location + GPR[PC]+1;//joins the data with the lower 8 bits
 				opdata_8bits = RAM[address_location];//takes the upper 8 bits of data from RAM]
 				//joins the data with the lower 8 bits giving the address
@@ -618,13 +624,21 @@ int address_location;
 			break;
 		}
 		case regADD: {	//Auto-Decrement Deferred Mode modeid:5
+            if(curr_Register == SP)//Stack pops the stack by 2
+            {
+                GPR[curr_Register] -= 2;//decrement the stack pointer by 2 (push)
+                operand_data = GPR[curr_Register];
+            }
+            else
+            {
 
-			GPR[curr_Register] -= 2;		//Decrement before dereferencing
-			opdata_8bits = RAM[GPR[curr_Register]];
-			operand_data = ((opdata_8bits) | (RAM[GPR[curr_Register]+1] << 0x8));
-			opdata_8bits = RAM[operand_data];
-			operand_data = ((opdata_8bits) | (RAM[operand_data+1] << 0x8));
-			break;
+                GPR[curr_Register] -= 2;		//Decrement before dereferencing
+                opdata_8bits = RAM[GPR[curr_Register]];
+                operand_data = ((opdata_8bits) | (RAM[GPR[curr_Register]+1] << 0x8));
+                opdata_8bits = RAM[operand_data];
+                operand_data = ((opdata_8bits) | (RAM[operand_data+1] << 0x8));
+                break;
+            }
 		}
 		case regAD: {	//Auto-Decrement Mode mode: 4
 
@@ -634,9 +648,13 @@ int address_location;
 			break;
 		}
 		case regAID: {	//Auto-Increment Deferred Modes modeid:3
-
+            if(curr_Register == SP)//Stack pops the stack by 2
+            {
+                operand_data = GPR[curr_Register];
+                GPR[curr_Register] += 2;//increment the stack pointer by 2 (pop)
+            }
 			//PC-relative Absolute Mode
-			if(curr_Register == PC)
+			else if(curr_Register == PC)
             {
                 opdata_8bits = RAM[address_op];
                 operand_data = ((opdata_8bits) | (RAM[GPR[curr_Register]+1] << 0x8));
