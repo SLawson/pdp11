@@ -18,7 +18,7 @@ ofstream file;
 int main(int argc, char * argv[]) {
 
 //Variables
-instruction current_inst = {0,0,0,0,0,0,0,0,0,0,0,0,0};       //Fetched/decoded instruction
+instruction current_inst = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};       //Fetched/decoded instruction
 PSW Status_word = {0, false, false, false, false, false};     //Current PSW
 int RAM[MEM_SIZE] = {0};                                      //Contents of main memory
 int GPR[REGISTERS] = {0};                                     //General Purpose Registers
@@ -48,7 +48,7 @@ file.open("tracefile.txt");
         Write_mem(RAM, current_inst.result, current_inst.dest_addr, file);
         current_inst.write_flag = false;
       }
-  } while(current_inst.opcode || current_inst.byteSel);
+  } while(current_inst.opcode /*|| current_inst.byteSel*/);
 
   cout <<"\nPDP-11/20 Simulation Complete\n";
   reg_dump(GPR, &Status_word, 1, 0);

@@ -148,6 +148,9 @@ struct instruction {
 	int modeDest;		//Addressing mode of the destination
 	int offset;			//Branch target PC-relative offset (# of words, signed)
 
+  int srcPC;
+  int destPC;
+
 	int result;			//Result of Operation
 	int write_flag;		//Write-result-to-RAM flag
 
