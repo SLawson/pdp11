@@ -163,7 +163,7 @@ int Read_mem(int RAM [], int GPR [], ofstream & file, bool I_or_D) {
   GPR[PC] = (GPR[PC] + 1);
 
   if (I_or_D)
-    file << "2" << "\t" <<  << '\n';
+    file << "2" << "\t" <<  Address << '\n';
   else
     file << "0" << "\t" << Address << '\n';
 
