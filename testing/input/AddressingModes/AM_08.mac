@@ -9,15 +9,15 @@
         .WORD 30
         .WORD 40
 
-.=.+200
+.=.+94
         .WORD 100
         .WORD 102
         .WORD 104
 
-.=.+300
+.=.+94
         .WORD 50
 
-.=.+402
+.=.+98               ;location 400
         .WORD 300
 
 .PSECT REL

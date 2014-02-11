@@ -9,7 +9,7 @@
         .WORD 30
         .WORD 40
 
-.=.+302
+.=.+196              ;location 302
         .WORD 50
 
 .PSECT REL
