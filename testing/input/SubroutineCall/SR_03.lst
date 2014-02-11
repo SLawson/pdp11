@@ -1,7 +1,7 @@
        1                                ; File: SR_03.mac
        2                                ; Tests: Subroutine call and return, nested 3 recursive subroutine calls deep
        3                                
-       4                                
+       4                                .RADIX 10
        5                                
        6                                SUB:
        7 000000 005201                        INC   R1
@@ -14,8 +14,8 @@
       14 000022 000000                        HALT
       15                                
       16                                START:
-      17 000024 012767  157777  000000G       MOV   #157777, R6
-      18 000032 012700  000010                MOV   #10, R0
+      17 000024 012767  064121  000000G       MOV   #157777, R6
+      18 000032 012700  000012                MOV   #10, R0
       19 000036 012701  000001                MOV   #1, R1
       20 000042 004067  177732                JSR   R0, SUB
       21 000046 012703  000003                MOV   #3, R3

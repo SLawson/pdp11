@@ -1,6 +1,7 @@
 ; File: SO_12.mac
 ; Tests: Arithmetic shift left
 
+.RADIX 10
 
 START:
          MOV      #-4, R1
