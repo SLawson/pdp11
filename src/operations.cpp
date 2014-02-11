@@ -341,9 +341,18 @@ Take a source and destination memory location
 		  //Pop top of stack to specified Link Register
 		  opdestination = AddressmodesDecode(RAM, current_inst.modeSrc, current_inst.source, GPR, current_inst.sourceReg,current_inst.srcPC);
 	  }
-	  else
-		  cout <<"Invalid Subroutine Instruction";
+	  else {
+		  //cout <<"Invalid Subroutine Instruction"; --move this!!!
+			//Push specified Link Register's contents onto stack
+		  //modeSrc = 00, sourceReg = Link Register
+		  opdestination = AddressmodesDecode(RAM, current_inst.modeSrc, current_inst.source, GPR, current_inst.sourceReg,current_inst.srcPC);
 
+		  //Copy PC's contents to specified Link Register (pre-incremented PC)
+		  //GPR[current_inst.destReg] = GPR[PC];
+
+		  //Copy Jump Destination to PC
+		  GPR[PC] = opdestination;
+			}
 	  if(current_inst.byteSel == 1) {
 
 		  cout <<"Erroneous B-bit";
