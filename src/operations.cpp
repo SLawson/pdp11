@@ -576,7 +576,7 @@ int16_t address_location;
 			//PC-relative Deferred Mode 77
 			if(curr_Register == PC) {
 			  //adds the PC to the address we are currently on to give us memory location
-        address_op = (0xff & (address_op + prog_cntr)); 
+        address_op = (0xff & (address_op + prog_cntr));
         //takes the upper 8 bits of data from RAM]
 				operand_data = RAM[address_op];
 				//joins the data with the lower 8 bits giving the address
