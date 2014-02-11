@@ -1,0 +1,9 @@
+; File: AM_09.mac
+; Tests: Immediate Addressing
+
+START:
+        MOV   #10, R0
+        MOV   #-10, R1
+        CCC
+        HALT
+

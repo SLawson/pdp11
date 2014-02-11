@@ -1,0 +1,9 @@
+; File: AM_01.mac
+; Tests: Register addressing mode
+
+START:
+        MOV   #5, R1
+        MOV   R1, R2
+        CCC
+        HALT
+

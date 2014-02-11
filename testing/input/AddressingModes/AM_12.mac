@@ -1,0 +1,21 @@
+; File: AM_12.mac
+; Tests: Relative addressing
+
+.RADIX 10
+.PSECT ABS
+
+.=.+100
+W1:       .WORD 20
+W2:       .WORD 30
+
+.PSECT REL
+
+          .WORD 100
+          .WORD 102
+
+START:
+        MOV     -4, -6
+        MOV     W1, R0
+        CCC
+        HALT  
+

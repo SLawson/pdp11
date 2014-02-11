@@ -1,0 +1,26 @@
+; File: AM_02.mac
+; Tests: Register deferred addressing mode
+
+.RADIX 10
+.PSECT ABS
+
+.=.+100.
+        .WORD 10.
+.=.+200.
+        .WORD 20.
+.=.+300.
+        .WORD 30.
+
+.PSECT REL
+
+START:
+        MOV   #100, R1
+        MOV   #200, R2
+        MOV   #300, R3
+        MOV   @R1, R4
+        MOV   R4, @R2
+        MOV   @R2, @R3
+        MOV   @R3, R5
+        CCC
+        HALT
+

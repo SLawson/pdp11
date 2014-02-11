@@ -1,0 +1,35 @@
+; File: AM_08.mac
+; Tests: Indexed deferred addressing
+
+.RADIX 10
+.PSECT ABS
+
+.=.+100
+        .WORD 20
+        .WORD 30
+        .WORD 40
+
+.=.+200
+        .WORD 100
+        .WORD 102
+        .WORD 104
+
+.=.+300
+        .WORD 50
+
+.=.+402
+        .WORD 300
+
+.PSECT REL
+
+START:
+        MOV   #202, R0
+        MOV   #400, R5
+        MOV   @-2(R0), R2
+        MOV   @0(R0), R3
+        MOV   @2(R0), R4
+        MOV   R4, @2(R5)
+        MOV   @2(R5), R1
+        CCC
+        HALT
+
