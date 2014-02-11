@@ -1,0 +1,15 @@
+       1                                ; File: BA_01.mac
+       2                                ; Tests: Halt instruction
+       3                                ; Note: This file has an intentionally incorrect start label.
+       4                                
+       5                                
+       6                                START:
+       7 000000 000000                        .WORD    0
+       8 000002 000000                        .WORD    0
+       9                                      
+      10                                ; Real starting address is 04
+      11                                
+      12 000004 012700  000005                MOV      #5, R0
+      13 000010 000000                        HALT
+      14                                
+      14                                
