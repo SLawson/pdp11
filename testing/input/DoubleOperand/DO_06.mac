@@ -1,6 +1,8 @@
 ; File: DO_06.mac
 ; Tests: Double operand add instruction
 
+.RADIX 10
+
 L9:
         MOV   #3, R5
         HALT

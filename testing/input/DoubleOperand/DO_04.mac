@@ -1,6 +1,8 @@
 ; File: DO_04.mac
 ; Tests: Double operand bit clear instruction
 
+.RADIX 10
+
 L9:
         MOV   #3, R5
         HALT
