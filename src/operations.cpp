@@ -19,7 +19,7 @@ void Operation(int RAM[],instruction & current_inst, int GPR [], PSW & Status_wo
     int opdestination;//this holds the value of the data (RAM or register)
     bool writeflag = true;//sets writeflag to alway write
 
-    opdestination = AddressmodesDecode(RAM, current_inst.modeDest, current_inst.destination, GPR, current_inst.destReg,current_inst.dest_addr,current_inst.destPC);
+    opdestination = AddressmodesDecode(RAM, current_inst.modeDest, current_inst.destination, GPR,current_inst.dest_addr,current_inst.destPC);
 
 /*********************************************************************************
 Double Operation
@@ -30,7 +30,7 @@ Take a source and destination memory location
   if(current_inst.instSel == DOUBLE_OP  && current_inst.byteSel == 0)
   {
 
-    opsource = AddressmodesDecode(RAM, current_inst.modeSrc, current_inst.source, GPR, current_inst.sourceReg,current_inst.src_addr,current_inst.srcPC);
+    opsource = AddressmodesDecode(RAM, current_inst.modeSrc, current_inst.source, GPR, current_inst.sourceReg,current_inst.srcPC);
 
     //once the correct destination and source the operation can occur
     switch(current_inst.opcode){
@@ -92,7 +92,7 @@ Take a source and destination memory location
   }
   else if(current_inst.instSel == DOUBLE_OP  && current_inst.byteSel == 1)
   {
-	opsource = AddressmodesDecode(RAM, current_inst.modeSrc, current_inst.source, GPR, current_inst.sourceReg,current_inst.dest_addr,current_inst.srcPC);
+	opsource = AddressmodesDecode(RAM, current_inst.modeSrc, current_inst.source, GPR, current_inst.sourceReg,current_inst.srcPC);
 	switch(current_inst.opcode){
 
 		case SUB://dest -=src
@@ -112,7 +112,7 @@ Take a source and destination memory location
   /*********************************************************************
   Single operand instructions
 
-  Only takes destination
+  Only takes destination and modifies Destination
 
   *********************************************************************/
 
@@ -323,7 +323,7 @@ Take a source and destination memory location
 
 		  //Push specified Link Register's contents onto stack
 		  //modeSrc = 00, sourceReg = Link Register
-		  opdestination = AddressmodesDecode(RAM, current_inst.modeSrc, current_inst.source, GPR, current_inst.sourceReg,current_inst.dest_addr,current_inst.srcPC);
+		  opdestination = AddressmodesDecode(RAM, current_inst.modeSrc, current_inst.source, GPR, current_inst.sourceReg,current_inst.srcPC);
 
 		  //Copy PC's contents to specified Link Register (pre-incremented PC)
 		  GPR[current_inst.destReg] = GPR[PC];
@@ -337,7 +337,7 @@ Take a source and destination memory location
 		  GPR[PC] = GPR[current_inst.destReg];
 
 		  //Pop top of stack to specified Link Register
-		  opdestination = AddressmodesDecode(RAM, current_inst.modeSrc, current_inst.source, GPR, current_inst.sourceReg,current_inst.dest_addr,current_inst.srcPC);
+		  opdestination = AddressmodesDecode(RAM, current_inst.modeSrc, current_inst.source, GPR, current_inst.sourceReg,current_inst.srcPC);
 	  }
 	  else
 		  cout <<"Invalid Subroutine Instruction";
@@ -487,8 +487,6 @@ writeflag is used to check for a write for both memory or register
 
 *******************************************************************/
 
-
-
   //return function here for the different modes
   if(writeflag)//checks if op requires write to memory or register
   {
@@ -503,7 +501,7 @@ writeflag is used to check for a write for both memory or register
         case regI:{//ID6 Index
             current_inst.write_flag = true;
             current_inst.result = opdestination;
-            //current_inst.dest_addr = opaddress; //operand
+            current_inst.dest_addr = current_inst.destination; //destination address
             break;
         }
         case regADD:{//ID5 Autodecrement deferred
@@ -531,21 +529,17 @@ writeflag is used to check for a write for both memory or register
 
             }
         case regAI:{//ID 2 Autoincrement
-            current_inst.write_flag = true;
-            current_inst.result = opdestination;
-            current_inst.dest_addr = GPR[current_inst.destReg]; //operand
+            GPR[current_inst.destReg] = current_inst.source + 2;//RN contains the address of the operand, then increments the register
             break;
         }
-        case regD://ID1 Register Deferred
+        case regD://ID 1 Register Deferred
         {
-            current_inst.write_flag = true;
-            current_inst.result = opdestination;
-            current_inst.dest_addr = GPR[current_inst.destReg];//operand
+            GPR[current_inst.destReg] = current_inst.source;//Stores the address of the operand
             break;
         }
-        case regS://ID0 Register
+        case regS://ID 0 Register
         {
-            GPR[current_inst.destReg] = opdestination;
+            GPR[current_inst.destReg] = opdestination;//stores the operand into the register
             break;
         }
         //need to add the rest of the modes here for double op
@@ -567,9 +561,8 @@ Address modes handler
 
 ***************************************************************/
 
-int AddressmodesDecode(int RAM[],int mode,int address_op, int GPR[], int curr_Register,int &address_loc, int prog_cntr) {
+int AddressmodesDecode(int RAM[],int mode,int &address_op, int GPR[], int curr_Register, int prog_cntr) {
 
-int opdata_8bits;
 int operand_data;
 int16_t address_location;
 
@@ -577,47 +570,43 @@ int16_t address_location;
 	switch (mode) {
 		case regID: {	//Index Deferred Modes modeid:7
 
-			//PC-relative Deferred Mode
+			//PC-relative Deferred Mode 77
 			if(curr_Register == PC){
-        address_location = RAM[address_op];
-        address_location = ((address_location) | (RAM[address_location+1] << 0x8));
-				address_location = address_location + GPR[PC]+1;//sets the address to the next address contents
-				opdata_8bits = RAM[address_location];//takes the upper 8 bits of data from RAM]
+                address_op = (0xff & (address_op + prog_cntr));//adds the PC to the address we are currently on to give us memory location
+				operand_data = RAM[address_op];//takes the upper 8 bits of data from RAM]
+				operand_data = ((operand_data | RAM[address_op+1] << 0x8));//joins the data with the lower 8 bits giving the address
+				operand_data = RAM[operand_data];//takes the upper 8 bits of data from RAM]
 				//joins the data with the lower 8 bits giving the address
-				address_location = ((opdata_8bits) | (RAM[address_location+1] << 0x8));
+				address_location = ((operand_data) | (RAM[address_location+1] << 0x8));
 				return address_location;//returns the address of the address
 			}
 
 			else {
-				opdata_8bits = RAM[address_op];
-				address_location = ((opdata_8bits) | (RAM[address_op+1] << 0x8));
-				opdata_8bits = RAM[address_location + GPR[curr_Register]];//Read_mem(RAM, GPR, file, I_or_D) trying to add
-				//This is an address
-				address_location = ((opdata_8bits) | (RAM[address_location + GPR[curr_Register]+1] << 0x8));//joins the data with the lower 8 bits
-				opdata_8bits = RAM[address_location];//takes the upper 8 bits of data from RAM
+				operand_data = RAM[address_op];
+				address_location = ((operand_data) | (RAM[address_op+1] << 0x8));
+				operand_data = RAM[address_location + GPR[curr_Register]];//trying to add
+				address_location = ((operand_data) | (RAM[address_location + GPR[curr_Register]+1] << 0x8));//joins the data with the lower 8 bits
+				operand_data = RAM[address_location];//takes the upper 8 bits of data from RAM
 				//joins the data with the lower 8 bits giving the address
-				address_location = ((opdata_8bits) | (RAM[address_op+1] << 0x8));
+				address_location = ((operand_data) | (RAM[address_op+1] << 0x8));
 				return address_location;
 			}
 			break;
 		}
 		case regI: {	//Index Modes modeid:6
-
-			//PC-relative Mode
+			//PC-relative Mode 67
 			if(curr_Register == PC) {
-				address_loc = (0xff & (address_op + prog_cntr));//adds the PC to the address we are currently on to give us memory location
-				//address_loc = address_location;
-				opdata_8bits = RAM[address_loc];//takes the upper 8 bits of data from RAM]
-				//joins the data with the lower 8 bits giving the address
-				operand_data = ((opdata_8bits | RAM[address_op+1] << 0x8));
+				address_op = (0xff & (address_op + prog_cntr));//adds the PC to the address we are currently on to give us memory location
+				operand_data = RAM[address_op];//takes the upper 8 bits of data from RAM]
+				operand_data = ((operand_data | RAM[address_op+1] << 0x8));//joins the data with the lower 8 bits giving the address
 			}
 			else {
-        opdata_8bits = RAM[address_op];
-				address_location = ((opdata_8bits) | (RAM[address_op+1] << 0x8));
-				opdata_8bits = RAM[address_location + GPR[curr_Register]];//Read_mem(RAM, GPR, file, I_or_D) trying to add
-        address_location = ((opdata_8bits) | (RAM[address_location + GPR[curr_Register]+1] << 0x8));//joins the data with the lower 8 bits
-				opdata_8bits = RAM[GPR[curr_Register]];	//Read_mem(RAM, GPR, file, I_or_D) trying to add
-				operand_data = ((opdata_8bits) | (RAM[GPR[curr_Register]+1] << 0x8));
+                operand_data = RAM[address_op];
+				address_location = ((operand_data) | (RAM[address_op+1] << 0x8));
+				operand_data = RAM[address_location + GPR[curr_Register]];//Read_mem(RAM, GPR, file, I_or_D) trying to add
+                address_location = ((operand_data) | (RAM[address_location + GPR[curr_Register]+1] << 0x8));//joins the data with the lower 8 bits
+				operand_data = RAM[GPR[curr_Register]];	//Read_mem(RAM, GPR, file, I_or_D) trying to add
+				operand_data = ((operand_data) | (RAM[GPR[curr_Register]+1] << 0x8));
 			}
 			break;
 		}
@@ -629,20 +618,19 @@ int16_t address_location;
             }
             else
             {
-
                 GPR[curr_Register] -= 2;		//Decrement before dereferencing
-                opdata_8bits = RAM[GPR[curr_Register]];
-                operand_data = ((opdata_8bits) | (RAM[GPR[curr_Register]+1] << 0x8));
-                opdata_8bits = RAM[operand_data];
-                operand_data = ((opdata_8bits) | (RAM[operand_data+1] << 0x8));
+                operand_data = RAM[GPR[curr_Register]];
+                operand_data = ((operand_data) | (RAM[GPR[curr_Register]+1] << 0x8));
+                operand_data = RAM[operand_data];
+                operand_data = ((operand_data) | (RAM[operand_data+1] << 0x8));
                 break;
             }
 		}
 		case regAD: {	//Auto-Decrement Mode mode: 4
 
 			GPR[curr_Register] -= 2;		//Decrement before dereferencing
-			opdata_8bits = RAM[GPR[curr_Register]];
-			operand_data = ((opdata_8bits) | (RAM[GPR[curr_Register]+1] << 0x8));
+			operand_data = RAM[GPR[curr_Register]];
+			operand_data = ((operand_data) | (RAM[GPR[curr_Register]+1] << 0x8));
 			break;
 		}
 		case regAID: {	//Auto-Increment Deferred Modes modeid:3
@@ -654,15 +642,15 @@ int16_t address_location;
 			//PC-relative Absolute Mode
 			else if(curr_Register == PC)
             {
-                opdata_8bits = RAM[address_op];
-                operand_data = ((opdata_8bits) | (RAM[GPR[curr_Register]+1] << 0x8));
+                operand_data = RAM[address_op];//Set a value stored in memory
+                operand_data = ((operand_data) | (RAM[GPR[curr_Register]+1] << 0x8));
             }
 			else
 			{
-				opdata_8bits = RAM[GPR[curr_Register]];
-				operand_data = ((opdata_8bits) | (RAM[GPR[curr_Register]+1] << 0x8));
-				opdata_8bits = RAM[operand_data];// Address of the address
-				operand_data = ((opdata_8bits) | (RAM[opdata_8bits+1] << 0x8));
+				operand_data = RAM[GPR[curr_Register]];
+				operand_data = ((operand_data) | (RAM[GPR[curr_Register]+1] << 0x8));
+				operand_data = RAM[operand_data];// Address of the address
+				operand_data = ((operand_data) | (RAM[operand_data+1] << 0x8));
 				GPR[curr_Register] += 2;		//Increment after dereferencing
 			}
 			break;
@@ -674,15 +662,15 @@ int16_t address_location;
 				operand_data = address_op;
 			else
 			{
-				opdata_8bits = RAM[GPR[curr_Register]];//fetches the address in the register and then increments by one
-				operand_data = ((opdata_8bits) | (RAM[GPR[curr_Register]+1] << 0x8));
+				operand_data = RAM[GPR[curr_Register]];//fetches the address in the register and then increments by one
+				operand_data = ((operand_data) | (RAM[GPR[curr_Register]+1] << 0x8));
 				GPR[curr_Register] += 2;
 			}
 			break;
 		}
 		case regD: {	//Register Deferred Mode mode: 1
-			opdata_8bits = RAM[GPR[curr_Register]];//Goes to the RAM address stored in the register location
-			operand_data = ((opdata_8bits) | (RAM[GPR[curr_Register]+1] << 0x8));//Goes to the RAM address stored in the register location
+			operand_data = RAM[GPR[curr_Register]];//Goes to the RAM address stored in the register location
+			operand_data = ((operand_data) | (RAM[GPR[curr_Register]+1] << 0x8));//Goes to the RAM address stored in the register location
 			break;
 		}
 		case regS: {	//Register Mode mode: 0
