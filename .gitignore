@@ -64,10 +64,16 @@ Thumbs.db
 # Project Specific #
 ######################
 testing/null.cpp
-testing/output
 testing/pdp
 testing/test_log.txt
 testing/tracefile.txt
+testing/output/SubroutineCall/*.txt
+testing/output/AddressingModes/*.txt
+testing/output/Base/*.txt
+testing/output/ConditionalBranches/*.txt
+testing/output/ConditionCode/*.txt
+testing/output/DoubleOperand/*.txt
+testing/output/SingleOperand/*.txt
 src/586.vim
 testing/input/ConditionCode/macro11
 testing/input/ConditionCode/obj2ascii
