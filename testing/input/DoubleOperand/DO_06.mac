@@ -1,10 +1,50 @@
 ; File: DO_06.mac
 ; Tests: Double operand add instruction
 
+L9:
+        MOV   #3, R5
+        HALT
+
+L4:
+        MOV #4, R4
+        CCC
+        HALT
+
+L3:
+        MOV   #32767, R1
+        MOV   #2, R2
+        MOV   #0, R3
+        ADD   R3, R1
+        BVS   L9
+        ADD   R1, R2
+        BVS   L4
+        HALT
+
+L2:
+        MOV   #32767, R1
+        MOV   #1, R2
+        MOV   #0, R3
+        ADD   R3, R1
+        BCC   L9
+        ADD   R1, R2
+        BCC   L3
+        HALT
+
+L1:     
+        MOV   #-6, R2
+        ADD   R1, R3 ; R3 is now 5
+        BMI   L9
+        ADD   R1, R2 ; R2 is now -1
+        BMI   L2
+        HALT
 
 START:
         MOV   #5, R1
         MOV   #4, R2
+        MOV   #-5, R3
         ADD   R1, R2
+        BEQ   L9
+        ADD   R1, R3
+        BEQ   L1
         HALT
 

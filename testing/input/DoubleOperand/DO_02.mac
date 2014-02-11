@@ -2,10 +2,46 @@
 ; Tests: Double operand compare instruction
 
 
+L9:
+        MOV   #3, R5
+        HALT
+
+L4:
+        CCC
+        HALT
+
+L3:
+        CMP   R3, R2
+        BCC   L9
+        MOV   #-1, R5
+        CMP   R4, R5
+        BCC   L4
+        HALT
+
+L2:
+        CMP   R3, R2
+        BVS   L9
+        MOV   #32767, R4
+        MOV   #-2, R5
+        CMP   R4, R5
+        BVS   L3
+        HALT
+
+L1:     
+        CMP   R3, R1
+        BMI   L9
+        CMP   R1, R3
+        BMI   L2
+        HALT
+
 START:
 
         MOV   #1, R1
         MOV   #1, R2
+        MOV   #2, R3
+        CMP   R3, R1
+        BEQ   L9
         CMP   R2, R1
+        BEQ   L1
         HALT
 

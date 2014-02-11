@@ -1,0 +1,18 @@
+; File: SR_01.mac
+; Tests: Single subroutine call and return
+
+
+SUB:
+      MOV   #2, R2
+      RTS   R0
+      MOV   #4, R4
+      HALT
+
+START:
+      MOV   #157777, R6
+      MOV   #10, R0
+      MOV   #1, R1
+      JSR   R0, SUB
+      MOV   #3, R3
+      HALT
+      

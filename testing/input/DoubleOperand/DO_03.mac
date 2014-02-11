@@ -1,10 +1,35 @@
 ; File: DO_03.mac
 ; Tests: Double operand bit test instruction
 
+L9:
+        MOV   #3, R5
+        HALT
+
+
+L2:
+        BCC   L9
+        BVS   L9
+        CCC
+        HALT
+
+L1:     
+        MOV   #-4, R1
+        MOV   #-4, R2
+        BIT   R3, R1
+        BMI   L9
+        BIT   R1, R2
+        BMI   L2
+        HALT
+
 
 START:
+        SEC
         MOV   #1, R1
         MOV   #2, R2
+        MOV   #1, R3
+        BIT   R3, R1
+        BEQ   L9
         BIT   R2, R1
+        BEQ   L1
         HALT
 

@@ -1,0 +1,32 @@
+; File: SR_02.mac
+; Tests: Subroutine call and return, nested 3 subroutine calls deep
+
+
+SUB3:
+      MOV   #3, R2
+      RTS   R0
+      MOV   #4, R4
+      HALT
+
+SUB2:
+      MOV   #2, R2
+      JSR   R0, SUB3
+      RTS   R0
+      MOV   #4, R4
+      HALT
+
+SUB1:
+      MOV   #1, R2
+      JSR   R0, SUB2
+      RTS   R0
+      MOV   #4, R4
+      HALT
+
+START:
+      MOV   #157777, R6
+      MOV   #10, R0
+      MOV   #1, R1
+      JSR   R0, SUB1
+      MOV   #3, R3
+      HALT
+      

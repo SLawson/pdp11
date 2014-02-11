@@ -1,0 +1,7 @@
+; File: BA_01.mac
+; Tests: Halt instruction
+
+
+START:
+        HALT
+

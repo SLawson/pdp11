@@ -1,0 +1,8 @@
+; File: BA_02.mac
+; Tests: Double operand move instruction
+
+
+START:
+        MOV   #5, R1
+        HALT
+
