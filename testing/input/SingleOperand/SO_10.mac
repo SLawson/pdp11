@@ -3,9 +3,9 @@
 
 
 START:
-         MOV      #0, R6
+         MOV      #0, R1
          SEC
-         ROL      R6
+         ROL      R1
          CCC
          HALT
 
