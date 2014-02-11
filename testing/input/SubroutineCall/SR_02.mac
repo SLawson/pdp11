@@ -1,7 +1,6 @@
 ; File: SR_02.mac
 ; Tests: Subroutine call and return, nested 3 subroutine calls deep
 
-.RADIX 10
 
 SUB3:
       MOV   #3, R2

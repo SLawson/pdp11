@@ -1,7 +1,6 @@
 ; File: SR_01.mac
 ; Tests: Single subroutine call and return
 
-.RADIX 10
 
 SUB:
       MOV   #2, R2

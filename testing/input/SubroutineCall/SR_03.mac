@@ -1,7 +1,7 @@
 ; File: SR_03.mac
 ; Tests: Subroutine call and return, nested 3 recursive subroutine calls deep
 
-.RADIX 10
+
 
 SUB:
       INC   R1

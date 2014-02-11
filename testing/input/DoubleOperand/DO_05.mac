@@ -1,8 +1,6 @@
 ; File: DO_05.mac
 ; Tests: Double operand bit set instruction
 
-.RADIX 10
-
 L9:
         MOV   #3, R5
         HALT

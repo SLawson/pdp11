@@ -1,8 +1,6 @@
 ; File: DO_02.mac
 ; Tests: Double operand compare instruction
 
-.RADIX 10
-
 
 L9:
         MOV   #3, R5

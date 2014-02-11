@@ -1,7 +1,6 @@
 ; File: SO_11.mac
 ; Tests: Arithmetic shift right
 
-.RADIX 10
 
 START:
          MOV      #-4, R1

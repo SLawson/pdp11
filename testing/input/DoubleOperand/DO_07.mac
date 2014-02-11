@@ -1,8 +1,6 @@
 ; File: DO_07.mac
 ; Tests: Double operand subtract instruction
 
-.RADIX 10
-
 MIN:     .WORD    -32768.
 
 L9:

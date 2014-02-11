@@ -1,7 +1,6 @@
 ; File: SO_14.mac
 ; Tests: Swap Bytes
 
-.RADIX 10
 
 BY:   .WORD    127.
 
