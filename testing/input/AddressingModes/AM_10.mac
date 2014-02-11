@@ -1,0 +1,20 @@
+; File: AM_10.mac
+; Tests: Absolute addressing
+
+.RADIX 10
+.PSECT ABS
+
+.=.+100
+        .WORD 20
+        .WORD 30
+        .WORD 40
+
+.PSECT REL
+
+START:
+        MOV   #104, R0
+        MOV   @#100, @#104
+        MOV   @R0, R1
+        CCC
+        HALT
+

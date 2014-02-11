@@ -1,0 +1,10 @@
+       1                                ; File: AM_01.mac
+       2                                ; Tests: Register addressing mode
+       3                                
+       4                                START:
+       5 000000 012701  000005                  MOV   #5, R1
+       6 000004 010102                          MOV   R1, R2
+       7 000006 000257                          CCC
+       8 000010 000000                          HALT
+       9                                
+       9                                

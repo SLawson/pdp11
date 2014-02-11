@@ -1,0 +1,13 @@
+; File: AM_11.mac
+; Tests: Relative addressing
+
+.RADIX 10
+W1:       .WORD 20
+W2:       .WORD 30
+
+START:
+        MOV     -4, -6
+        MOV     W1, R0
+        CCC
+        HALT  
+

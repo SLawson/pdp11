@@ -1,0 +1,10 @@
+       1                                ; File: AM_09.mac
+       2                                ; Tests: Immediate Addressing
+       3                                
+       4                                START:
+       5 000000 012700  000010                  MOV   #10, R0
+       6 000004 012701  177770                  MOV   #-10, R1
+       7 000010 000257                          CCC
+       8 000012 000000                          HALT
+       9                                
+       9                                

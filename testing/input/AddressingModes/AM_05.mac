@@ -1,0 +1,26 @@
+; File: AM_05.mac
+; Tests: Auto Decrement addressing
+
+.RADIX 10
+.PSECT ABS
+
+.=.+100
+        .WORD 20
+        .WORD 30
+
+.=.+200
+        .WORD 90
+        .WORD 80
+
+.PSECT REL
+
+START:
+        MOV   #104, R0
+        MOV   #204, R1
+        MOV   #200, R2
+        MOV   -(R0), -(R1)
+        MOV   -(R0), -(R1)
+        MOV   @R2, R3
+        CCC
+        HALT
+

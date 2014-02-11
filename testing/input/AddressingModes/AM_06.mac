@@ -1,0 +1,34 @@
+; File: AM_06.mac
+; Tests: Auto Decrement deferred addressing
+
+.RADIX 10
+.PSECT ABS
+
+.=.+100
+        .WORD 20
+        .WORD 30
+
+.=.+200
+        .WORD 90
+        .WORD 80
+
+.=.+300
+        .WORD 100
+        .WORD 102
+
+.=.+400
+        .WORD 200
+        .WORD 202
+
+.PSECT REL
+
+START:
+        MOV   #304, R0
+        MOV   #404, R1
+        MOV   #200, R2
+        MOV   @-(R0), @-(R1)
+        MOV   @-(R0), @-(R1)
+        MOV   @R2, R3
+        CCC
+        HALT
+

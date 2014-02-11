@@ -1,0 +1,27 @@
+; File: AM_07.mac
+; Tests: Indexed addressing
+
+.RADIX 10
+.PSECT ABS
+
+.=.+100
+        .WORD 20
+        .WORD 30
+        .WORD 40
+
+.=.+302
+        .WORD 50
+
+.PSECT REL
+
+START:
+        MOV   #102, R0
+        MOV   #300, R5
+        MOV   -2(R0), R2
+        MOV   0(R0), R3
+        MOV   2(R0), R4
+        MOV   R4, 2(R5)
+        MOV   2(R5), R1
+        CCC
+        HALT
+
