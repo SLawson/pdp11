@@ -55,6 +55,7 @@ int initialize(int RAM [], int argc, char * argv[], int* PC_Reg, string &out_fil
 
     else if(!pc_opt.compare(argv[i])){
       *PC_Reg = (int) strtol(argv[i+1], NULL, 8);
+      address_flag = 1;
       i += 1;
     }
 
@@ -112,7 +113,6 @@ int initialize(int RAM [], int argc, char * argv[], int* PC_Reg, string &out_fil
           if (address_flag){
             cout << "\nWarning: Starting PC value has been specified a second time "
                  << "on line " << i << endl;
-            status = 1;
           }
 
           else{
