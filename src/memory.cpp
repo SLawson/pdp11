@@ -131,7 +131,17 @@ void Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream &
 	  /* -- jump instruction -- */
 	  else if (((CurrentInst & 0x40)) == 0x40) {
 		  current_inst.instSel = JUMP;
-		  current_inst.offset = ((CurrentInst & 0x3f) - 1);
+		  
+		  current_inst.modeDest = ((CurrentInst & 0x38) >> 0x3);
+      current_inst.destReg = (CurrentInst & 0x7);
+		  
+		  //current_inst.offset = (CurrentInst & 0x3f);
+		  
+		  if ((current_inst.destReg == PC) || (current_inst.modeDest > 0x5)) {
+      	current_inst.destination = Read_mem(RAM, GPR, file, I_or_D);
+      	current_inst.destPC = (GPR[PC]);
+    	}
+		  
 	  }
 
     //RESET op
@@ -153,7 +163,7 @@ int Read_mem(int RAM [], int GPR [], ofstream & file, bool I_or_D) {
   GPR[PC] = (GPR[PC] + 1);
 
   if (I_or_D)
-    file << "2" << "\t" << Address << '\n';
+    file << "2" << "\t" <<  Address << '\n';
   else
     file << "0" << "\t" << Address << '\n';
 
