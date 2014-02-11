@@ -631,8 +631,8 @@ int16_t address_location;
                 operand_data = ((operand_data) | (RAM[GPR[curr_Register]+1] << 0x8));
                 operand_data = RAM[operand_data];
                 operand_data = ((operand_data) | (RAM[operand_data+1] << 0x8));
-                break;
             }
+			break;
 		}
 		case regAD: {	//Auto-Decrement Mode mode: 4
 
