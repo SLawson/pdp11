@@ -1,9 +1,0 @@
-; File: SY_01.mac
-; Tests: Halt instruction
-
-
-START:
-        MOV    #5, R1
-        HALT
-        MOV    #3, R1
-

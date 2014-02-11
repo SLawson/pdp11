@@ -1,10 +1,53 @@
 ; File: DO_07.mac
 ; Tests: Double operand subtract instruction
 
+MIN:     .WORD    -32768.
+
+L9:
+        MOV   #3, R5
+        HALT
+
+L4:
+        MOV #4, R4
+        CCC
+        HALT
+
+L3:
+        MOV   MIN, R1
+        MOV   #2, R2
+        MOV   #0, R3
+        SUB   R3, R1
+        BVS   L9
+        SUB   R1, R2
+        BVS   L4
+        HALT
+
+L2:
+        MOV   #MIN, R1
+        MOV   #1, R2
+        MOV   #0, R3
+        SUB   R3, R1
+        BCC   L9
+        SUB   R1, R2
+        BCC   L3
+        HALT
+
+L1:     
+        MOV   #5, R1
+        MOV   #3, R3
+        SUB   R3, R1 ; R1 is now 2
+        BMI   L9
+        SUB   R3, R1 ; R1 is now -1
+        BMI   L2
+        HALT
 
 START:
         MOV   #5, R1
-        MOV   #3, R2
+        MOV   #2, R2
+        MOV   #3, R3
         SUB   R2, R1
+        BEQ   L9
+        SUB   R3, R1
+        BEQ   L1
         HALT
 

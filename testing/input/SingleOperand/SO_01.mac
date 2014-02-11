@@ -3,8 +3,8 @@
 
 
 START:
-         MOV      #3, R6
-         CLR      R6
+         MOV      #3, R1
+         CLR      R1
          CCC
          HALT
 

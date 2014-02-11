@@ -1,8 +1,27 @@
 ; File: DO_01.mac
 ; Tests: Double operand move instruction
 
+L9:
+        MOV   #3, R5
+        HALT
+
+L2:
+        BCC   L9
+        BVS   L9
+        MOV   #2, R3
+        HALT
+
+L1:     
+        BMI   L9
+        MOV   #-5, R2
+        BMI   L2
+        HALT
 
 START:
+        SEC
         MOV   #5, R1
+        BEQ   L9
+        MOV   #0, R2
+        BEQ   L1
         HALT
 

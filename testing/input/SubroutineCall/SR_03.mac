@@ -1,0 +1,23 @@
+; File: SR_03.mac
+; Tests: Subroutine call and return, nested 3 recursive subroutine calls deep
+
+
+
+SUB:
+      INC   R1
+      CMP   #4, R1
+      BEQ   END
+      JSR   R0, SUB
+END:
+      RTS   R0
+      MOV   #4, R4
+      HALT
+
+START:
+      MOV   #157777, R6
+      MOV   #10, R0
+      MOV   #1, R1
+      JSR   R0, SUB
+      MOV   #3, R3
+      HALT
+      

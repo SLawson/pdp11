@@ -3,8 +3,8 @@
 
 
 START:
-         MOV      #-4, R6
-         ASL      R6
+         MOV      #-4, R1
+         ASL      R1
          CCC
          HALT
 

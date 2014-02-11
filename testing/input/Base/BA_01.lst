@@ -1,0 +1,8 @@
+       1                                ; File: BA_01.mac
+       2                                ; Tests: Halt instruction
+       3                                
+       4                                
+       5                                START:
+       6 000000 000000                          HALT
+       7                                
+       7                                
