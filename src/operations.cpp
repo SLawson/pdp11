@@ -531,7 +531,8 @@ writeflag is used to check for a write for both memory or register
 
             }
         case regAI:{//ID 2 Autoincrement
-            GPR[current_inst.destReg] = current_inst.source + 2;//RN contains the address of the operand, then increments the register
+            GPR[current_inst.destReg] = current_inst.source;//RN contains the address of the operand, then increments the register
+            current_inst.source += 2;
             break;
         }
         case regD://ID 1 Register Deferred
@@ -573,14 +574,19 @@ int16_t address_location;
 		case regID: {	//Index Deferred Modes modeid:7
 
 			//PC-relative Deferred Mode 77
-			if(curr_Register == PC){
-                address_op = (0xff & (address_op + prog_cntr));//adds the PC to the address we are currently on to give us memory location
-				operand_data = RAM[address_op];//takes the upper 8 bits of data from RAM]
-				operand_data = (operand_data | (RAM[address_op+1] << 0x8));//joins the data with the lower 8 bits giving the address
-				operand_data = RAM[operand_data];//takes the upper 8 bits of data from RAM]
+			if(curr_Register == PC) {
+			  //adds the PC to the address we are currently on to give us memory location
+        address_op = (0xff & (address_op + prog_cntr)); 
+        //takes the upper 8 bits of data from RAM]
+				operand_data = RAM[address_op];
+				//joins the data with the lower 8 bits giving the address
+				operand_data = (operand_data | (RAM[address_op+1] << 0x8));
+				//takes the upper 8 bits of data from RAM]
+				operand_data = RAM[operand_data];
 				//joins the data with the lower 8 bits giving the address
 				address_location = ((operand_data) | (RAM[address_location+1] << 0x8));
-				return address_location;//returns the address of the address
+				//returns the address of the address
+				return address_location;
 			}
 
 			else {
