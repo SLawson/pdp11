@@ -19,7 +19,7 @@ void Operation(int RAM[],instruction & current_inst, int GPR [], PSW & Status_wo
     int opdestination;//this holds the value of the data (RAM or register)
     bool writeflag = true;//sets writeflag to alway write
 
-    opdestination = AddressmodesDecode(RAM, current_inst.modeDest, current_inst.destination, GPR,current_inst.dest_addr,current_inst.destPC);
+    opdestination = AddressmodesDecode(RAM, current_inst.modeDest, current_inst.destination, GPR,current_inst.destReg,current_inst.destPC);
 
 /*********************************************************************************
 Double Operation
@@ -131,7 +131,8 @@ Take a source and destination memory location
       }
       case COM://sets the destinations complement
       {
-        opdestination = ~opdestination;
+        int16_t dest16 = ~opdestination;
+        opdestination = dest16;
         StatusFlags(Status_word,opdestination,0);//just sets the zero and negative
         Status_word.C = false;//sets the carry flag to false
         Status_word.V = false;//sets the overflow flag to false
@@ -184,13 +185,15 @@ Take a source and destination memory location
       }
       case ROR:
       {
-        //load the 16 bit value
-        int16_t dest16 = RAM[current_inst.destination];
-        dest16 = (dest16) | (RAM[current_inst.destination + 1]  << 0x8);
-
-        Status_word.C = (dest16 & 0x1);
+        int16_t dest16 = opdestination;
+        int holder = (dest16 & 0x1);
+        
         dest16 = (dest16 >> 0x1);
-        dest16 = ((Status_word.C << 0xf) | dest16);
+        if (Status_word.C)
+          dest16 = (dest16 | (Status_word.C << 0xf));
+        else if (!Status_word.C)
+          dest16 = (dest16 & 0x7fff);
+        Status_word.C = holder;
 
         //set remaining flags
         if (dest16 == 0)
@@ -202,19 +205,21 @@ Take a source and destination memory location
         else
           Status_word.N = false;
         Status_word.V = (Status_word.C ^ Status_word.N);
-        current_inst.result = dest16;
-        current_inst.write_flag = true;
+        opdestination = dest16;
+        //current_inst.write_flag = true;
         break;
       }
       case ROL:
       {
-        //load the 16 bit value
-        int16_t dest16 = RAM[current_inst.destination];
-        dest16 = (dest16) | (RAM[current_inst.destination + 1]  << 0x8);
-
-        Status_word.C = (dest16 & 0x8000);
+        int16_t dest16 = opdestination;
+        int holder = (dest16 & 0x8000);
+        
         dest16 = (dest16 << 0x1);
-        dest16 = (Status_word.C | dest16);
+        if (Status_word.C)
+          dest16 = (dest16 | (Status_word.C));
+        else if (!Status_word.C)
+          dest16 = (dest16 & 0xfffe);
+        Status_word.C = holder;
 
         //set remaining flags
         if (dest16 == 0)
@@ -226,18 +231,19 @@ Take a source and destination memory location
         else
           Status_word.N = false;
         Status_word.V = (Status_word.C ^ Status_word.N);
-        current_inst.result = dest16;
-        current_inst.write_flag = true;
+        opdestination = dest16;
+        //current_inst.write_flag = true;
         break;
       }
       case ASR:
       {
-        //load the 16 bit value
-        int16_t dest16 = RAM[current_inst.destination];
-        dest16 = (dest16) | (RAM[current_inst.destination + 1]  << 0x8);
+        int16_t dest16 = opdestination;
 
         Status_word.C = (dest16 & 0x1);
-        dest16 = ((dest16 & 0X8000) | ((dest16 & 0x7fff) >> 0x1));
+        if (dest16 & 0x8000)
+          dest16 = ((dest16 >> 0x1) | (0x1 << 0xf));
+        else if (!(dest16 & 0x8000))
+          dest16 = ((dest16 >> 0x1) & (0x7fff));
 
         //set remaining flags
         if (dest16 == 0)
@@ -251,21 +257,19 @@ Take a source and destination memory location
           Status_word.N = false;
 
         Status_word.V = (Status_word.C ^ Status_word.N);
-        current_inst.result = dest16;
-        current_inst.write_flag = true;
+        opdestination = dest16;
+        //current_inst.write_flag = true;
         break;
       }
       case ASL:
       {
-        //load the 16 bit value
-        int16_t dest16 = RAM[current_inst.destination];
-        dest16 = (dest16) | (RAM[current_inst.destination + 1]  << 0x8);
+        int16_t dest16 = opdestination;
 
         Status_word.C = (dest16 & 0x8000);
-        if (Status_word.C)
-          dest16 = (0X8000 | ((dest16 & 0x7fff) << 0x1));
-        else
-          dest16 = ((dest16 & 0X7fff) & ((dest16 & 0x7fff) << 0x1));
+        if (dest16 & 0x8000)
+          dest16 = ((dest16 << 0x1) | (0x1 << 0xf));
+        else if (!(dest16 & 0x8000))
+          dest16 = ((dest16 << 0x1) & (0xfffe));
 
         //set remaining flags
         if (dest16 == 0)
@@ -279,15 +283,13 @@ Take a source and destination memory location
           Status_word.N = false;
 
         Status_word.V = (Status_word.C ^ Status_word.N);
-        current_inst.result = dest16;
-        current_inst.write_flag = true;
+        opdestination = dest16;
+        //current_inst.write_flag = true;
         break;
       }
       case SWAB:
       {
-        //load the 16 bit value
-        int16_t dest16 = RAM[current_inst.destination];
-        dest16 = (dest16) | (RAM[current_inst.destination + 1]  << 0x8);
+        int16_t dest16 = opdestination;
 
         dest16 = ((dest16 >> 0x8) | ((dest16 & 0xff) << 0x8));
 
@@ -304,8 +306,8 @@ Take a source and destination memory location
 
         Status_word.C = false;
         Status_word.V = false;
-        current_inst.result = dest16;
-        current_inst.write_flag = true;
+        opdestination = dest16;
+        //current_inst.write_flag = true;
         break;
       }
       default:
@@ -574,7 +576,7 @@ int16_t address_location;
 			if(curr_Register == PC){
                 address_op = (0xff & (address_op + prog_cntr));//adds the PC to the address we are currently on to give us memory location
 				operand_data = RAM[address_op];//takes the upper 8 bits of data from RAM]
-				operand_data = ((operand_data | RAM[address_op+1] << 0x8));//joins the data with the lower 8 bits giving the address
+				operand_data = (operand_data | (RAM[address_op+1] << 0x8));//joins the data with the lower 8 bits giving the address
 				operand_data = RAM[operand_data];//takes the upper 8 bits of data from RAM]
 				//joins the data with the lower 8 bits giving the address
 				address_location = ((operand_data) | (RAM[address_location+1] << 0x8));
@@ -598,7 +600,7 @@ int16_t address_location;
 			if(curr_Register == PC) {
 				address_op = (0xff & (address_op + prog_cntr));//adds the PC to the address we are currently on to give us memory location
 				operand_data = RAM[address_op];//takes the upper 8 bits of data from RAM]
-				operand_data = ((operand_data | RAM[address_op+1] << 0x8));//joins the data with the lower 8 bits giving the address
+				operand_data = (operand_data | (RAM[address_op+1] << 0x8));//joins the data with the lower 8 bits giving the address
 			}
 			else {
                 operand_data = RAM[address_op];

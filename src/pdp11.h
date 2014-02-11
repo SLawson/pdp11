@@ -45,23 +45,23 @@ using namespace std;
 
 //Single-operand instructions (SINGLE_OP)
 //byteSel = 0
-#define SWAB    003     //Swap Bytes
-#define CLR     050     //Clear: dest = 0
-#define COM     051     //Complement dest = ~dest
-#define INC     052     //Increment: dest +=1
-#define DEC     053     //Decrement: dest -=1
-#define NEG     054     //Negate: dest = −dest
-#define ADC     055     //Add carry: dest += C
-#define SBC     056     //Subtract carry: dest −= C
-#define TST     057     //Test: Load src, set flags only
-#define ROR 	060     //Rotate right 1 bit
-#define ROL		061     //Rotate left 1 bit
-#define ASR		062     //Shift right: dest >>= 1
-#define ASL		063     //Shift left: dest <<= 1
-#define MARK	064     //Return from subroutine, skip 0..63 instruction words
-#define MFPI	065     //Move from previous I space: −(SP) = src
-#define MTPI	066     //Move to previous I space: dest = (SP)+
-#define SXT		067     //Sign extend: dest = (16 copies of N flag)
+#define SWAB    3     //Swap Bytes
+#define CLR     8     //Clear: dest = 0
+#define COM     9     //Complement dest = ~dest
+#define INC     10     //Increment: dest +=1
+#define DEC     11     //Decrement: dest -=1
+#define NEG     12     //Negate: dest = −dest
+#define ADC     13     //Add carry: dest += C
+#define SBC     14     //Subtract carry: dest −= C
+#define TST     15     //Test: Load src, set flags only
+#define ROR 	16     //Rotate right 1 bit
+#define ROL		17     //Rotate left 1 bit
+#define ASR		18     //Shift right: dest >>= 1
+#define ASL		19     //Shift left: dest <<= 1
+#define MARK	20     //Return from subroutine, skip 0..63 instruction words
+#define MFPI	21     //Move from previous I space: −(SP) = src
+#define MTPI	22     //Move to previous I space: dest = (SP)+
+#define SXT		23     //Sign extend: dest = (16 copies of N flag)
 //byteSel = 1
 #define CLRB    050     //Clear: dest = 0
 #define COMB    051     //Complement dest = ~dest
