@@ -10,6 +10,7 @@
 #define MEMORY_H_
 
 #include "pdp11.h"
+#include <stdint.h>
 
 //Fetches an instruction, decodes and updates current_inst
 void Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream & file, bool I_or_D, PSW & Status_word);
