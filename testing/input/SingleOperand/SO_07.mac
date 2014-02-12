@@ -5,8 +5,8 @@
 START:
          MOV      #2, R1
          SEC
-         SBC      R6 ; Should result in 1 in R6
-         SBC      R6 ; Carry bit should be clear, so no change to R6
+         SBC      R1 ; Should result in 1 in R1
+         SBC      R1 ; Carry bit should be clear, so no change to R1
          CCC
          HALT
 

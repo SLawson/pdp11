@@ -12,8 +12,6 @@
 #include "operations.h"
 #include "testing.h"
 
-//Global variable for the trace file
-ofstream file;
 
 int main(int argc, char * argv[]) {
 
@@ -24,8 +22,9 @@ int RAM[MEM_SIZE] = {0};                                      //Contents of main
 int GPR[REGISTERS] = {0};                                     //General Purpose Registers
 int init_status = 0;                                          //initialization routine return code
 bool I_or_D = false;
-string out_file("trace.txt");                                 //output trace file name
-file.open("tracefile.txt");
+
+string out_file("tracefile.txt");                                 //output trace file name
+ofstream file;  // trace file stream
 
   cout <<"PDP-11/20 Simulation\n\n";
 
@@ -34,6 +33,7 @@ file.open("tracefile.txt");
 
   //Initialize program
   init_status = initialize(RAM, argc, argv, &GPR[PC], out_file); //Read ASCII file, write code and static data to memory
+  file.open(out_file.c_str());
 
   if (init_status) {
     return 0;
