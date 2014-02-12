@@ -76,14 +76,17 @@ void Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream &
   /* -- Conditional branch instruction -- */
   else if ((CurrentInst & 0x7800) == 0x0) {
     if (((CurrentInst & 0x700) >> 0x8) > 0x0) {
+    	int8_t temp8bit = 0;
       current_inst.instSel = CONDITIONAL_OP;
       current_inst.opcode = ((CurrentInst & 0x700) >> 0x8);
+			temp8bit = ((CurrentInst & 0xff));
+			current_inst.offset = temp8bit;
 
-      if ((CurrentInst & 0x80) == 0x80)
+      /*if ((CurrentInst & 0x80) == 0x80) {
       	current_inst.offset = (0 - (CurrentInst & 0xff) - 1);
 
       else
-      	current_inst.offset = ((CurrentInst & 0xff) - 1);
+      	current_inst.offset = ((CurrentInst & 0xff) - 1);*/
     }
     //Set status word opertation
     else if ((CurrentInst & 0xffe0) == 0xa0) {
@@ -130,14 +133,15 @@ void Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream &
 	  /* -- jump instruction -- */
 	  else if (((CurrentInst & 0x40)) == 0x40) {
 		  current_inst.instSel = JUMP;
-		  
+		  int16_t temp16bit = 0;
 		  current_inst.modeDest = ((CurrentInst & 0x38) >> 0x3);
       current_inst.destReg = (CurrentInst & 0x7);
 		  
 		  //current_inst.offset = (CurrentInst & 0x3f);
 		  
 		  if ((current_inst.destReg == PC) || (current_inst.modeDest > 0x5)) {
-      	current_inst.destination = Read_mem(RAM, GPR, file, I_or_D, &Status_word);
+      	temp16bit = Read_mem(RAM, GPR, file, I_or_D, &Status_word);
+      	current_inst.destination = temp16bit;
       	current_inst.destPC = (GPR[PC]);
     	}
 		  
