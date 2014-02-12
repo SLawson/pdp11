@@ -510,15 +510,15 @@ writeflag is used to check for a write for both memory or register
 
             current_inst.write_flag = true;
             current_inst.result = opdestination;
-            RAM_contents = RAM[(0xffff & (current_inst.destination + GPR[current_inst.destReg]))];//Read_mem(RAM, GPR, file, I_or_D) trying to add
-            RAM_contents = ((RAM_contents) | (RAM[(0xffff &(current_inst.destination + GPR[current_inst.destReg]))+1] << 0x8));//joins the data with the lower 8 bits
+            RAM_contents = RAM[current_inst.destination + GPR[current_inst.destReg]];//Read_mem(RAM, GPR, file, I_or_D) trying to add
+            RAM_contents = ((RAM_contents) | (RAM[(current_inst.destination + GPR[current_inst.destReg])+1] << 0x8));//joins the data with the lower 8 bits
             current_inst.dest_addr =  RAM_contents;//destination address;
             break;
         }
         case regI:{//ID6 Index
             current_inst.write_flag = true;
             current_inst.result = opdestination;
-            current_inst.dest_addr = (0xffff &(current_inst.destination + GPR[current_inst.destReg])); //destination address
+            current_inst.dest_addr = (current_inst.destination + GPR[current_inst.destReg]); //destination address
             break;
         }
         case regADD:{//ID5 Autodecrement deferred
@@ -594,7 +594,7 @@ int16_t address_location=0;
 			//PC-relative Deferred Mode 77
 			if(curr_Register == PC) {
 			  //adds the PC to the address we are currently on to give us memory location
-        address_op = (0xff & (address_op + prog_cntr));
+        address_op = (address_op + prog_cntr);
         //takes the upper 8 bits of data from RAM]
 				operand_data = RAM[address_op];
 				//joins the data with the lower 8 bits giving the address
@@ -608,8 +608,8 @@ int16_t address_location=0;
 			}
 
 			else {
-				address_location = RAM[(0xffff & (address_op + GPR[curr_Register]))];//Read_mem(RAM, GPR, file, I_or_D) trying to add
-                address_location = ((address_location) | (RAM[(0xffff &(address_op + GPR[curr_Register]))+1] << 0x8));//joins the data with the lower 8 bits
+				address_location = RAM[address_op + GPR[curr_Register]];//Read_mem(RAM, GPR, file, I_or_D) trying to add
+                address_location = ((address_location) | (RAM[(address_op + GPR[curr_Register])+1] << 0x8));//joins the data with the lower 8 bits
 				operand_data = RAM[address_location];//Read_mem(RAM, GPR, file, I_or_D) trying to add
                 operand_data = ((operand_data) | (RAM[address_location+1] << 0x8));//joins the data with the lower 8 bits
 			}
@@ -618,13 +618,13 @@ int16_t address_location=0;
 		case regI: {	//Index Modes modeid:6
 			//PC-relative Mode 67
 			if(curr_Register == PC) {
-				address_op = (0xffff & (address_op + prog_cntr));//adds the PC to the address we are currently on to give us memory location
+				address_op = (address_op + prog_cntr);//adds the PC to the address we are currently on to give us memory location
 				operand_data = RAM[address_op];//takes the upper 8 bits of data from RAM]
 				operand_data = (operand_data | (RAM[address_op+1] << 0x8));//joins the data with the lower 8 bits giving the address
 			}
 			else {
-				operand_data = RAM[(0xffff & (address_op + GPR[curr_Register]))];//Read_mem(RAM, GPR, file, I_or_D) trying to add
-                operand_data = ((operand_data) | (RAM[(0xffff &(address_op + GPR[curr_Register]))+1] << 0x8));//joins the data with the lower 8 bits
+				operand_data = RAM[(address_op + GPR[curr_Register])];//Read_mem(RAM, GPR, file, I_or_D) trying to add
+                operand_data = ((operand_data) | (RAM[(address_op + GPR[curr_Register])+1] << 0x8));//joins the data with the lower 8 bits
 			}
 			break;
 		}
