@@ -6,7 +6,6 @@
 // 	   Project: pdp11
 //******************************************************************************
 
-#include "pdp11.h"
 #include "memory.h"
 
 //Function definitions
@@ -14,7 +13,7 @@ void Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream &
   current_inst.Op_flag = true;
   I_or_D = true;
   int CurrentInst;
-  CurrentInst = Read_mem(RAM, GPR, file, I_or_D);
+  CurrentInst = Read_mem(RAM, GPR, file, I_or_D, &Status_word);
 
   //HALT op
   if (CurrentInst == 0x0) {
@@ -36,13 +35,13 @@ void Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream &
 
     //PC operation -- src
     if ((current_inst.sourceReg == PC) || (current_inst.modeSrc > 0x5)) {
-      current_inst.source = Read_mem(RAM, GPR, file, I_or_D);
+      current_inst.source = Read_mem(RAM, GPR, file, I_or_D, &Status_word);
       current_inst.srcPC = (GPR[PC]);
     }
 
     //PC operation -- dst
     if ((current_inst.destReg == PC) || (current_inst.modeDest > 0x5)) {
-      current_inst.destination = Read_mem(RAM, GPR, file, I_or_D);
+      current_inst.destination = Read_mem(RAM, GPR, file, I_or_D, &Status_word);
       current_inst.destPC = (GPR[PC]);
     }
   }
@@ -60,7 +59,7 @@ void Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream &
 
       //PC operation
       if ((current_inst.destReg == PC) || (current_inst.modeDest > 0x5)) {
-        current_inst.destination = Read_mem(RAM, GPR, file, I_or_D);
+        current_inst.destination = Read_mem(RAM, GPR, file, I_or_D, &Status_word);
         current_inst.srcPC = (GPR[PC]);
       }
     }
@@ -77,14 +76,17 @@ void Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream &
   /* -- Conditional branch instruction -- */
   else if ((CurrentInst & 0x7800) == 0x0) {
     if (((CurrentInst & 0x700) >> 0x8) > 0x0) {
+    	int8_t temp8bit = 0;
       current_inst.instSel = CONDITIONAL_OP;
       current_inst.opcode = ((CurrentInst & 0x700) >> 0x8);
+			temp8bit = ((CurrentInst & 0xff));
+			current_inst.offset = temp8bit;
 
-      if ((CurrentInst & 0x80) == 0x80)
+      /*if ((CurrentInst & 0x80) == 0x80) {
       	current_inst.offset = (0 - (CurrentInst & 0xff) - 1);
 
       else
-      	current_inst.offset = ((CurrentInst & 0xff) - 1);
+      	current_inst.offset = ((CurrentInst & 0xff) - 1);*/
     }
     //Set status word opertation
     else if ((CurrentInst & 0xffe0) == 0xa0) {
@@ -131,14 +133,15 @@ void Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream &
 	  /* -- jump instruction -- */
 	  else if (((CurrentInst & 0x40)) == 0x40) {
 		  current_inst.instSel = JUMP;
-		  
+		  int16_t temp16bit = 0;
 		  current_inst.modeDest = ((CurrentInst & 0x38) >> 0x3);
       current_inst.destReg = (CurrentInst & 0x7);
 		  
 		  //current_inst.offset = (CurrentInst & 0x3f);
 		  
 		  if ((current_inst.destReg == PC) || (current_inst.modeDest > 0x5)) {
-      	current_inst.destination = Read_mem(RAM, GPR, file, I_or_D);
+      	temp16bit = Read_mem(RAM, GPR, file, I_or_D, &Status_word);
+      	current_inst.destination = temp16bit;
       	current_inst.destPC = (GPR[PC]);
     	}
 		  
@@ -153,19 +156,31 @@ void Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream &
 }
 
 //This function will be used to fetch instructions or data from memory
-int Read_mem(int RAM [], int GPR [], ofstream & file, bool I_or_D) {
+int Read_mem(int RAM [], int GPR [], ofstream & file, bool I_or_D, PSW* Status_word) {
 
   int Address;
+
+  if (I_or_D){
+    if (display){
+      status_dump(GPR, Status_word);
+    }
+  }
 
   Address = RAM[(GPR[PC])];
   GPR[PC] = (GPR[PC] + 1);
   Address = ((Address) | (RAM[GPR[PC]] << 0x8));
   GPR[PC] = (GPR[PC] + 1);
 
-  if (I_or_D)
-    file << "2" << "\t" <<  Address << '\n';
+  if (I_or_D){
+    file << "2" << "\t" << setfill('0') << oct << setw(6) <<  Address << '\n';
+
+    if (display){
+      cout << "\t" << setfill('0') << oct << setw(6) << Address  << endl;
+    }
+  }
+
   else
-    file << "0" << "\t" << Address << '\n';
+    file << "0" << "\t" << setfill('0') << setw(6) << oct << Address << '\n';
 
   return Address;
 }
@@ -176,7 +191,7 @@ int Write_mem(int RAM [], int & result, int & dest_addr, ofstream & file) {
   RAM[dest_addr] = (result & 0xff);
   RAM[(dest_addr + 1)] = ((result & 0xff00) >> 0x8);
 
-  file << "1" << "\t" << dest_addr << '\n';
+  file << "1" << "\t" << oct << setw(6) << dest_addr << '\n';
 
 
   return 1;

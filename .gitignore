@@ -63,6 +63,7 @@ Thumbs.db
 
 # Project Specific #
 ######################
+*.swp
 testing/null.cpp
 testing/pdp
 testing/test_log.txt
@@ -74,6 +75,7 @@ testing/output/ConditionalBranches/*.txt
 testing/output/ConditionCode/*.txt
 testing/output/DoubleOperand/*.txt
 testing/output/SingleOperand/*.txt
+testing/output/Other/*.txt
 src/586.vim
 testing/input/ConditionCode/macro11
 testing/input/ConditionCode/obj2ascii

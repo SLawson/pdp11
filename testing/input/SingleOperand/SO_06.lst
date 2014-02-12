@@ -5,9 +5,9 @@
        5                                START:
        6 000000 012701  000002                   MOV      #2, R1
        7 000004 000261                           SEC
-       8 000006 005567  000000G                  ADC      R6 ; Should result in 3 in R1
-       9 000012 005567  000000G                  ADC      R6 ; Carry bit should be clear, so no change to R1
-      10 000016 000257                           CCC
-      11 000020 000000                           HALT
+       8 000006 005501                           ADC      R1 ; Should result in 3 in R1
+       9 000010 005501                           ADC      R1 ; Carry bit should be clear, so no change to R1
+      10 000012 000257                           CCC
+      11 000014 000000                           HALT
       12                                
       12                                

@@ -5,8 +5,8 @@
 START:
          MOV      #2, R1
          SEC
-         ADC      R6 ; Should result in 3 in R1
-         ADC      R6 ; Carry bit should be clear, so no change to R1
+         ADC      R1 ; Should result in 3 in R1
+         ADC      R1 ; Carry bit should be clear, so no change to R1
          CCC
          HALT
 

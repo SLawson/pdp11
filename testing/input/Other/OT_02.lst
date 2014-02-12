@@ -1,4 +1,4 @@
-       1                                ; File: BA_01.mac
+       1                                ; File: OT_02.mac
        2                                ; Tests: Halt instruction
        3                                ; Note: This file has an intentionally incorrect start label.
        4                                
