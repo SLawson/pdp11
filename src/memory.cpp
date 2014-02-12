@@ -81,7 +81,7 @@ void Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream &
       current_inst.instSel = CONDITIONAL_OP;
       current_inst.opcode = ((CurrentInst & 0x700) >> 0x8);
 			temp8bit = (CurrentInst & 0xff);
-			current_inst.offset = (GPR[PC] + temp8bit)
+			current_inst.offset = (GPR[PC] + temp8bit);
 
       /*if ((CurrentInst & 0x80) == 0x80) {
       	current_inst.offset = (0 - (CurrentInst & 0xff) - 1);
