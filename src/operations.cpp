@@ -514,7 +514,7 @@ writeflag is used to check for a write for both memory or register
         case regI:{//ID6 Index
             current_inst.write_flag = true;
             current_inst.result = opdestination;
-            current_inst.dest_addr = current_inst.destination; //destination address
+            current_inst.dest_addr = (0xffff &(current_inst.destination + GPR[current_inst.destReg])); //destination address
             break;
         }
         case regADD:{//ID5 Autodecrement deferred
@@ -624,10 +624,11 @@ int16_t address_location;
 				operand_data = (operand_data | (RAM[address_op+1] << 0x8));//joins the data with the lower 8 bits giving the address
 			}
 			else {
-                operand_data = GPR[curr_Register];
+
+                address_location = GPR[curr_Register];
 				//address_location = ((operand_data) | ((GPR[curr_Register]+1) << 0x8));
-				operand_data = RAM[0xffff &(address_op + operand_data)];//Read_mem(RAM, GPR, file, I_or_D) trying to add
-                operand_data = ((operand_data) | (RAM[0xffff &((address_op + address_location)+1)] << 0x8));//joins the data with the lower 8 bits
+				operand_data = RAM[(0xffff & (address_op + address_location))];//Read_mem(RAM, GPR, file, I_or_D) trying to add
+                operand_data = ((operand_data) | (RAM[(0xffff &(address_op + address_location))+1] << 0x8));//joins the data with the lower 8 bits
 
 			}
 			break;
