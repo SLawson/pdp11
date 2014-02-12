@@ -76,6 +76,7 @@ testing/output/ConditionCode/*.txt
 testing/output/DoubleOperand/*.txt
 testing/output/SingleOperand/*.txt
 testing/output/Other/*.txt
+testing/config.ini
 src/586.vim
 testing/input/ConditionCode/macro11
 testing/input/ConditionCode/obj2ascii

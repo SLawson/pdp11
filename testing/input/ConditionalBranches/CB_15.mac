@@ -14,8 +14,8 @@ L1:
 
 START:
         CCC
-        BSC   L2
+        BCS   L2
         SEC
-        BSC   L1
+        BCS   L1
         HALT
 
