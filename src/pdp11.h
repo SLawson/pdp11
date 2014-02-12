@@ -93,7 +93,7 @@ using namespace std;
 #define BPL				10      //Branch if plus (N=0)
 #define BMI				01      //Branch if minus (N=1)
 #define BHI				02      //Branch if higher than (C|Z = 0)
-#define BLOS			0101    //Branch if lower or same (C|Z = 1)
+#define BLOS			03    //Branch if lower or same (C|Z = 1)
 #define BVC				04      //Branch if overflow clear (V=0)
 #define BVS				05      //Branch if overflow set (V=1)
 #define BCC_BHIS	06      //Branch if carry clear (C=0)

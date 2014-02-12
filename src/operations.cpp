@@ -40,7 +40,7 @@ Take a source and destination memory location
       {
 
         opdestination = opsource;
-        StatusFlags(Status_word,opdestination,1);
+        StatusFlags(Status_word,opdestination,0);
         Status_word.V = false;//sets the overflow flag to false
         break;
 
