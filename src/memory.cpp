@@ -43,7 +43,7 @@ void Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream &
     //PC operation -- dst
     if ((current_inst.destReg == PC) || (current_inst.modeDest > 0x5)) {
       int16_t temp16bit = Read_mem(RAM, GPR, file, I_or_D, &Status_word);
-      current_inst.source = temp16bit;
+      current_inst.destination = temp16bit;
       current_inst.destPC = (GPR[PC]);
     }
   }
@@ -62,8 +62,8 @@ void Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream &
       //PC operation
       if ((current_inst.destReg == PC) || (current_inst.modeDest > 0x5)) {
         int16_t temp16bit = Read_mem(RAM, GPR, file, I_or_D, &Status_word);
-      	current_inst.source = temp16bit;
-        current_inst.srcPC = (GPR[PC]);
+      	current_inst.destination = temp16bit;
+        current_inst.destPC = (GPR[PC]);
       }
     }
 
