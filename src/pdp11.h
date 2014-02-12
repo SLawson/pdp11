@@ -100,7 +100,7 @@ using namespace std;
 #define BCS_BLO		07      //Branch if carry set (C=1)
 
 //Subroutine instructions
-#define JSR		01		//Jump to Subroutine
+#define JSR		04		//Jump to Subroutine
 #define RTS		020		//Return from Subroutine
 
 //General Purpose Register names
