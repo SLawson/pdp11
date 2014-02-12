@@ -326,22 +326,21 @@ Take a source and destination memory location
 
 		  //Push specified Link Register's contents onto stack
 		  //modeSrc = 00, sourceReg = Link Register
-		  opsource = AddressmodesDecode(RAM, current_inst.modeSrc, current_inst.source, GPR, current_inst.sourceReg,current_inst.srcPC);
+		  opdestination = AddressmodesDecode(RAM, current_inst.modeSrc, current_inst.source, GPR, current_inst.sourceReg,current_inst.srcPC);
 
 		  //Copy PC's contents to specified Link Register (pre-incremented PC)
-		  GPR[current_inst.sourceReg] = GPR[PC];
+		  GPR[current_inst.destReg] = GPR[PC];
 
 		  //Copy Jump Destination to PC
-//		  TakeBranch(GPR[PC], current_inst.destination);
-		  GPR[PC] = GPR[PC] + current_inst.destination;
+		  GPR[PC] = current_inst.destination;
 	  }
 	  else if(current_inst.opcode == RTS) {	//ReTurn from Subroutine
 
 		  //Copy specified Link Register's contents to PC
-		  GPR[PC] = opdestination;
+		  GPR[PC] = GPR[current_inst.destReg];
 
 		  //Pop top of stack to specified Link Register
-		  opsource = AddressmodesDecode(RAM, current_inst.modeSrc, current_inst.source, GPR, current_inst.sourceReg,current_inst.srcPC);
+		  opdestination = AddressmodesDecode(RAM, current_inst.modeSrc, current_inst.source, GPR, current_inst.sourceReg,current_inst.srcPC);
 	  }
 	  else {
 		  //cout <<"Invalid Subroutine Instruction"; --move this!!!
@@ -514,7 +513,7 @@ writeflag is used to check for a write for both memory or register
         case regI:{//ID6 Index
             current_inst.write_flag = true;
             current_inst.result = opdestination;
-            current_inst.dest_addr = (0xffff &(current_inst.destination + GPR[current_inst.destReg])); //destination address
+            current_inst.dest_addr = current_inst.destination; //destination address
             break;
         }
         case regADD:{//ID5 Autodecrement deferred
@@ -530,19 +529,16 @@ writeflag is used to check for a write for both memory or register
             break;
             }
         case regAID:{//ID3 Autoincrement deferred
-                if(current_inst.destReg == SP) {
-//                    GPR[current_inst.destReg] = opdestination;
-					current_inst.write_flag = true;
-					current_inst.result = opsource;
-					current_inst.dest_addr = opdestination - 2;
-                }
+                if(current_inst.destReg == SP)
+                    GPR[current_inst.destReg] = opdestination;
                 else
                 {
                     current_inst.write_flag = true;
                     current_inst.result = opdestination;
                     current_inst.dest_addr = RAM[GPR[current_inst.destReg]-2];
+                    break;
                 }
-                break;
+
             }
         case regAI:{//ID 2 Autoincrement
                     current_inst.write_flag = true;
@@ -624,11 +620,10 @@ int16_t address_location;
 				operand_data = (operand_data | (RAM[address_op+1] << 0x8));//joins the data with the lower 8 bits giving the address
 			}
 			else {
-
-                address_location = GPR[curr_Register];
+                operand_data = GPR[curr_Register];
 				//address_location = ((operand_data) | ((GPR[curr_Register]+1) << 0x8));
-				operand_data = RAM[(0xffff & (address_op + address_location))];//Read_mem(RAM, GPR, file, I_or_D) trying to add
-                operand_data = ((operand_data) | (RAM[(0xffff &(address_op + address_location))+1] << 0x8));//joins the data with the lower 8 bits
+				operand_data = RAM[0xffff &(address_op + operand_data)];//Read_mem(RAM, GPR, file, I_or_D) trying to add
+                operand_data = ((operand_data) | (RAM[0xffff &((address_op + address_location)+1)] << 0x8));//joins the data with the lower 8 bits
 
 			}
 			break;

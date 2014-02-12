@@ -35,7 +35,8 @@ void Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream &
 
     //PC operation -- src
     if ((current_inst.sourceReg == PC) || (current_inst.modeSrc > 0x5)) {
-      current_inst.source = Read_mem(RAM, GPR, file, I_or_D, &Status_word);
+    	int16_t temp16bit = Read_mem(RAM, GPR, file, I_or_D, &Status_word);
+      current_inst.source = temp16bit;
       current_inst.srcPC = (GPR[PC]);
     }
 
@@ -67,39 +68,25 @@ void Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream &
       //JSR
     else if (((CurrentInst & 0xfc0) >> 0x6) < 0x28) {
       current_inst.instSel = JUMP;
-      current_inst.opcode = JSR;
-
-      //Set Link Register Fields
-      current_inst.modeSrc = regS;
-      current_inst.sourceReg = ((CurrentInst & 0x01c0) >> 0x6);	//read reg field in instruction
-
-      //Set Stack Pointer Fields
-      current_inst.modeDest = regADD;
-      current_inst.destReg = SP;
-      current_inst.destination = Read_mem(RAM, GPR, file, I_or_D, &Status_word);
-      current_inst.destPC = (GPR[PC]);
-
-      //Sign-extend destination if negative
-      if (current_inst.destination & 0x8000) {
-    	  current_inst.destination = (current_inst.destination | 0xffff0000);
-      }
+      current_inst.modeDest = regAD;
+      current_inst.byteSel = ((CurrentInst & 0x8000) >> 0xf);
+      current_inst.destReg = ((CurrentInst & 0x01c0) >> 0x6);
+      current_inst.destination = (CurrentInst & 0x003f); //this is the value of the 6 bit dst field...
     }
   }
 
   /* -- Conditional branch instruction -- */
   else if ((CurrentInst & 0x7800) == 0x0) {
-    if (((CurrentInst & 0x700) >> 0x8) > 0x0) {
+    if (((CurrentInst & 0x700) > 0x0) || ((CurrentInst & 0xf800) == 0x8000)) {
+    	current_inst.byteSel = ((CurrentInst & 0x8000) >> 0xf);
     	int8_t temp8bit = 0;
       current_inst.instSel = CONDITIONAL_OP;
       current_inst.opcode = ((CurrentInst & 0x700) >> 0x8);
+      if (current_inst.opcode == 0x0)
+      	current_inst.opcode = BPL;
 			temp8bit = ((CurrentInst & 0xff));
 			current_inst.offset = temp8bit;
 
-      /*if ((CurrentInst & 0x80) == 0x80) {
-      	current_inst.offset = (0 - (CurrentInst & 0xff) - 1);
-
-      else
-      	current_inst.offset = ((CurrentInst & 0xff) - 1);*/
     }
     //Set status word opertation
     else if ((CurrentInst & 0xffe0) == 0xa0) {
@@ -138,16 +125,8 @@ void Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream &
 
     //RTS
     else if ((CurrentInst & 0xfff8) == 0x0080) {
-    	current_inst.instSel = JUMP;
-    	current_inst.opcode = RTS;
-
-    	//Set Link Register Fields
-    	current_inst.modeDest = regS;
-    	current_inst.destReg = (CurrentInst & 0x0007);
-
-    	//Set Stack Pointer Fields
-    	current_inst.modeSrc = regAID;
-    	current_inst.sourceReg = SP;
+      current_inst.modeSrc = regAI;
+      current_inst.sourceReg = (CurrentInst & 0x0007);
     }
 
 	  //Decode the current instruction
