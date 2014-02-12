@@ -90,14 +90,14 @@ using namespace std;
 #define BGT				06      //Branch if greater than (N^V = 1)
 #define BLE				07      //Branch if less than or equal (N^V = 0)
 //byteSel = 1
-#define BPL				00      //Branch if plus (N=0)
+#define BPL				10      //Branch if plus (N=0)
 #define BMI				01      //Branch if minus (N=1)
 #define BHI				02      //Branch if higher than (C|Z = 0)
 #define BLOS			0101    //Branch if lower or same (C|Z = 1)
 #define BVC				04      //Branch if overflow clear (V=0)
 #define BVS				05      //Branch if overflow set (V=1)
-#define BCC_BHIS		06      //Branch if carry clear (C=0)
-#define BCS_BLO			07      //Branch if carry set (C=1)
+#define BCC_BHIS	06      //Branch if carry clear (C=0)
+#define BCS_BLO		07      //Branch if carry set (C=1)
 
 //Subroutine instructions
 #define JSR		04		//Jump to Subroutine

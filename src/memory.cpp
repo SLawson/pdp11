@@ -68,6 +68,7 @@ void Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream &
     else if (((CurrentInst & 0xfc0) >> 0x6) < 0x28) {
       current_inst.instSel = JUMP;
       current_inst.modeDest = regAD;
+      current_inst.byteSel = ((CurrentInst & 0x8000) >> 0xf);
       current_inst.destReg = ((CurrentInst & 0x01c0) >> 0x6);
       current_inst.destination = (CurrentInst & 0x003f); //this is the value of the 6 bit dst field...
     }
@@ -75,18 +76,16 @@ void Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream &
 
   /* -- Conditional branch instruction -- */
   else if ((CurrentInst & 0x7800) == 0x0) {
-    if (((CurrentInst & 0x700) >> 0x8) > 0x0) {
+    if (((CurrentInst & 0x700) > 0x0) || ((CurrentInst & 0xf800) == 0x8000)) {
+    	current_inst.byteSel = ((CurrentInst & 0x8000) >> 0xf);
     	int8_t temp8bit = 0;
       current_inst.instSel = CONDITIONAL_OP;
       current_inst.opcode = ((CurrentInst & 0x700) >> 0x8);
+      if (current_inst.opcode == 0x0)
+      	current_inst.opcode = BPL;
 			temp8bit = ((CurrentInst & 0xff));
 			current_inst.offset = temp8bit;
 
-      /*if ((CurrentInst & 0x80) == 0x80) {
-      	current_inst.offset = (0 - (CurrentInst & 0xff) - 1);
-
-      else
-      	current_inst.offset = ((CurrentInst & 0xff) - 1);*/
     }
     //Set status word opertation
     else if ((CurrentInst & 0xffe0) == 0xa0) {
