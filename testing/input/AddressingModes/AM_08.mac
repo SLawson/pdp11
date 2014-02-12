@@ -24,11 +24,11 @@
 
 START:
         MOV   #202, R0
-        MOV   #400, R5
+        MOV   #398, R5
         MOV   @-2(R0), R2
         MOV   @0(R0), R3
         MOV   @2(R0), R4
-        MOV   R4, @2(R5)
+        MOV   R4, @2(R5)  ;store R4 at address stored in 400 (address 300)
         MOV   @2(R5), R1
         CCC
         HALT
