@@ -502,18 +502,23 @@ writeflag is used to check for a write for both memory or register
   //return function here for the different modes
   if(writeflag)//checks if op requires write to memory or register
   {
+      int RAM_contents;
+
       switch (current_inst.modeDest) {
 
         case regID:{//ID 7 Index deferred
+
             current_inst.write_flag = true;
             current_inst.result = opdestination;
-            current_inst.dest_addr = RAM[(0xffff &(current_inst.destination + GPR[current_inst.destReg]))]; //destination address;
+            RAM_contents = RAM[(0xffff & (current_inst.destination + GPR[current_inst.destReg]))];//Read_mem(RAM, GPR, file, I_or_D) trying to add
+            RAM_contents = ((RAM_contents) | (RAM[(0xffff &(current_inst.destination + GPR[current_inst.destReg]))+1] << 0x8));//joins the data with the lower 8 bits
+            current_inst.dest_addr =  RAM_contents;//destination address;
             break;
         }
         case regI:{//ID6 Index
             current_inst.write_flag = true;
             current_inst.result = opdestination;
-            current_inst.dest_addr = current_inst.destination; //destination address
+            current_inst.dest_addr = (0xffff &(current_inst.destination + GPR[current_inst.destReg])); //destination address
             break;
         }
         case regADD:{//ID5 Autodecrement deferred
@@ -604,7 +609,7 @@ int16_t address_location=0;
 
 			else {
 				address_location = RAM[(0xffff & (address_op + GPR[curr_Register]))];//Read_mem(RAM, GPR, file, I_or_D) trying to add
-                address_location = ((operand_data) | (RAM[(0xffff &(address_op + GPR[curr_Register]))+1] << 0x8));//joins the data with the lower 8 bits
+                address_location = ((address_location) | (RAM[(0xffff &(address_op + GPR[curr_Register]))+1] << 0x8));//joins the data with the lower 8 bits
 				operand_data = RAM[address_location];//Read_mem(RAM, GPR, file, I_or_D) trying to add
                 operand_data = ((operand_data) | (RAM[address_location+1] << 0x8));//joins the data with the lower 8 bits
 			}
