@@ -400,7 +400,7 @@ Take a source and destination memory location
 		}
 		case BGT: {				//Branch on Greater Than(Zero)
 
-			if((Status_word.N == Status_word.V) || Status_word.Z == false) {
+			if((Status_word.N == Status_word.V) || Status_word.Z == true) {
 				TakeBranch(GPR[PC], current_inst.offset);
 			}
 			break;
