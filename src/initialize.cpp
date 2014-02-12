@@ -12,7 +12,7 @@ int initialize(int RAM [], int argc, char * argv[], int* PC_Reg, string &out_fil
 
   // misc vars
   int status = 0;                  // status of initialization operations
-  int load_address = 0;           // pointer into RAM for storing file data
+  int load_address = 0;            // pointer into RAM for storing file data
   int address_flag = 0;            // indicates whether or not the file has specified a starting load address
   int i = 1;                       // loop control variable
   string temp;                     // temporary string storage during file parsing
