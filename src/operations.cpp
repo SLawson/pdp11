@@ -512,7 +512,7 @@ writeflag is used to check for a write for both memory or register
             current_inst.result = opdestination;
             RAM_contents = RAM[(0xffff & (current_inst.destination + GPR[current_inst.destReg]))];//Read_mem(RAM, GPR, file, I_or_D) trying to add
             RAM_contents = ((RAM_contents) | (RAM[(0xffff &(current_inst.destination + GPR[current_inst.destReg]))+1] << 0x8));//joins the data with the lower 8 bits
-            current_inst.dest_addr =  RAM[RAM_contents];//destination address;
+            current_inst.dest_addr =  RAM_contents;//destination address;
             break;
         }
         case regI:{//ID6 Index
