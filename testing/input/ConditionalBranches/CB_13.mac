@@ -14,8 +14,8 @@ L1:
 
 START:
         CCC
-        BVC   L2
+        BVS   L2
         SEV
-        BVC   L1
+        BVS   L1
         HALT
 
