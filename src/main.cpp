@@ -28,8 +28,10 @@ ofstream file;  // trace file stream
 
   cout <<"PDP-11/20 Simulation\n\n";
 
-  if(DEBUG_FLAG)
+  if(DEBUG_FLAG) {
     cout <<"*************************DEBUG MODE*************************\n\n";
+    GPR[SP] = MEM_SIZE - 1;	//Set stack pointer to top of address space
+  }
 
   //Initialize program
   init_status = initialize(RAM, argc, argv, &GPR[PC], out_file); //Read ASCII file, write code and static data to memory
