@@ -35,7 +35,8 @@ void Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream &
 
     //PC operation -- src
     if ((current_inst.sourceReg == PC) || (current_inst.modeSrc > 0x5)) {
-      current_inst.source = Read_mem(RAM, GPR, file, I_or_D, &Status_word);
+    	int16_t temp16bit = Read_mem(RAM, GPR, file, I_or_D, &Status_word);
+      current_inst.source = temp16bit;
       current_inst.srcPC = (GPR[PC]);
     }
 
