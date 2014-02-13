@@ -3,8 +3,6 @@
 
 .RADIX 10
 
-MIN:     .WORD    -32768.
-
 L9:
         MOV   #3, R5
         HALT
@@ -15,7 +13,7 @@ L4:
         HALT
 
 L3:
-        MOV   MIN, R1
+        MOV   #-32768, R1
         MOV   #2, R2
         MOV   #0, R3
         SUB   R3, R1
@@ -25,7 +23,7 @@ L3:
         HALT
 
 L2:
-        MOV   #MIN, R1
+        MOV   #-32768, R1
         MOV   #1, R2
         MOV   #0, R3
         SUB   R3, R1
@@ -47,9 +45,9 @@ START:
         MOV   #5, R1
         MOV   #2, R2
         MOV   #3, R3
-        SUB   R2, R1
+        SUB   R2, R1 ; R1 is now 3
         BEQ   L9
-        SUB   R3, R1
+        SUB   R3, R1 ; R1 is now 0
         BEQ   L1
         HALT
 
