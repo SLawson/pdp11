@@ -120,8 +120,20 @@ Take a source and destination memory location
 
 		case SUB://dest -=src
 		{
-		opdestination -= opsource;
-		StatusFlags(opdestination,1);
+		//opdestination -= opsource;
+		//StatusFlags(opdestination,1);
+		int16_t temp;
+        temp = (0xffff &(opdestination - opsource));
+        StatusFlags(temp,1);
+         if((((opsource > 0) && (opdestination < 0)) && (temp > 0))||(((opsource < 0) && (opdestination > 0)) && (temp < 0)))
+            Status_word.V = true;
+        else
+            Status_word.V = false;
+
+        opdestination = temp;
+
+
+
 		break;
 		}
 		default:
