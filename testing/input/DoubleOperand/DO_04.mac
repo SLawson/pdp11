@@ -12,7 +12,6 @@ L2:
         BCS   L9
         BVS   L9
         MOV   #3, R0
-        CCC
         HALT
 
 L1:     
