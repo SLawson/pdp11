@@ -561,7 +561,7 @@ writeflag is used to check for a write for both memory or register
                 {
                     current_inst.write_flag = true;
                     current_inst.result = opdestination;
-                    current_inst.dest_addr = access_mem([GPR[current_inst.destReg]-2],-1);
+                    current_inst.dest_addr = access_mem(GPR[current_inst.destReg]-2,-1);
 
                 }
                 break;
@@ -577,7 +577,7 @@ writeflag is used to check for a write for both memory or register
         {
             current_inst.write_flag = true;
             current_inst.result = opdestination;
-            current_inst.dest_addr = GPR[current_inst.destReg]
+            current_inst.dest_addr = GPR[current_inst.destReg];
             break;
         }
         case regS://ID 0 Register
