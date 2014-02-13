@@ -3,14 +3,12 @@
 
 .RADIX 10
 
-W1:   .WORD     4660
-
 L9:
         MOV     #5, R5
         HALT
 
 L1:     
-        MOV     #-32768, R1
+        MOV     #-32767, R1
         SWAB    R1
         HALT
 
