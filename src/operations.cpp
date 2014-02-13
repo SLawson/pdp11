@@ -329,10 +329,10 @@ Take a source and destination memory location
 		  opdestination = AddressmodesDecode(RAM, current_inst.modeSrc, current_inst.source, GPR, current_inst.sourceReg,current_inst.srcPC);
 
 		  //Copy PC's contents to specified Link Register (pre-incremented PC)
-		  GPR[current_inst.destReg] = GPR[PC];
+		  GPR[current_inst.sourceReg] = GPR[PC];
 
 		  //Copy Jump Destination to PC
-		  GPR[PC] = current_inst.destination;
+		  GPR[PC] = GPR[PC] + current_inst.destination;
 	  }
 	  else if(current_inst.opcode == RTS) {	//ReTurn from Subroutine
 
