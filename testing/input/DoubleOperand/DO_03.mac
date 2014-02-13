@@ -8,7 +8,7 @@ L9:
         HALT
 
 L2:
-        BCS   L9
+        BCC   L9
         BVS   L9
         CCC
         HALT
