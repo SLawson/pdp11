@@ -50,6 +50,13 @@ Take a source and destination memory location
         int tempresult;
 		    tempresult = opsource - opdestination;
 		    StatusFlags(Status_word,tempresult,0);
+		    if(((tempresult) & (1 << 15)) || (((tempresult < 0) && (((tempresult) & (1 << 15)) != 0))))
+                Status_word.C = false;
+            else
+                Status_word.C = true;
+
+
+
 		    writeflag = false;//does not modify memory/registers
 
         break;
