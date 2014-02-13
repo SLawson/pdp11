@@ -21,7 +21,6 @@ L1:
         CCC
         MOV     #-32768, R1
         ASL     R1
-        BEQ     L9
         BCS     L2
         HALT
 

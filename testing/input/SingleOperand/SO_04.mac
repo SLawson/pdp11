@@ -17,14 +17,14 @@ L2:
         BVS    L9
         BCS    L9
         BEQ    L9
-        BMI    L1
+        BMI    L3
         HALT
         
 L1:
         MOV    #-32768, R1
         DEC    R1
-        BVS    L9
-        BCS    L2
+        BCS    L9
+        BVS    L2
         HALT
 
 START:
