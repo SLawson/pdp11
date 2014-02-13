@@ -8,7 +8,7 @@
 
 #include "initialize.h"
 
-int initialize(int RAM [], int argc, char * argv[], int* PC_Reg, string &out_file) {
+int initialize(int argc, char * argv[], string &out_file) {
 
   // misc vars
   int status = 0;                  // status of initialization operations
@@ -20,7 +20,7 @@ int initialize(int RAM [], int argc, char * argv[], int* PC_Reg, string &out_fil
   ifstream fi;                     // input file stream
 
   // default values if user doesn't provide them
-  *PC_Reg = 010;                   // default PC if none specified
+  GPR[7] = 010;                   // default PC if none specified
   string fi_name("default.ascii"); // default input file name
   // out_file default name is set in main when constructed
 
@@ -54,7 +54,7 @@ int initialize(int RAM [], int argc, char * argv[], int* PC_Reg, string &out_fil
     }
 
     else if(!pc_opt.compare(argv[i])){
-      *PC_Reg = (int) strtol(argv[i+1], NULL, 8);
+      GPR[7] = (int) strtol(argv[i+1], NULL, 8);
       address_flag = 1;
       i += 1;
     }
@@ -116,7 +116,7 @@ int initialize(int RAM [], int argc, char * argv[], int* PC_Reg, string &out_fil
           }
 
           else{
-            *PC_Reg = result.value;
+            GPR[7] = result.value;
             address_flag = 1;
           }
 

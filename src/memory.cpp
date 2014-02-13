@@ -9,11 +9,12 @@
 #include "memory.h"
 
 //Function definitions
-void Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream & file, bool I_or_D, PSW & Status_word) {
+void Fetch_Decode(instruction & current_inst, bool I_or_D) {
   current_inst.Op_flag = true;
   I_or_D = true;
   int CurrentInst;
-  CurrentInst = Read_mem(RAM, GPR, file, I_or_D, &Status_word);
+  CurrentInst = access_mem(GPR[7], FETCH);
+  GPR[7] = GPR[7] + 2;
 
   //HALT op
   if (CurrentInst == 0x0) {
@@ -35,14 +36,16 @@ void Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream &
 
     //PC operation -- src
     if ((current_inst.sourceReg == PC) || (current_inst.modeSrc > 0x5)) {
-    	int16_t temp16bit = Read_mem(RAM, GPR, file, I_or_D, &Status_word);
+    	int16_t temp16bit = access_mem(GPR[7], FETCH);
+  		GPR[7] = GPR[7] + 2;
       current_inst.source = temp16bit;
       current_inst.srcPC = (GPR[PC]);
     }
 
     //PC operation -- dst
     if ((current_inst.destReg == PC) || (current_inst.modeDest > 0x5)) {
-      int16_t temp16bit = Read_mem(RAM, GPR, file, I_or_D, &Status_word);
+      int16_t temp16bit = access_mem(GPR[7], FETCH);
+  		GPR[7] = GPR[7] + 2;
       current_inst.destination = temp16bit;
       current_inst.destPC = (GPR[PC]);
     }
@@ -61,7 +64,8 @@ void Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream &
 
       //PC operation
       if ((current_inst.destReg == PC) || (current_inst.modeDest > 0x5)) {
-        int16_t temp16bit = Read_mem(RAM, GPR, file, I_or_D, &Status_word);
+        int16_t temp16bit = access_mem(GPR[7], FETCH);
+  			GPR[7] = GPR[7] + 2;
       	current_inst.destination = temp16bit;
         current_inst.destPC = (GPR[PC]);
       }
@@ -81,7 +85,8 @@ void Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream &
       
       current_inst.destReg = SP;
       current_inst.destPC = (GPR[PC]);
-      int16_t temp16bit = Read_mem(RAM, GPR, file, I_or_D, &Status_word);
+      int16_t temp16bit = access_mem(GPR[7], FETCH);
+  		GPR[7] = GPR[7] + 2;
       current_inst.destination = temp16bit;
     }
   }
@@ -160,7 +165,8 @@ void Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream &
 		  //current_inst.offset = (CurrentInst & 0x3f);
 		  
 		  if ((current_inst.destReg == PC) || (current_inst.modeDest > 0x5)) {
-      	temp16bit = Read_mem(RAM, GPR, file, I_or_D, &Status_word);
+      	temp16bit = access_mem(GPR[7], FETCH);
+  			GPR[7] = GPR[7] + 2;
       	current_inst.destination = temp16bit;
       	current_inst.destPC = (GPR[PC]);
     	}
@@ -176,45 +182,47 @@ void Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream &
 }
 
 //This function will be used to fetch instructions or data from memory
-int Read_mem(int RAM [], int GPR [], ofstream & file, bool I_or_D, PSW* Status_word) {
+int access_mem(int index, int flag, int out=0) {
 
-  int Address;
+  int value = 0;
 
-  if (I_or_D){
+  if (flag == READ){
+    file << "0" << "\t" << setfill('0') << setw(6) << oct << index << '\n';
+    value = RAM[index];
+    value = (value | (RAM[index + 1] << 0x8));
+  }
+
+  else if (flag == WRITE){
+    RAM[index] = (out & 0xFF);
+    RAM[index + 1] = ((out & 0xFF00) >> 0x8);
+    file << "1" << "\t" << setfill('0') << oct << setw(6) <<  index << '\n';
+  }
+
+  else if (flag == FETCH){
+    file << "2" << "\t" << setfill('0') << oct << setw(6) <<  index << '\n';
+    value = RAM[index];
+    value = (value | (RAM[index + 1] << 0x8));
+
     if (display){
-      status_dump(GPR, Status_word);
+      // dump register values
+      for (int i=0; i<REGISTERS; ++i){
+        cout << "R" << i << "," 
+             << setfill('0') << oct << setw(6) << GPR[i] << endl;
+      }
+      // dump PSW 
+      cout << Status_word.priority << Status_word.T
+           << Status_word.Z << Status_word.N << Status_word.C
+           << Status_word.V << endl;
+      // dump fetched instruction
+      cout << "\t" << setfill('0') << oct << setw(6) << value << endl;
     }
   }
 
-  Address = RAM[(GPR[PC])];
-  GPR[PC] = (GPR[PC] + 1);
-  Address = ((Address) | (RAM[GPR[PC]] << 0x8));
-  GPR[PC] = (GPR[PC] + 1);
-
-  if (I_or_D){
-    file << "2" << "\t" << setfill('0') << oct << setw(6) <<  Address << '\n';
-
-    if (display){
-      cout << "\t" << setfill('0') << oct << setw(6) << Address  << endl;
-    }
+  else{
+    value = RAM[index];
+    value = (value | (RAM[index + 1] << 0x8));
   }
 
-  else
-    file << "0" << "\t" << setfill('0') << setw(6) << oct << Address << '\n';
-
-  return Address;
+  return value;
 }
-
-
-int Write_mem(int RAM [], int & result, int & dest_addr, ofstream & file) {
-
-  RAM[dest_addr] = (result & 0xff);
-  RAM[(dest_addr + 1)] = ((result & 0xff00) >> 0x8);
-
-  file << "1" << "\t" << oct << setw(6) << dest_addr << '\n';
-
-
-  return 1;
-}
-
 
