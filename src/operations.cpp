@@ -47,7 +47,7 @@ Take a source and destination memory location
       }
       case CMP://compute src - dest, set flags only
       {
-        int tempresult;
+        int16_t tempresult;
 		    tempresult = opsource - opdestination;
 		    StatusFlags(tempresult,0);
 		    if(((tempresult) & (1 << 15)) || (((tempresult < 0) && (((tempresult) & (1 << 15)) != 0))))
