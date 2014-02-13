@@ -8,14 +8,17 @@
 W1:       .WORD 20
 W2:       .WORD 30
 
+.=.+96
+
+W3:       .WORD 100
+W4:       .WORD 102
+          
 .PSECT REL
 
-          .WORD 100
-          .WORD 102
-
 START:
-        MOV     -4, -6
-        MOV     W1, R0
-        CCC
+        MOV     #50, R0
+        MOV     R0, @W3
+        MOV     @W3, @W4
+        MOV     @W4, R1
         HALT  
 
