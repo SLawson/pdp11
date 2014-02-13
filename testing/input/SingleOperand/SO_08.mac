@@ -8,23 +8,23 @@ L9:
         HALT
 
 L2:
-        SEC
-        MOV     #-32768, R1
-        ADDC    R1
-        BVS     L9
-        BCS     L3
+        MOV     #2, R2
         HALT
 
 L1:
-        SEC
-        MOV     #32767, R1
-        ADDC    R1
-        BVS     L2
+        MOV     #-2, R1
+        TST     R1
+        BCS     L9
+        BVS     L9
+        BEQ     L9
+        BMI     L1
         HALT
-
 START:
-         MOV      #-2, R1
-         TST      R1
-          
-         HALT
+        MOV     #0, R1
+        TST     R1
+        BCS     L9
+        BVS     L9
+        BMI     L9
+        BEQ     L2
+        HALT
 

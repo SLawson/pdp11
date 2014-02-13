@@ -16,7 +16,7 @@ L2:
 
 L1:     
         BMI   L9
-        BIC   R4, R1
+        BIS   R4, R1
         BMI   L2
         HALT
 

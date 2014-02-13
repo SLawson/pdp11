@@ -1,6 +1,22 @@
 ; File: SO_09.mac
 ; Tests: Rotate Right
 
+L9:
+        MOV     #5, R5
+        HALT
+
+L2:
+        MOV     #2, R2
+        HALT
+
+L1:
+        MOV     #-2, R1
+        TST     R1
+        BCS     L9
+        BVS     L9
+        BEQ     L9
+        BMI     L1
+        HALT
 
 START:
          MOV      #2, R1
