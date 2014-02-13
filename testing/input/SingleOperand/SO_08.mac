@@ -25,6 +25,6 @@ START:
         BCS     L9
         BVS     L9
         BMI     L9
-        BEQ     L2
+        BEQ     L1
         HALT
 
