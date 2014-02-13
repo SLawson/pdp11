@@ -18,6 +18,5 @@ extern string *reg_file;
 extern bool display;
 
 int reg_dump(bool file_out, bool std_out); // dumps register values to a text file
-void status_dump(); // dumps register values to the screen in octal
 
 #endif // TESTING_H_

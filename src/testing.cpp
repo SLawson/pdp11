@@ -57,12 +57,6 @@ int reg_dump(bool file_out, bool std_out){
 
 void status_dump(){
 
-  for (int i=0; i<REGISTERS; ++i){
-    cout << "R" << i << "," << setfill('0') << oct << setw(6) << GPR[i] << endl;
-  }
-  // dump PSW also
-  cout << Status_word -> priority << Status_word -> T << Status_word -> Z << Status_word -> N
-     << Status_word -> C << Status_word -> V << endl;
-
   return;
 }
+
