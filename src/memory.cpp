@@ -13,7 +13,7 @@ void Fetch_Decode(instruction & current_inst, bool I_or_D) {
   current_inst.Op_flag = true;
   I_or_D = true;
   int CurrentInst;
-  CurrentInst = access_mem(GPR[7], 2);
+  CurrentInst = access_mem(GPR[7], FETCH);
   GPR[7] = GPR[7] + 2;
 
   //HALT op
@@ -36,14 +36,16 @@ void Fetch_Decode(instruction & current_inst, bool I_or_D) {
 
     //PC operation -- src
     if ((current_inst.sourceReg == PC) || (current_inst.modeSrc > 0x5)) {
-    	int16_t temp16bit = Read_mem(GPR, file, I_or_D);
+    	int16_t temp16bit = access_mem(GPR[7], FETCH);
+  		GPR[7] = GPR[7] + 2;
       current_inst.source = temp16bit;
       current_inst.srcPC = (GPR[PC]);
     }
 
     //PC operation -- dst
     if ((current_inst.destReg == PC) || (current_inst.modeDest > 0x5)) {
-      int16_t temp16bit = Read_mem(GPR, file, I_or_D);
+      int16_t temp16bit = access_mem(GPR[7], FETCH);
+  		GPR[7] = GPR[7] + 2;
       current_inst.destination = temp16bit;
       current_inst.destPC = (GPR[PC]);
     }
@@ -62,7 +64,8 @@ void Fetch_Decode(instruction & current_inst, bool I_or_D) {
 
       //PC operation
       if ((current_inst.destReg == PC) || (current_inst.modeDest > 0x5)) {
-        int16_t temp16bit = Read_mem(GPR, file, I_or_D);
+        int16_t temp16bit = access_mem(GPR[7], FETCH);
+  			GPR[7] = GPR[7] + 2;
       	current_inst.destination = temp16bit;
         current_inst.destPC = (GPR[PC]);
       }
@@ -82,7 +85,8 @@ void Fetch_Decode(instruction & current_inst, bool I_or_D) {
       
       current_inst.destReg = SP;
       current_inst.destPC = (GPR[PC]);
-      int16_t temp16bit = Read_mem(GPR, file, I_or_D);
+      int16_t temp16bit = access_mem(GPR[7], FETCH);
+  		GPR[7] = GPR[7] + 2;
       current_inst.destination = temp16bit;
     }
   }
@@ -161,7 +165,8 @@ void Fetch_Decode(instruction & current_inst, bool I_or_D) {
 		  //current_inst.offset = (CurrentInst & 0x3f);
 		  
 		  if ((current_inst.destReg == PC) || (current_inst.modeDest > 0x5)) {
-      	temp16bit = Read_mem(GPR, file, I_or_D);
+      	temp16bit = access_mem(GPR[7], FETCH);
+  			GPR[7] = GPR[7] + 2;
       	current_inst.destination = temp16bit;
       	current_inst.destPC = (GPR[PC]);
     	}
