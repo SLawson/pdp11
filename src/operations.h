@@ -13,9 +13,9 @@
 #include <stdint.h>
 
 //Function prototypes
-void Operation(instruction & current_inst, int GPR [], PSW & Status_word);        //Perform operation on current_inst operands
-void StatusFlags(PSW & Status_word,int regDest, int ignore);
-int AddressmodesDecode(int mode, int &address_op, int GPR[],int curr_Register,int prog_cntr);
+void Operation(instruction & current_inst, PSW & Status_word);        //Perform operation on current_inst operands
+void StatusFlags(int regDest, int ignore);
+int AddressmodesDecode(int mode, int &address_op,int curr_Register,int prog_cntr);
 void TakeBranch(int & Program_Counter, int & branch_offset);
 
 #endif//OPERATIONS_H_
