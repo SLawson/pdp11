@@ -22,7 +22,7 @@ struct command{
 };
 
 //Function prototypes
-int initialize(int RAM [], int argc, char * argv[], int* PC_Reg, string& out_file);      //Reads ASCII, stores code/data sections in memory before execution begins
+int initialize(int argc, char * argv[], string& out_file);      //Reads ASCII, stores code/data sections in memory before execution begins
 command parse_line(string line_in);         // parses a line from the input file into a command and value
 
 
