@@ -277,10 +277,12 @@ Take a source and destination memory location
         int16_t dest16 = opdestination;
 
         Status_word.C = (dest16 & 0x8000);
-        if (dest16 & 0x8000)
+        /*if (dest16 & 0x8000)
           dest16 = ((dest16 << 0x1) | (0x1 << 0xf));
         else if (!(dest16 & 0x8000))
-          dest16 = ((dest16 << 0x1) & (0xfffe));
+          dest16 = ((dest16 << 0x1) & (0xfffe));*/
+
+        dest16 = dest16 << 2;
 
         //set remaining flags
         if (dest16 == 0)
