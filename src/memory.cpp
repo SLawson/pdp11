@@ -105,6 +105,25 @@ void Fetch_Decode(instruction & current_inst, bool I_or_D) {
 			current_inst.offset = temp8bit;
     }
     
+    //Special SWAB case
+    else if ((CurrentInst & 0x7fc0) == 0xc0) {
+    	I_or_D = false;
+      current_inst.instSel = SINGLE_OP;
+
+      current_inst.byteSel = ((CurrentInst & 0x8000) >> 0xf);
+      current_inst.opcode = ((CurrentInst & 0x7c0) >> 0x6);
+      current_inst.modeDest = ((CurrentInst & 0x38) >> 0x3);
+      current_inst.destReg = (CurrentInst & 0x7);
+
+      //PC operation
+      if ((current_inst.destReg == PC) || (current_inst.modeDest > 0x5)) {
+        int16_t temp16bit = access_mem(GPR[7], FETCH);
+  			GPR[7] = GPR[7] + 2;
+      	current_inst.destination = temp16bit;
+        current_inst.destPC = (GPR[PC]);
+      }
+    
+    }
     //Set status word opertation
     else if ((CurrentInst & 0xffe0) == 0xa0) {
       current_inst.Op_flag = false;

@@ -325,7 +325,7 @@ Take a source and destination memory location
       {
         int16_t dest16 = opdestination;
 
-        dest16 = ((dest16 >> 0x8) | ((dest16 & 0xff) << 0x8));
+        dest16 = (((dest16 && 0xff00) >> 0x8) | ((dest16 & 0xff) << 0x8));
 
         //set flags
         if ((dest16 & 0xff) == 0)
