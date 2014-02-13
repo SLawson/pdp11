@@ -47,7 +47,7 @@ Take a source and destination memory location
       }
       case CMP://compute src - dest, set flags only
       {
-        int tempresult;
+        int16_t tempresult;
 		    tempresult = opsource - opdestination;
 		    StatusFlags(tempresult,0);
 		    if(((tempresult) & (1 << 15)) || (((tempresult < 0) && (((tempresult) & (1 << 15)) != 0))))
@@ -142,8 +142,9 @@ Take a source and destination memory location
       }
       case COM://sets the destinations complement
       {
-        int16_t dest16 = ~opdestination;
-        opdestination = dest16;
+        int16_t dest16 = opdestination;
+        dest16 = ~dest16^dest16;
+        opdestination = dest16+1;
         StatusFlags(opdestination,0);//just sets the zero and negative
         Status_word.C = true;//sets the carry flag to true
         Status_word.V = false;//sets the overflow flag to false
