@@ -142,7 +142,7 @@ Take a source and destination memory location
         int16_t dest16 = ~opdestination;
         opdestination = dest16;
         StatusFlags(opdestination,0);//just sets the zero and negative
-        Status_word.C = false;//sets the carry flag to false
+        Status_word.C = true;//sets the carry flag to true
         Status_word.V = false;//sets the overflow flag to false
         break;
       }
