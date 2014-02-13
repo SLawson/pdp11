@@ -28,8 +28,8 @@ int reg_dump(bool file_out, bool std_out){
           fi << "R" << i << "," << GPR[i] << endl;
         }
         // dump PSW also
-        fi << Status_word -> priority << Status_word -> T << Status_word -> Z << Status_word -> N
-           << Status_word -> C << Status_word -> V << endl;
+        fi << Status_word.priority << Status_word.T << Status_word.Z
+           << Status_word.N << Status_word.C << Status_word.V << endl;
       }
 
       // handle file that couldn't be opened
@@ -48,15 +48,10 @@ int reg_dump(bool file_out, bool std_out){
         cout << "R" << i << "," << GPR[i] << endl;
       }
       // dump PSW also
-      cout << Status_word -> priority << Status_word -> T << Status_word -> Z << Status_word -> N
-         << Status_word -> C << Status_word -> V << endl;
+      cout << Status_word.priority << Status_word.T << Status_word.Z
+           << Status_word.N << Status_word.C << Status_word.V << endl;
   }
 
   return (status);
-}
-
-void status_dump(){
-
-  return;
 }
 
