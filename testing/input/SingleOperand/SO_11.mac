@@ -3,9 +3,32 @@
 
 .RADIX 10
 
+L9:
+        MOV     #5, R5
+        HALT
+
+L3:
+        MOV     #-4, R1
+        ASR     R1
+        BEQ     L9
+        BCS     L9
+        HALT
+
+L2:
+        MOV     #0, R1
+        ASR     R1
+        BCS     L9
+        BMI     L9
+        BEQ     L3
+        HALT
+
+L1:
+        BVS     L2
+        HALT
+        
 START:
-         MOV      #-4, R1
-         ASR      R1
-         CCC
-         HALT
+        MOV     #1, R1
+        ASR     R1
+        BCS     L1
+        HALT
 

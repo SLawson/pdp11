@@ -11,7 +11,7 @@ L2:
       MOV     #1, R3
       HALT
 L1:
-      MOV     #-32768, R2
+      MOV     #-1, R2
       COM     R2
       BMI     L9
       BVS     L9

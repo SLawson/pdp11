@@ -1,11 +1,37 @@
 ; File: SO_10.mac
 ; Tests: Rotate Left
 
+.RADIX 10
+
+L9:
+        MOV     #5, R5
+        HALT
+
+L4:
+        MOV     #4, R3
+        HALT
+
+L3:
+        CCC
+        MOV     #32767, R1
+        ROL     R1
+        BCS     L9
+        BMI     L4
+        HALT
+
+L2:
+        BEQ     L3
+        HALT
+
+L1:
+        BVS     L2
+        HALT
 
 START:
-         MOV      #0, R1
-         SEC
-         ROL      R1
-         CCC
-         HALT
+        CCC
+        MOV     #-32768, R1
+        ROL     R1
+        BMI     L9
+        BCS     L1
+        HALT
 
