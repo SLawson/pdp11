@@ -2,27 +2,12 @@
 ; Tests:  Trace file generation
 
 .RADIX 10
-
-.PSECT ABS
-
-.=.+100
-VAL1:     .WORD   5
-
-.=.+98
-VAL2:     .WORD   6
-
-.PSECT REL
+W1:       .WORD 20
+W2:       .WORD 30
 
 START:
-          MOV   #100, R0
-          MOV   #200, R1
-          MOV   #1, R2
-          MOV   #1, R3
-          ADD   VAL1, R2
-          ADD   VAL2, R3
-          MOV   R2, @R0
-          MOV   R3, @R1
-          MOV   VAL1, R4
-          MOV   VAL2, R5
-          HALT
-
+        MOV     #50, R0
+        MOV     R0, W1
+        MOV     W1, W2
+        MOV     W2, R1
+        HALT 

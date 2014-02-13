@@ -1,10 +1,30 @@
 ; File: SO_08.mac
 ; Tests: Test
 
+.RADIX 10
+
+L9:
+        MOV     #5, R5
+        HALT
+
+L2:
+        SEC
+        MOV     #-32768, R1
+        ADDC    R1
+        BVS     L9
+        BCS     L3
+        HALT
+
+L1:
+        SEC
+        MOV     #32767, R1
+        ADDC    R1
+        BVS     L2
+        HALT
 
 START:
-         MOV      #2, R1
+         MOV      #-2, R1
          TST      R1
-         CCC
+          
          HALT
 
