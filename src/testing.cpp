@@ -12,7 +12,7 @@ string* reg_file = NULL; // name of register dump file - set in initialization f
 bool display = 0;
 
 
-int reg_dump(int GPR[], PSW* Status_word, bool file_out, bool std_out){
+int reg_dump(bool file_out, bool std_out){
 
   ofstream fi;                     // output file stream
   int status = 0;                  // return code
@@ -55,7 +55,7 @@ int reg_dump(int GPR[], PSW* Status_word, bool file_out, bool std_out){
   return (status);
 }
 
-void status_dump(int GPR[], PSW* Status_word){
+void status_dump(){
 
   for (int i=0; i<REGISTERS; ++i){
     cout << "R" << i << "," << setfill('0') << oct << setw(6) << GPR[i] << endl;

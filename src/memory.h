@@ -14,12 +14,10 @@
 #include <stdint.h>
 
 //Fetches an instruction, decodes and updates current_inst
-void Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream & file, bool I_or_D, PSW & Status_word);
+void Fetch_Decode(instruction & current_inst, bool I_or_D);
 
 //Perform a data fetch  
-int Read_mem(int RAM [], int GPR [], ofstream&, bool I_or_D, PSW* Status_word); 
+int access_mem(int index, int flag, int out); 
 
-//Perform memory write if required
-int Write_mem(int RAM [], int & result, int & dest_addr, ofstream&);                 
 
 #endif//MEMORY_H_
