@@ -56,7 +56,7 @@ Take a source and destination memory location
             else
                 Status_word.C = true;
 
-            if((tempresult <= opdestination) && (opsource > 0 && tempresult < 0))
+            if((tempresult <= opdestination) && ((opsource > 0) && (tempresult < 0)))
 		        Status_word.V = true;
 		    else
                 Status_word.V = false;
@@ -96,7 +96,13 @@ Take a source and destination memory location
         int16_t temp;
         temp = (0xffff &(opdestination + opsource));
         StatusFlags(temp,1);
+         if((((opsource < 0) && (opdestination < 0)) && (temp > 0))||(((opsource > 0) && (opdestination > 0)) && (temp < 0)))
+            Status_word.V = true;
+        else
+            Status_word.V = false;
+
         opdestination = temp;
+
         break;
       }
       default:
