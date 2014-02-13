@@ -516,6 +516,12 @@ writeflag is used to check for a write for both memory or register
             break;
         }
         case regI:{//ID6 Index
+            if(current_inst.destReg == PC)
+            {
+                current_inst.write_flag = true;
+                current_inst.result = opdestination;
+                current_inst.dest_addr = (current_inst.destination + current_inst.destPC);
+            }
             current_inst.write_flag = true;
             current_inst.result = opdestination;
             current_inst.dest_addr = (current_inst.destination + GPR[current_inst.destReg]); //destination address
@@ -534,16 +540,22 @@ writeflag is used to check for a write for both memory or register
             break;
             }
         case regAID:{//ID3 Autoincrement deferred
-                if(current_inst.destReg == SP)
+                if(current_inst.destReg == SP)//for the stack pointer
                     GPR[current_inst.destReg] = opdestination;
-                else
+                else if(current_inst.destReg == PC)//For mode 37
+                {
+                    current_inst.write_flag = true;
+                    current_inst.result = opdestination;
+                    current_inst.dest_addr = current_inst.destination;
+                }
+                else//for mode 3
                 {
                     current_inst.write_flag = true;
                     current_inst.result = opdestination;
                     current_inst.dest_addr = RAM[GPR[current_inst.destReg]-2];
-                    break;
-                }
 
+                }
+                break;
             }
         case regAI:{//ID 2 Autoincrement
                     current_inst.write_flag = true;
@@ -661,7 +673,7 @@ int16_t address_location=0;
 			else if(curr_Register == PC)
             {
                 operand_data = RAM[address_op];//Set a value stored in memory
-                operand_data = ((operand_data) | (RAM[GPR[curr_Register]+1] << 0x8));
+                operand_data = ((operand_data) | (RAM[address_op+1] << 0x8));
             }
 			else
 			{
