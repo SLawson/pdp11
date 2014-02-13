@@ -195,22 +195,30 @@ Take a source and destination memory location
       }
       case ADC:
       {
-        opdestination = opdestination + Status_word.C;
-        StatusFlags(opdestination,1);//just sets the zero and negative
-        if(opdestination == -1)
+        if((opdestination == -1) && Status_word.C == true)
         {
           Status_word.C = true;//sets the carry flag to true
         }
+        else{
+          Status_word.C = false;
+        }
+        opdestination = opdestination + Status_word.C;
+        StatusFlags(opdestination,0);//just sets the zero and negative
+        
         break;
       }
       case SBC:
       {
         opdestination = opdestination - Status_word.C;
-        StatusFlags(opdestination, 1);//just sets the zero and negative
+        StatusFlags(opdestination, 0);//just sets the zero and negative
         if(opdestination == 0 && Status_word.C == true)
         {
             Status_word.C = false;//sets the carry flag to true
         }
+        else{
+          Status_word.C = false;
+        }
+        
         break;
       }
       case TST:

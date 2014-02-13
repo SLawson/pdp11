@@ -204,6 +204,23 @@ void Fetch_Decode(instruction & current_inst, bool I_or_D) {
 int access_mem(int index, int flag, int out) {
 
   int value = 0;
+  string type;
+
+  if (index & 0x1){
+    if (flag == READ){
+      type.assign("read");
+    }
+    else if (flag == WRITE){
+      type.assign("write");
+    }
+    else{
+      type.assign("fetch");
+    }
+  
+    cout << "\nWarning: Non-word-aligned memory " << type << " at "
+         << "location " << setfill('0') << setw(6) << oct << index
+         << "." << endl;
+  }
 
   if (flag == READ){
     file << "0" << "\t" << setfill('0') << setw(6) << oct << index << '\n';
