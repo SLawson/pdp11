@@ -71,9 +71,9 @@ extern ofstream file;		// trace file stream
 
 //Memory Access Options
 #define NOPRINT		-1
-#define READ		-1
-#define WRITE		-1
-#define FETCH		-1
+#define READ		0
+#define WRITE		1
+#define FETCH		2
 
 //OpCode Mnemonics
 
