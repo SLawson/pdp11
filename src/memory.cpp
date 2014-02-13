@@ -36,7 +36,7 @@ void Fetch_Decode(instruction & current_inst, bool I_or_D) {
 
     //PC operation -- src
     if ((current_inst.sourceReg == PC) || (current_inst.modeSrc > 0x5)) {
-    	int16_t temp16bit = access_mem(GPR[7], READ);
+    	int16_t temp16bit = access_mem(GPR[7], FETCH);
   		GPR[7] = GPR[7] + 2;
       current_inst.source = temp16bit;
       current_inst.srcPC = (GPR[PC]);
@@ -44,7 +44,7 @@ void Fetch_Decode(instruction & current_inst, bool I_or_D) {
 
     //PC operation -- dst
     if ((current_inst.destReg == PC) || (current_inst.modeDest > 0x5)) {
-      int16_t temp16bit = access_mem(GPR[7], READ);
+      int16_t temp16bit = access_mem(GPR[7], FETCH);
   		GPR[7] = GPR[7] + 2;
       current_inst.destination = temp16bit;
       current_inst.destPC = (GPR[PC]);
@@ -64,7 +64,7 @@ void Fetch_Decode(instruction & current_inst, bool I_or_D) {
 
       //PC operation
       if ((current_inst.destReg == PC) || (current_inst.modeDest > 0x5)) {
-        int16_t temp16bit = access_mem(GPR[7], READ);
+        int16_t temp16bit = access_mem(GPR[7], FETCH);
   			GPR[7] = GPR[7] + 2;
       	current_inst.destination = temp16bit;
         current_inst.destPC = (GPR[PC]);
@@ -85,7 +85,7 @@ void Fetch_Decode(instruction & current_inst, bool I_or_D) {
       
       current_inst.destReg = SP;
       current_inst.destPC = (GPR[PC]);
-      int16_t temp16bit = access_mem(GPR[7], READ);
+      int16_t temp16bit = access_mem(GPR[7], FETCH);
   		GPR[7] = GPR[7] + 2;
       current_inst.destination = temp16bit;
     }
@@ -117,7 +117,7 @@ void Fetch_Decode(instruction & current_inst, bool I_or_D) {
 
       //PC operation
       if ((current_inst.destReg == PC) || (current_inst.modeDest > 0x5)) {
-        int16_t temp16bit = access_mem(GPR[7], READ);
+        int16_t temp16bit = access_mem(GPR[7], FETCH);
   			GPR[7] = GPR[7] + 2;
       	current_inst.destination = temp16bit;
         current_inst.destPC = (GPR[PC]);
@@ -184,7 +184,7 @@ void Fetch_Decode(instruction & current_inst, bool I_or_D) {
 		  //current_inst.offset = (CurrentInst & 0x3f);
 		  
 		  if ((current_inst.destReg == PC) || (current_inst.modeDest > 0x5)) {
-      	temp16bit = access_mem(GPR[7], READ);
+      	temp16bit = access_mem(GPR[7], FETCH);
   			GPR[7] = GPR[7] + 2;
       	current_inst.destination = temp16bit;
       	current_inst.destPC = (GPR[PC]);
@@ -221,7 +221,17 @@ int access_mem(int index, int flag, int out) {
          << "location " << setfill('0') << setw(6) << oct << index
          << "." << endl;
   }
-
+  
+  if ((index < 0) || (index > 0177777)){
+    cout << "\nError: Memory address " << setfill('0') << setw(6)
+         << oct << index << " is out of valid memory space." << endl;
+  }
+  
+  else if (index > 61439){
+    cout << "\nWarning: Memory address " << setfill('0') << setw(6)
+         << oct << index << " is in dedicaded IO space." << endl;
+  }
+    
   if (flag == READ){
     file << "0" << "\t" << setfill('0') << setw(6) << oct << index << '\n';
     value = RAM[index];
