@@ -326,7 +326,7 @@ Take a source and destination memory location
 
 		  //Push specified Link Register's contents onto stack
 		  //modeSrc = 00, sourceReg = Link Register
-		  opdestination = AddressmodesDecode(RAM, current_inst.modeSrc, current_inst.source, GPR, current_inst.sourceReg,current_inst.srcPC);
+		  opsource = AddressmodesDecode(RAM, current_inst.modeSrc, current_inst.source, GPR, current_inst.sourceReg,current_inst.srcPC);
 
 		  //Copy PC's contents to specified Link Register (pre-incremented PC)
 		  GPR[current_inst.sourceReg] = GPR[PC];
@@ -337,7 +337,7 @@ Take a source and destination memory location
 	  else if(current_inst.opcode == RTS) {	//ReTurn from Subroutine
 
 		  //Copy specified Link Register's contents to PC
-		  GPR[PC] = GPR[current_inst.destReg];
+		  GPR[PC] = opdestination;
 
 		  //Pop top of stack to specified Link Register
 		  opdestination = AddressmodesDecode(RAM, current_inst.modeSrc, current_inst.source, GPR, current_inst.sourceReg,current_inst.srcPC);
@@ -522,10 +522,17 @@ writeflag is used to check for a write for both memory or register
             break;
         }
         case regADD:{//ID5 Autodecrement deferred
-            current_inst.write_flag = true;
-            current_inst.result = opdestination;//DATA
-            current_inst.dest_addr = RAM[GPR[current_inst.destReg]];
-            break;
+            if(current_inst.destReg == SP) {//for the stack pointer
+            	current_inst.write_flag = true;
+            	current_inst.result = opsource;
+            	current_inst.dest_addr = opdestination;
+            }
+            else {
+				current_inst.write_flag = true;
+				current_inst.result = opdestination;//DATA
+				current_inst.dest_addr = RAM[GPR[current_inst.destReg]];
+            }
+			break;
         }
         case regAD:{//ID4 Autodecrement
             current_inst.write_flag = true;
@@ -534,8 +541,11 @@ writeflag is used to check for a write for both memory or register
             break;
             }
         case regAID:{//ID3 Autoincrement deferred
-                if(current_inst.destReg == SP)//for the stack pointer
-                    GPR[current_inst.destReg] = opdestination;
+                if(current_inst.destReg == SP) {//for the stack pointer
+                	current_inst.write_flag = true;
+                	current_inst.result = opsource;
+                	current_inst.dest_addr = opdestination;
+                }
                 else if(current_inst.destReg == PC)//For mode 37
                 {
                     current_inst.write_flag = true;
