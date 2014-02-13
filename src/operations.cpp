@@ -618,8 +618,8 @@ int address_location=0;
 			if(curr_Register == PC) {
 
                 address_op = (address_op + prog_cntr);//adds the PC to the address we are currently on to give us memory location
-        		operand_data = access_mem(address_op,0);//takes the upper 8 bits of data from RAM
-				address_location = access_mem(address_op,0);//takes the upper 8 bits of data from RAM
+        		address_location = access_mem(address_op,0);//takes the upper 8 bits of data from RAM
+				address_location = access_mem(address_location,0);//takes the upper 8 bits of data from RAM
 				return address_location;//returns the address of the address
 			}
 
@@ -634,7 +634,8 @@ int address_location=0;
 			//PC-relative Mode 67
 			if(curr_Register == PC) {
 				address_op = (address_op + prog_cntr);//adds the PC to the address we are currently on to give us memory location
-				operand_data = access_mem(address_op,0);//takes the upper 8 bits of data from RAM]
+				address_location = access_mem(address_op,0);//takes the upper 8 bits of data from RAM]
+				return address_location;
 			}
 			else {
 				address_op = (address_op + GPR[curr_Register]);//adds the PC to the address we are currently on to give us memory location
@@ -646,7 +647,8 @@ int address_location=0;
             if(curr_Register == SP)//Stack pops the stack by 2
             {
                 GPR[curr_Register] -= 2;//decrement the stack pointer by 2 (push)
-                operand_data = GPR[curr_Register];
+                address_location = GPR[curr_Register];
+                return address_location;
             }
             else
             {
@@ -667,8 +669,9 @@ int address_location=0;
 		case regAID: {	//Auto-Increment Deferred Modes modeid:3
             if(curr_Register == SP)//Stack pops the stack by 2
             {
-                operand_data = GPR[curr_Register];
+                address_location = GPR[curr_Register];
                 GPR[curr_Register] += 2;//increment the stack pointer by 2 (pop)
+                return address_location;
             }
 			//PC-relative Absolute Mode
 			else if(curr_Register == PC)
