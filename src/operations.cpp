@@ -527,10 +527,12 @@ writeflag is used to check for a write for both memory or register
             	current_inst.result = opsource;
             	current_inst.dest_addr = opdestination - 2;
             }
-            current_inst.write_flag = true;
-            current_inst.result = opdestination;//DATA
-            current_inst.dest_addr = RAM[GPR[current_inst.destReg]];
-            break;
+            else {
+				current_inst.write_flag = true;
+				current_inst.result = opdestination;//DATA
+				current_inst.dest_addr = RAM[GPR[current_inst.destReg]];
+            }
+			break;
         }
         case regAD:{//ID4 Autodecrement
             current_inst.write_flag = true;
