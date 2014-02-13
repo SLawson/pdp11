@@ -19,7 +19,7 @@ void Operation(instruction & current_inst) {
     int opdestination;//this holds the value of the data (RAM or register)
     bool writeflag = true;//sets writeflag to alway write
 
-    opdestination = AddressmodesDecode(current_inst.modeDest, current_inst.destination, current_inst.destReg,current_inst.destPC);
+    //opdestination = AddressmodesDecode(current_inst.modeDest, current_inst.destination, current_inst.destReg,current_inst.destPC);
 
 /*********************************************************************************
 Double Operation
@@ -29,7 +29,7 @@ Take a source and destination memory location
 *********************************************************************************/
   if(current_inst.instSel == DOUBLE_OP  && current_inst.byteSel == 0)
   {
-
+    opdestination = AddressmodesDecode(current_inst.modeDest, current_inst.destination, current_inst.destReg,current_inst.destPC);
     opsource = AddressmodesDecode(current_inst.modeSrc, current_inst.source, current_inst.sourceReg,current_inst.srcPC);
 
 
@@ -100,6 +100,7 @@ Take a source and destination memory location
   }
   else if(current_inst.instSel == DOUBLE_OP  && current_inst.byteSel == 1)
   {
+	opdestination = AddressmodesDecode(current_inst.modeDest, current_inst.destination, current_inst.destReg,current_inst.destPC);
 	opsource = AddressmodesDecode(current_inst.modeSrc, current_inst.source, current_inst.sourceReg,current_inst.srcPC);
 	switch(current_inst.opcode){
 
@@ -126,6 +127,8 @@ Take a source and destination memory location
 
   else if(current_inst.instSel == SINGLE_OP && current_inst.byteSel == 0)
   {
+
+   opdestination = AddressmodesDecode(current_inst.modeDest, current_inst.destination, current_inst.destReg,current_inst.destPC);
     switch(current_inst.opcode)
     {
       case CLR://set the destination to zero
@@ -329,8 +332,9 @@ Take a source and destination memory location
   //Subroutine Jump Instructions
   else if(current_inst.instSel == JUMP) {
 
-	  if(current_inst.opcode == JSR) {		//Jump to Subroutine
 
+	  if(current_inst.opcode == JSR) {		//Jump to Subroutine
+        opdestination = AddressmodesDecode(current_inst.modeDest, current_inst.destination, current_inst.destReg,current_inst.destPC);
 		  //Push specified Link Register's contents onto stack
 		  //modeSrc = 00, sourceReg = Link Register
 		  opsource = AddressmodesDecode(current_inst.modeSrc, current_inst.source, current_inst.sourceReg,current_inst.srcPC);
@@ -342,7 +346,7 @@ Take a source and destination memory location
 		  GPR[PC] = GPR[PC] + current_inst.destination;
 	  }
 	  else if(current_inst.opcode == RTS) {	//ReTurn from Subroutine
-
+            opdestination = AddressmodesDecode(current_inst.modeDest, current_inst.destination, current_inst.destReg,current_inst.destPC);
 		  //Copy specified Link Register's contents to PC
 		  GPR[PC] = opdestination;
 
@@ -350,7 +354,6 @@ Take a source and destination memory location
 		  opdestination = AddressmodesDecode(current_inst.modeSrc, current_inst.source, current_inst.sourceReg,current_inst.srcPC);
 	  }
 	  else {
-		  //cout <<"Invalid Subroutine Instruction"; --move this!!!
 			//Push specified Link Register's contents onto stack
 		  //modeSrc = 00, sourceReg = Link Register
 		  opdestination = AddressmodesDecode(current_inst.modeDest, current_inst.destination, current_inst.destReg,current_inst.srcPC);
@@ -360,6 +363,8 @@ Take a source and destination memory location
 
 		  //Copy Jump Destination to PC
 		  GPR[PC] = opdestination;
+		  current_inst.opcode = 1;
+		  writeflag = false;
 			}
 	  if(current_inst.byteSel == 1) {
 
