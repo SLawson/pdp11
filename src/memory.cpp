@@ -145,7 +145,7 @@ void Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream &
      	current_inst.destReg = (CurrentInst & 0x0007);
  
      	//Set Stack Pointer Fields
-     	current_inst.modeSrc = regAID;
+     	current_inst.modeSrc = regAI;
      	current_inst.sourceReg = SP;
     }
 

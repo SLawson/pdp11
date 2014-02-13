@@ -340,7 +340,7 @@ Take a source and destination memory location
 		  GPR[PC] = opdestination;
 
 		  //Pop top of stack to specified Link Register
-		  opsource = AddressmodesDecode(RAM, current_inst.modeSrc, current_inst.source, GPR, current_inst.sourceReg,current_inst.srcPC);
+		  opdestination = AddressmodesDecode(RAM, current_inst.modeSrc, current_inst.source, GPR, current_inst.sourceReg,current_inst.srcPC);
 	  }
 	  else {
 		  //cout <<"Invalid Subroutine Instruction"; --move this!!!
@@ -525,7 +525,7 @@ writeflag is used to check for a write for both memory or register
             if(current_inst.destReg == SP) {//for the stack pointer
             	current_inst.write_flag = true;
             	current_inst.result = opsource;
-            	current_inst.dest_addr = opdestination - 2;
+            	current_inst.dest_addr = opdestination;
             }
             else {
 				current_inst.write_flag = true;
@@ -544,7 +544,7 @@ writeflag is used to check for a write for both memory or register
                 if(current_inst.destReg == SP) {//for the stack pointer
                 	current_inst.write_flag = true;
                 	current_inst.result = opsource;
-                	current_inst.dest_addr = opdestination - 2;
+                	current_inst.dest_addr = opdestination;
                 }
                 else if(current_inst.destReg == PC)//For mode 37
                 {
