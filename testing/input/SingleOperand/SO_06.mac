@@ -44,7 +44,6 @@ START:
         SEC
         MOV     #-1, R1
         ADC     R1
-        BMI     L9
         BEQ     L1
         HALT
 
