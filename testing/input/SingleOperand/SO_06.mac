@@ -1,6 +1,8 @@
 ; File: SO_06.mac
 ; Tests: Add carry
 
+.RADIX 10
+
 L9:
         MOV     #5, R5
         HALT
