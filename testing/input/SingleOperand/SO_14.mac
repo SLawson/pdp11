@@ -3,11 +3,22 @@
 
 .RADIX 10
 
-BY:   .WORD    127.
+W1:   .WORD     4660
+
+L9:
+        MOV     #5, R5
+        HALT
+
+L1:     
+        MOV     #-32768, R1
+        SWAB    R1
+        HALT
 
 START:
-         MOV      BY, R1
-         SWAB     R1
-         CCC
-         HALT
+        MOV     #0, R1
+        SWAB    R1
+        BCS     L9
+        BVS     L9
+        BEQ     L1
+        HALT
 
