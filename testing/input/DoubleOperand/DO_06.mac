@@ -9,7 +9,6 @@ L9:
 
 L4:
         MOV #4, R4
-        CCC
         HALT
 
 L3:
@@ -27,9 +26,9 @@ L2:
         MOV   #1, R2
         MOV   #0, R3
         ADD   R3, R1
-        BCC   L9
+        BCS   L9
         ADD   R1, R2
-        BCC   L3
+        BCS   L3
         HALT
 
 L1:     
