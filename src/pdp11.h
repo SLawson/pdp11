@@ -25,6 +25,12 @@ using namespace std;
 #define MEM_SIZE        65536   //Mem size in bytes
 #define REGISTERS       8       //Number of GPR's
 
+//Memory Access Options
+#define NOPRINT		-1
+#define READ		-1
+#define WRITE		-1
+#define FETCH		-1
+
 //OpCode Mnemonics
 
 //Double-operand instructions (DOUBLE_OP)
