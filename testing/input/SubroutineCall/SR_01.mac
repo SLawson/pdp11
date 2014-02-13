@@ -10,7 +10,6 @@ SUB:
       HALT
 
 START:
-      MOV   #157777, R6
       MOV   #10, R0
       MOV   #1, R1
       JSR   R0, SUB

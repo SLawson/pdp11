@@ -70,10 +70,19 @@ void Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream &
       //JSR
     else if (((CurrentInst & 0xfc0) >> 0x6) < 0x28) {
       current_inst.instSel = JUMP;
-      current_inst.modeDest = regAD;
+      current_inst.modeDest = regADD;
       current_inst.byteSel = ((CurrentInst & 0x8000) >> 0xf);
-      current_inst.destReg = ((CurrentInst & 0x01c0) >> 0x6);
-      current_inst.destination = (CurrentInst & 0x003f); //this is the value of the 6 bit dst field...
+      current_inst.opcode = JSR;
+      
+      current_inst.destReg = PC;
+      
+      current_inst.modeSrc = regS;
+      current_inst.sourceReg = ((CurrentInst & 0x01c0) >> 0x6);
+      
+      current_inst.destReg = SP;
+      current_inst.destPC = (GPR[PC]);
+      int16_t temp16bit = Read_mem(RAM, GPR, file, I_or_D, &Status_word);
+      current_inst.destination = temp16bit;
     }
   }
 
@@ -81,15 +90,16 @@ void Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream &
   else if ((CurrentInst & 0x7800) == 0x0) {
     if (((CurrentInst & 0x700) > 0x0) || ((CurrentInst & 0xf800) == 0x8000)) {
     	current_inst.byteSel = ((CurrentInst & 0x8000) >> 0xf);
-    	int8_t temp8bit = 0;
       current_inst.instSel = CONDITIONAL_OP;
+      
       current_inst.opcode = ((CurrentInst & 0x700) >> 0x8);
       if (current_inst.opcode == 0x0)
       	current_inst.opcode = BPL;
-			temp8bit = ((CurrentInst & 0xff));
+      	
+			int8_t temp8bit = ((CurrentInst & 0xff));
 			current_inst.offset = temp8bit;
-
     }
+    
     //Set status word opertation
     else if ((CurrentInst & 0xffe0) == 0xa0) {
       current_inst.Op_flag = false;
@@ -127,8 +137,16 @@ void Fetch_Decode(int RAM [], int GPR [], instruction & current_inst, ofstream &
 
     //RTS
     else if ((CurrentInst & 0xfff8) == 0x0080) {
-      current_inst.modeSrc = regAI;
-      current_inst.sourceReg = (CurrentInst & 0x0007);
+    	current_inst.instSel = JUMP;
+     	current_inst.opcode = RTS;
+ 
+     	//Set Link Register Fields
+     	current_inst.modeDest = regS;
+     	current_inst.destReg = (CurrentInst & 0x0007);
+ 
+     	//Set Stack Pointer Fields
+     	current_inst.modeSrc = regAID;
+     	current_inst.sourceReg = SP;
     }
 
 	  //Decode the current instruction
