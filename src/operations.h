@@ -13,7 +13,7 @@
 #include <stdint.h>
 
 //Function prototypes
-void Operation(instruction & current_inst, PSW & Status_word);        //Perform operation on current_inst operands
+void Operation(instruction & current_inst);        //Perform operation on current_inst operands
 void StatusFlags(int regDest, int ignore);
 int AddressmodesDecode(int mode, int &address_op,int curr_Register,int prog_cntr);
 void TakeBranch(int & Program_Counter, int & branch_offset);
