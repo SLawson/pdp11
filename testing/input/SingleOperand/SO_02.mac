@@ -1,10 +1,30 @@
 ; File: SO_02.mac
 ; Tests: Complement
 
+.RADIX    10
+
+L9:
+      MOV     #9, R0
+      HALT
+
+L2:
+      MOV     #1, R3
+      HALT
+L1:
+      MOV     #-32768, R2
+      COM     R2
+      BMI     L9
+      BVS     L9
+      BCC     L9
+      BEQ     L2
+      HALT
 
 START:
-         MOV      #1, R1
-         COM      R1
-         CCC
-         HALT
+      MOV     #1, R1
+      COM     R1
+      BCC     L9
+      BVS     L9
+      BPL     L9
+      BMI     L1
+      HALT
 
