@@ -14,6 +14,7 @@
 #include <fstream>
 using namespace std;
 
+
 //Debug configuration flag
 #ifdef _DEBUG
 #define DEBUG_FLAG		true
@@ -24,6 +25,49 @@ using namespace std;
 //Architecture parameters
 #define MEM_SIZE		65536	//Mem size in bytes
 #define REGISTERS		8		//Number of GPR's
+
+//Decoded instruction and destination address
+struct instruction {
+	int instSel;		//Identify the instruction type
+	int byteSel;		//For byte instructions
+	int opcode;			//Instruction OpCode
+
+	int source;			//Source Address
+	int sourceReg;		//Source Operand Register
+	int modeSrc;		//Addressing mode of the src
+	int src_addr;       //Source memory location
+	int srcPC;
+
+	int destination;	//Destination Address
+	int destReg;		//Destination Operand Register
+	int modeDest;		//Addressing mode of the destination
+	int dest_addr;		//Memory write address
+	int destPC;
+
+	int offset;			//Branch target PC-relative offset (# of words, signed)
+
+	int result;			//Result of Operation
+	int write_flag;		//Write-result-to-RAM flag
+	bool Op_flag;		//Requires call to Operations() flag
+
+};
+
+//Processor Status Word
+struct PSW {
+
+	int priority;	//Interrupt Priority
+	bool T;			//
+	bool N;			//Negative Flag
+	bool Z;			//Zero Flag
+	bool V;			//Overflow Flag
+	bool C;			//Carry Flag
+};
+
+//Global variables
+extern int GPR[REGISTERS];	//General Purpose Registers
+extern PSW Status_word;		//Current PSW
+extern int RAM[MEM_SIZE];	//Contents of main memory
+extern ofstream file;		// trace file stream
 
 //Memory Access Options
 #define NOPRINT		-1
@@ -140,41 +184,5 @@ using namespace std;
 #define CONDITIONAL_OP	4
 #define COND_CODE_OP	5
 
-//Decoded instruction and destination address
-struct instruction {
-	int instSel;		//Identify the instruction type
-	int byteSel;		//For byte instructions
-	int opcode;			//Instruction OpCode
-
-	int source;			//Source Address
-	int sourceReg;		//Source Operand Register
-	int modeSrc;		//Addressing mode of the src
-	int src_addr;       //Source memory location
-	int srcPC;
-
-	int destination;	//Destination Address
-	int destReg;		//Destination Operand Register
-	int modeDest;		//Addressing mode of the destination
-	int dest_addr;		//Memory write address
-	int destPC;
-
-	int offset;			//Branch target PC-relative offset (# of words, signed)
-
-	int result;			//Result of Operation
-	int write_flag;		//Write-result-to-RAM flag
-	bool Op_flag;		//Requires call to Operations() flag
-
-};
-
-//Processor Status Word
-struct PSW {
-
-	int priority;	//Interrupt Priority
-	bool T;			//
-	bool N;			//Negative Flag
-	bool Z;			//Zero Flag
-	bool V;			//Overflow Flag
-	bool C;			//Carry Flag
-};
 
 #endif//PDP11_H_
