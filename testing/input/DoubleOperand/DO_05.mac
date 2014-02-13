@@ -9,7 +9,7 @@ L9:
 
 
 L2:
-        BCC   L9
+        BCS   L9
         BVS   L9
         MOV   #3, R0
         CCC

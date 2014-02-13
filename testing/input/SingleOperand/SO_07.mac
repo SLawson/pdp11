@@ -1,12 +1,47 @@
 ; File: SO_07.mac
 ; Tests: Subtract carry
 
+L9:
+        MOV     #5, R5
+        HALT
+
+L4:
+        MOV     #3, R3
+        HALT
+
+L3:
+        SEC   
+        MOV     #-2, R1
+        SBC     R1
+        BVS     L9
+        BCC     L9
+        BEQ     L9
+        BMI     L4
+        HALT
+
+L2:
+        SEC
+        MOV     #-1, R1
+        SBC     R1
+        BVS     L9
+        BCC     L3
+        HALT
+
+L1:
+        SEC
+        MOV     #-32767, R1
+        SBC     R1
+        BCS     L9
+        BVS     L2
+        HALT
 
 START:
-         MOV      #2, R1
-         SEC
-         SBC      R1 ; Should result in 1 in R1
-         SBC      R1 ; Carry bit should be clear, so no change to R1
-         CCC
-         HALT
+        SEC
+        MOV     #1, R1
+        SBC     R1
+        BVS     L9
+        BMI     L9
+        BCC     L9
+        BEQ     L1
+        HALT
 
