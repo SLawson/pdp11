@@ -57,7 +57,7 @@ string out_file("tracefile.txt");	//output trace file name
 
 		//Write result to RAM if write_flag set
 		if(current_inst.write_flag) {
-			access_mem(current_inst.dest_addr, current_inst.result, WRITE);
+			access_mem(current_inst.dest_addr, WRITE, current_inst.result);
 			current_inst.write_flag = false;
 		}
 		instruction_count = instruction_count + 1;	//Increment instructions executed count
