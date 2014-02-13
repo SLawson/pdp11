@@ -605,18 +605,13 @@ int16_t address_location=0;
 
 			//PC-relative Deferred Mode 77
 			if(curr_Register == PC) {
-			  //adds the PC to the address we are currently on to give us memory location
-        address_op = (address_op + prog_cntr);
-        //takes the upper 8 bits of data from RAM]
-				operand_data = RAM[address_op];
-				//joins the data with the lower 8 bits giving the address
-				operand_data = (operand_data | (RAM[address_op+1] << 0x8));
-				//takes the upper 8 bits of data from RAM]
-				operand_data = RAM[operand_data];
-				//joins the data with the lower 8 bits giving the address
-				address_location = ((operand_data) | (RAM[address_location+1] << 0x8));
-				//returns the address of the address
-				return address_location;
+
+                address_op = (address_op + prog_cntr);//adds the PC to the address we are currently on to give us memory location
+        		operand_data = RAM[address_op];//takes the upper 8 bits of data from RAM
+				operand_data = (operand_data | (RAM[address_op+1] << 0x8));//joins the data with the lower 8 bits giving the address
+				operand_data = RAM[operand_data];//takes the upper 8 bits of data from RAM
+				address_location = ((operand_data) | (RAM[address_location+1] << 0x8));//joins the data with the lower 8 bits giving the address
+				return address_location;//returns the address of the address
 			}
 
 			else {
