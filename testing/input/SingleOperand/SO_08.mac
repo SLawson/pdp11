@@ -17,7 +17,7 @@ L1:
         BCS     L9
         BVS     L9
         BEQ     L9
-        BMI     L1
+        BMI     L2
         HALT
 START:
         MOV     #0, R1
