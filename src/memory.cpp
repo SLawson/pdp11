@@ -182,7 +182,7 @@ void Fetch_Decode(instruction & current_inst, bool I_or_D) {
 }
 
 //This function will be used to fetch instructions or data from memory
-int access_mem(int index, int flag, int out=0) {
+int access_mem(int index, int flag, int out) {
 
   int value = 0;
 

@@ -17,7 +17,7 @@
 void Fetch_Decode(instruction & current_inst, bool I_or_D);
 
 //Perform a data fetch  
-int access_mem(int index, int flag, int out); 
+int access_mem(int index, int flag, int out=0); 
 
 
 #endif//MEMORY_H_
