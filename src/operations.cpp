@@ -87,8 +87,11 @@ Take a source and destination memory location
       }
       case ADD://dest +=src
       {
+        int16_t temp;
         opdestination += opsource;
         StatusFlags(opdestination,1);
+        temp = opdestination;
+        opdestination = temp;
         break;
       }
       default:
