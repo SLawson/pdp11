@@ -19,7 +19,8 @@ int main(int argc, char * argv[]) {
 instruction current_inst = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};       //Fetched/decoded instruction
 PSW Status_word = {0, false, false, false, false, false};     //Current PSW
 int RAM[MEM_SIZE] = {0};                                      //Contents of main memory
-int GPR[REGISTERS] = {0};                                     //General Purpose Registers
+int GPR[REGISTERS] = {0,0,0,0,0,0,61439,0}; //General Purpose Registers
+// R6 is initialized to the top of accessible memory space, below IO space
 int init_status = 0;                                          //initialization routine return code
 bool I_or_D = false;
 
