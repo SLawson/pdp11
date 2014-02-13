@@ -18,7 +18,7 @@ L3:
         MOV   #0, R3
         SUB   R3, R1
         BVS   L9
-        SUB   R1, R2
+        SUB   R2, R1
         BVS   L4
         HALT
 
@@ -28,7 +28,7 @@ L2:
         MOV   #0, R3
         SUB   R3, R1
         BCC   L9
-        SUB   R1, R2
+        SUB   R2, R1
         BCC   L3
         HALT
 
