@@ -70,6 +70,9 @@ string out_file("tracefile.txt");	//output trace file name
 
 	//Write processor state to file if filename specified
 	reg_dump(1, 0);
+  if (dump_flag){
+    mem_dump();
+  }
 
 	file.close();	//Close trace file
 

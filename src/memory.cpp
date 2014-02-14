@@ -231,6 +231,10 @@ int access_mem(int index, int flag, int out) {
     cout << "\nWarning: Memory address " << setfill('0') << setw(6)
          << oct << index << " is in dedicaded IO space." << endl;
   }
+
+  if (dump_flag){
+    mem_tracker[index] = true;
+  }
     
   if (flag == READ){
     file << "0" << "\t" << setfill('0') << setw(6) << oct << index << '\n';

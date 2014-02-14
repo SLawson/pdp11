@@ -30,6 +30,7 @@ int initialize(int argc, char * argv[], string &out_file) {
   string out_fi("-o");             // option for specifying output trace file name/directory
   string reg_fi("-r");             // option for specifying register dump file name/directory
   string disp_en("-d");             // option for enabling register prints
+  string dump_en("-m");             // option for enabling valid memory dump at end of execution 
 
   while (i < argc){
 
@@ -45,6 +46,11 @@ int initialize(int argc, char * argv[], string &out_file) {
 
     else if(!disp_en.compare(argv[i])){
       display = 1;
+      i += 1;
+    }
+
+    else if(!dump_en.compare(argv[i])){
+      dump_flag = 1;
       i += 1;
     }
 

@@ -10,7 +10,8 @@
 
 string* reg_file = NULL; // name of register dump file - set in initialization function
 bool display = 0;
-
+bool dump_flag = 0;
+bool mem_tracker[MEM_SIZE] = {false};
 
 int reg_dump(bool file_out, bool std_out){
 
@@ -53,5 +54,21 @@ int reg_dump(bool file_out, bool std_out){
   }
 
   return (status);
+}
+
+void mem_dump(){
+
+  int i = 0;
+  
+  cout << "\nAccessed Memory Locations and Current Data:\n" << endl;
+
+  for (i=0; i<MEM_SIZE; ++i){
+    if (mem_tracker[i]){
+      cout << setfill('0') << oct << setw(6) << i << "\t"
+           << oct << setw(6) << RAM[i] << endl;
+    }
+  }
+
+  return;
 }
 
