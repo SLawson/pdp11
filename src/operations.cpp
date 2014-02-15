@@ -96,8 +96,10 @@ Take a source and destination memory location
         int16_t temp;
         temp = (0xffff &(opdestination + opsource));
         StatusFlags(temp,1);
-         if((((opsource < 0) && (opdestination < 0)) && (temp > 0))||(((opsource > 0) && (opdestination > 0)) && (temp < 0)))
+         if(((opsource < 0) && (opdestination < 0)) && (temp > 0))
             Status_word.V = true;
+         if (((opsource > 0) && (opdestination > 0)) && (temp < 0))
+         		Status_word.V = true;
         else
             Status_word.V = false;
 
@@ -120,17 +122,19 @@ Take a source and destination memory location
 
 		case SUB://dest -=src
 		{
-		//opdestination -= opsource;
-		//StatusFlags(opdestination,1);
-		int16_t temp;
-        temp = (0xffff &(opdestination - opsource));
-        StatusFlags(temp,1);
-         if((((opsource > 0) && (opdestination < 0)) && (temp > 0))||(((opsource < 0) && (opdestination > 0)) && (temp < 0)))
-            Status_word.V = true;
-        else
-            Status_word.V = false;
+			//opdestination -= opsource;
+			//StatusFlags(opdestination,1);
+			int16_t temp;
+			temp = (0xffff &(opdestination - opsource));
+			StatusFlags(temp,1);
+			 if(((opsource > 0) && (opdestination < 0)) && (temp > 0))
+			 		Status_word.V = true;
+			 if (((opsource < 0) && (opdestination > 0)) && (temp < 0))
+				  Status_word.V = true;
+			else
+				  Status_word.V = false;
 
-        opdestination = temp;
+			opdestination = temp;
 
 
 
@@ -637,13 +641,13 @@ writeflag is used to check for a write for both memory or register
         case regS://ID 0 Register
         {
         	//Mask sign-extended bits in 32-bit representation of 16-bit word
+
         	//if(opdestination < 0) {
         		//opdestination = (opdestination & 0x0000ffff);
         	//}
 
             data = opdestination;
             GPR[current_inst.destReg] = data;//stores the operand into the register
-
 
             break;
         }
@@ -668,8 +672,10 @@ These functions control the address reads to the
 
 int AddressmodesDecode(int mode,int &address_op, int curr_Register, int prog_cntr) {
 
+
 uint16_t operand_data=0;
 uint16_t address_location=0;
+
 
 
 	//Takes the destination address and fetches the data from the RAM for the destination value
