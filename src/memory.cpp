@@ -77,12 +77,12 @@ void Fetch_Decode(instruction & current_inst, bool I_or_D) {
       current_inst.modeDest = regADD;
       current_inst.byteSel = ((CurrentInst & 0x8000) >> 0xf);
       current_inst.opcode = JSR;
-      
+
       current_inst.destReg = PC;
-      
+
       current_inst.modeSrc = regS;
       current_inst.sourceReg = ((CurrentInst & 0x01c0) >> 0x6);
-      
+
       current_inst.destReg = SP;
       current_inst.destPC = (GPR[PC]);
       int16_t temp16bit = access_mem(GPR[7], NOPRINT);
@@ -96,15 +96,15 @@ void Fetch_Decode(instruction & current_inst, bool I_or_D) {
     if (((CurrentInst & 0x700) > 0x0) || ((CurrentInst & 0xf800) == 0x8000)) {
     	current_inst.byteSel = ((CurrentInst & 0x8000) >> 0xf);
       current_inst.instSel = CONDITIONAL_OP;
-      
+
       current_inst.opcode = ((CurrentInst & 0x700) >> 0x8);
       if (current_inst.opcode == 0x0)
       	current_inst.opcode = BPL;
-      	
+
 			int8_t temp8bit = ((CurrentInst & 0xff));
 			current_inst.offset = temp8bit;
     }
-    
+
     //Special SWAB case
     else if ((CurrentInst & 0x7fc0) == 0xc0) {
     	I_or_D = false;
@@ -122,7 +122,7 @@ void Fetch_Decode(instruction & current_inst, bool I_or_D) {
       	current_inst.destination = temp16bit;
         current_inst.destPC = (GPR[PC]);
       }
-    
+
     }
     //Set status word opertation
     else if ((CurrentInst & 0xffe0) == 0xa0) {
@@ -163,11 +163,11 @@ void Fetch_Decode(instruction & current_inst, bool I_or_D) {
     else if ((CurrentInst & 0xfff8) == 0x0080) {
     	current_inst.instSel = JUMP;
      	current_inst.opcode = RTS;
- 
+
      	//Set Link Register Fields
      	current_inst.modeDest = regS;
      	current_inst.destReg = (CurrentInst & 0x0007);
- 
+
      	//Set Stack Pointer Fields
      	current_inst.modeSrc = regAI;
      	current_inst.sourceReg = SP;
@@ -180,16 +180,16 @@ void Fetch_Decode(instruction & current_inst, bool I_or_D) {
 		  int16_t temp16bit = 0;
 		  current_inst.modeDest = ((CurrentInst & 0x38) >> 0x3);
       current_inst.destReg = (CurrentInst & 0x7);
-		  
+
 		  //current_inst.offset = (CurrentInst & 0x3f);
-		  
+
 		  if ((current_inst.destReg == PC) || (current_inst.modeDest > 0x5)) {
       	temp16bit = access_mem(GPR[7], NOPRINT);
   			GPR[7] = GPR[7] + 2;
       	current_inst.destination = temp16bit;
       	current_inst.destPC = (GPR[PC]);
     	}
-		  
+
 	  }
 
     //RESET op
@@ -201,7 +201,7 @@ void Fetch_Decode(instruction & current_inst, bool I_or_D) {
 }
 
 //This function will be used to fetch instructions or data from memory
-int access_mem(int index, int flag, int out) {
+int access_mem(uint16_t index, int flag, int out) {
 
   int value = 0;
   string type;
@@ -216,17 +216,17 @@ int access_mem(int index, int flag, int out) {
     else{
       type.assign("fetch");
     }
-  
+
     cout << "\nWarning: Non-word-aligned memory " << type << " at "
          << "location " << setfill('0') << setw(6) << oct << index
          << "." << endl;
   }
-  
+
   if ((index < 0) || (index > 0177777)){
     cout << "\nError: Memory address " << setfill('0') << setw(6)
          << oct << index << " is out of valid memory space." << endl;
   }
-  
+
   else if (index > 61439){
     cout << "\nWarning: Memory address " << setfill('0') << setw(6)
          << oct << index << " is in dedicaded IO space." << endl;
@@ -235,7 +235,7 @@ int access_mem(int index, int flag, int out) {
   if (dump_flag){
     mem_tracker[index] = true;
   }
-    
+
   if (flag == READ){
     file << "0" << "\t" << setfill('0') << setw(6) << oct << index << '\n';
     value = RAM[index];
@@ -256,10 +256,10 @@ int access_mem(int index, int flag, int out) {
     if (display){
       // dump register values
       for (int i=0; i<REGISTERS; ++i){
-        cout << "R" << i << "," 
+        cout << "R" << i << ","
              << setfill('0') << oct << setw(6) << GPR[i] << endl;
       }
-      // dump PSW 
+      // dump PSW
       cout << Status_word.priority << Status_word.T
            << Status_word.Z << Status_word.N << Status_word.C
            << Status_word.V << endl;

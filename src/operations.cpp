@@ -12,7 +12,6 @@
 
 void Operation(instruction & current_inst) {
 
-  //TODO Rob/Brett implement instruction ops, populate current_inst.result
 
     //Internal scratch pad registers
     int opsource = 0;		//this holds the value of the data (RAM or register)
@@ -40,6 +39,7 @@ Take a source and destination memory location
       {
 
         opdestination = opsource;
+        //opdestination = (0xffff & opdestination);
         StatusFlags(opdestination,0);
         Status_word.V = false;//sets the overflow flag to false
         break;
@@ -204,7 +204,7 @@ Take a source and destination memory location
         }
         opdestination = opdestination + Status_word.C;
         StatusFlags(opdestination,0);//just sets the zero and negative
-        
+
         break;
       }
       case SBC:
@@ -218,7 +218,7 @@ Take a source and destination memory location
         else{
           Status_word.C = false;
         }
-        
+
         break;
       }
       case TST:
@@ -256,7 +256,7 @@ Take a source and destination memory location
       }
       case ROL:
       {
-        int16_t dest16 = opdestination;
+        uint16_t dest16 = opdestination;
         int holder = (dest16 & 0x8000);
 
         dest16 = (dest16 << 0x1);
@@ -545,20 +545,27 @@ writeflag is used to check for a write for both memory or register
   //return function here for the different modes
   if(writeflag)//checks if op requires write to memory or register
   {
-
+      uint16_t data=0;
+      uint16_t address=0;
+      uint16_t address_Op = 0;
       switch (current_inst.modeDest) {
 
         case regID:{//ID 7 Index deferred
+            address_Op = opdestination;
+            address = access_mem(current_inst.destination + GPR[current_inst.destReg],-1);//access_mem(RAM, GPR, file, I_or_D) trying to add
 
             current_inst.write_flag = true;
-            current_inst.result = opdestination;
-            current_inst.dest_addr = access_mem(current_inst.destination + GPR[current_inst.destReg],-1);//access_mem(RAM, GPR, file, I_or_D) trying to add
+            current_inst.result = address_Op;
+            current_inst.dest_addr = address;
             break;
         }
         case regI:{//ID6 Index
+            data = opdestination;
+            address = current_inst.destination;
+
             current_inst.write_flag = true;
-            current_inst.result = opdestination;
-            current_inst.dest_addr = current_inst.destination; //destination address
+            current_inst.result = data;
+            current_inst.dest_addr = address; //destination address
             break;
         }
         case regADD:{//ID5 Autodecrement deferred
@@ -568,17 +575,22 @@ writeflag is used to check for a write for both memory or register
             	current_inst.dest_addr = opdestination;
             }
             else {
+				address_Op = opdestination;
+				address = access_mem(GPR[current_inst.destReg],-1);
 				current_inst.write_flag = true;
-				current_inst.result = opdestination;//DATA
-				current_inst.dest_addr = access_mem(GPR[current_inst.destReg],-1);
+				current_inst.result = address_Op;//Address
+				current_inst.dest_addr = address;
 
             }
 			break;
         }
         case regAD:{//ID4 Autodecrement
+            address_Op = opdestination;
+            address = GPR[current_inst.destReg];
+
             current_inst.write_flag = true;
-            current_inst.result = opdestination;
-            current_inst.dest_addr = GPR[current_inst.destReg]; //operand
+            current_inst.result = address_Op;
+            current_inst.dest_addr =  address;
             break;
             }
         case regAID:{//ID3 Autoincrement deferred
@@ -595,34 +607,44 @@ writeflag is used to check for a write for both memory or register
                 }
                 else//for mode 3
                 {
+                    address_Op = opdestination;
+                    address = access_mem(GPR[current_inst.destReg]-2,-1);
                     current_inst.write_flag = true;
-                    current_inst.result = opdestination;
-                    current_inst.dest_addr = access_mem(GPR[current_inst.destReg]-2,-1);
+                    current_inst.result = address_Op;
+                    current_inst.dest_addr = address;
 
                 }
                 break;
             }
         case regAI:{//ID 2 Autoincrement
+                    data = opdestination;
+                    address = GPR[current_inst.destReg]-2;
                     current_inst.write_flag = true;
-                    current_inst.result = opdestination;
-                    current_inst.dest_addr = GPR[current_inst.destReg]-2;
+                    current_inst.result = data;
+                    current_inst.dest_addr = address;
 
             break;
         }
         case regD://ID 1 Register Deferred
         {
+            data = opdestination;
+            address = GPR[current_inst.destReg];
             current_inst.write_flag = true;
-            current_inst.result = opdestination;
-            current_inst.dest_addr = GPR[current_inst.destReg];
+            current_inst.result = data;
+            current_inst.dest_addr = address;
             break;
         }
         case regS://ID 0 Register
         {
         	//Mask sign-extended bits in 32-bit representation of 16-bit word
-        	if(opdestination < 0) {
-        		opdestination = (opdestination & 0x0000ffff);
-        	}
-            GPR[current_inst.destReg] = opdestination;//stores the operand into the register
+        	//if(opdestination < 0) {
+        		//opdestination = (opdestination & 0x0000ffff);
+        	//}
+
+            data = opdestination;
+            GPR[current_inst.destReg] = data;//stores the operand into the register
+
+
             break;
         }
         //need to add the rest of the modes here for double op
@@ -646,8 +668,8 @@ These functions control the address reads to the
 
 int AddressmodesDecode(int mode,int &address_op, int curr_Register, int prog_cntr) {
 
-int16_t operand_data=0;
-int address_location=0;
+uint16_t operand_data=0;
+uint16_t address_location=0;
 
 
 	//Takes the destination address and fetches the data from the RAM for the destination value
@@ -765,7 +787,7 @@ This function sets the status flags based on an operation
 void StatusFlags(int regDest, int ignore)
 {
   //if the result of the register is zero then set the flag otherwise set to false
-  if(regDest == 0)//setting the zero flag on the Status flags
+  if(regDest == 0|| regDest == 65536)//setting the zero flag on the Status flags
   {
     Status_word.Z = true;
   }
@@ -775,7 +797,7 @@ void StatusFlags(int regDest, int ignore)
   }
 
   //if the result is a negative number
-  if(regDest < 0) //setting the negative flag on the Status flags
+  if(0x8000&regDest) //setting the negative flag on the Status flags
   {
     Status_word.N = true;
   }
