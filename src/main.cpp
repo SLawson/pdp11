@@ -66,14 +66,14 @@ string out_file("tracefile.txt");	//output trace file name
 
 	//Display summary of simulation
 	cout <<"\nPDP-11/20 Simulation Complete\n";
-	cout <<"\nInstructions Executed: " <<instruction_count <<'\n';
+	cout <<"\nInstructions Executed: " << instruction_count <<'\n';
 
 	//Write processor state to file if filename specified
 	reg_dump(1, 0);
   if (dump_flag){
     mem_dump();
   }
-
+	
 	file.close();	//Close trace file
 
 	cin.get();		//Pause before exiting

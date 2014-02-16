@@ -12,11 +12,11 @@
 
 void Operation(instruction & current_inst) {
 
-
     //Internal scratch pad registers
-    int opsource = 0;		//this holds the value of the data (RAM or register)
-    int opdestination = 0;	//this holds the value of the data (RAM or register)
+    int opsource;		//this holds the value of the data (RAM or register)
+    int opdestination;	//this holds the value of the data (RAM or register)
     bool writeflag = true;	//sets writeflag to alway write
+    bool access = true;
 
     //opdestination = AddressmodesDecode(current_inst.modeDest, current_inst.destination, current_inst.destReg,current_inst.destPC);
 
@@ -28,8 +28,11 @@ Take a source and destination memory location
 *********************************************************************************/
   if(current_inst.instSel == DOUBLE_OP  && current_inst.byteSel == 0)
   {
-    opdestination = AddressmodesDecode(current_inst.modeDest, current_inst.destination, current_inst.destReg,current_inst.destPC);
-    opsource = AddressmodesDecode(current_inst.modeSrc, current_inst.source, current_inst.sourceReg,current_inst.srcPC);
+  	if (current_inst.opcode == MOV)
+  		access = false;
+    opdestination = AddressmodesDecode(current_inst.modeDest, current_inst.destination, current_inst.destReg,current_inst.destPC, access);
+    access = true;
+    opsource = AddressmodesDecode(current_inst.modeSrc, current_inst.source, current_inst.sourceReg,current_inst.srcPC, access);
 
 
     //once the correct destination and source the operation can occur
@@ -39,29 +42,31 @@ Take a source and destination memory location
       {
 
         opdestination = opsource;
-        //opdestination = (0xffff & opdestination);
-        StatusFlags(opdestination,0);
+        //opdestination = temp;
+        StatusFlags(opdestination, 0);
         Status_word.V = false;//sets the overflow flag to false
         break;
 
       }
       case CMP://compute src - dest, set flags only
       {
-        int16_t tempresult;
-		    tempresult = opsource - opdestination;
-		    StatusFlags(tempresult,0);
+        int temp = (opsource - opdestination);
+		    opdestination = (opsource - opdestination);
+		    
+		    StatusFlags(opdestination, 0);
 
-		    if(((tempresult) & (1 << 15)) || (((tempresult < 0) && (((tempresult) & (1 << 15)) != 0))))
-                Status_word.C = false;
-            else
-                Status_word.C = true;
+		    if (((opdestination >= 0) && (opdestination & 0x8000)) || (((opdestination < 0) && ((opdestination & 0x10000) != 0))))
+           Status_word.C = false;
+        else
+           Status_word.C = true;
 
-            if((tempresult <= opdestination) && ((opsource > 0) && (tempresult < 0)))
-		        Status_word.V = true;
+        if((temp <= opdestination) && ((opsource > 0) && (temp < 0)))
+		       Status_word.V = true;
 		    else
-                Status_word.V = false;
+           Status_word.V = false;
 
-
+				temp = opdestination;
+				opdestination = temp;
 
 		    writeflag = false;//does not modify memory/registers
 
@@ -69,34 +74,45 @@ Take a source and destination memory location
       }
       case BIT://compute dest & src set flags only
       {
-        int tempresult=opdestination & opsource;
-        StatusFlags(tempresult,0);
+        opdestination = (opdestination & opsource);
+        
+        StatusFlags(opdestination, 0);
         Status_word.V = false;//sets the overflow flag to false
         writeflag = false;//does not modify memory/registers
+        
+        int16_t temp = opdestination;
+        opdestination = temp;
+        
         break;
       }
       case BIC://dest &= ~src
       {
-        opdestination= ~opsource & opdestination;
-        StatusFlags(opdestination,0);
+      	opdestination = (opdestination & ~opsource);
+
+        //opdestination= ~opsource & opdestination;
+        StatusFlags(opdestination, 0);
         Status_word.V = false;//sets the overflow flag to false
+        int16_t temp = opdestination;
+        opdestination = temp;
         break;
 
       }
       case BIS://Logical OR dest|=src
       {
         opdestination= opsource | opdestination;
-        StatusFlags(opdestination,0);
+        StatusFlags(opdestination, 0);
         Status_word.V = false;//sets the overflow flag to false
         break;
 
       }
       case ADD://dest +=src
       {
-        int16_t temp;
-        temp = (0xffff &(opdestination + opsource));
-        StatusFlags(temp,1);
-         if(((opsource < 0) && (opdestination < 0)) && (temp > 0))
+				
+        int16_t temp =  (opdestination + opsource);
+        opdestination = (opdestination + opsource);
+        
+        StatusFlags(opdestination, 1);
+         if((((opsource < 0) && (opdestination < 0)) && (temp > 0))||(((opsource > 0) && (opdestination > 0)) && (temp < 0)))
             Status_word.V = true;
          if (((opsource > 0) && (opdestination > 0)) && (temp < 0))
          		Status_word.V = true;
@@ -116,30 +132,30 @@ Take a source and destination memory location
   }
   else if(current_inst.instSel == DOUBLE_OP  && current_inst.byteSel == 1)
   {
-	opdestination = AddressmodesDecode(current_inst.modeDest, current_inst.destination, current_inst.destReg,current_inst.destPC);
-	opsource = AddressmodesDecode(current_inst.modeSrc, current_inst.source, current_inst.sourceReg,current_inst.srcPC);
+  access = true;
+	opdestination = AddressmodesDecode(current_inst.modeDest, current_inst.destination, current_inst.destReg,current_inst.destPC, access);
+	opsource = AddressmodesDecode(current_inst.modeSrc, current_inst.source, current_inst.sourceReg,current_inst.srcPC, access);
 	switch(current_inst.opcode){
 
 		case SUB://dest -=src
 		{
 			//opdestination -= opsource;
 			//StatusFlags(opdestination,1);
-			int16_t temp;
-			temp = (0xffff &(opdestination - opsource));
-			StatusFlags(temp,1);
-			 if(((opsource > 0) && (opdestination < 0)) && (temp > 0))
-			 		Status_word.V = true;
-			 if (((opsource < 0) && (opdestination > 0)) && (temp < 0))
+			int16_t temp =	(opdestination - opsource);
+			opdestination = (opdestination - opsource);
+
+			  
+			StatusFlags(opdestination, 1);
+			 if((((opsource > 0) && (opdestination < 0)) && (temp > 0))||(((opsource < 0) && (opdestination > 0)) && (temp < 0)))
 				  Status_word.V = true;
 			else
 				  Status_word.V = false;
 
 			opdestination = temp;
-
-
-
+			
 		break;
 		}
+		
 		default:
         {
             cout << "error in double op\n";
@@ -157,8 +173,10 @@ Take a source and destination memory location
 
   else if(current_inst.instSel == SINGLE_OP && current_inst.byteSel == 0)
   {
-
-   opdestination = AddressmodesDecode(current_inst.modeDest, current_inst.destination, current_inst.destReg,current_inst.destPC);
+		if (current_inst.opcode == CLR)
+  		access = false;
+   	opdestination = AddressmodesDecode(current_inst.modeDest, current_inst.destination, current_inst.destReg,current_inst.destPC, access);
+   	access = true;
     switch(current_inst.opcode)
     {
       case CLR://set the destination to zero
@@ -177,63 +195,68 @@ Take a source and destination memory location
         StatusFlags(opdestination,0);//just sets the zero and negative
         Status_word.C = true;//sets the carry flag to true
         Status_word.V = false;//sets the overflow flag to false
+        
         break;
       }
       case INC://increments the destination value by one
       {
-        opdestination = opdestination + 1;
+        
+        opdestination = (opdestination + 1);
+
         StatusFlags(opdestination,0);//just sets the zero and negative
+        int16_t temp = opdestination;
+        opdestination = temp;
         break;
       }
       case DEC://decrements the destination value by one
       {
-        opdestination = opdestination - 1;
+        
+        opdestination = (opdestination - 1);
+
         StatusFlags(opdestination,0);//just sets the zero and negative
+        int16_t temp = opdestination;
+        opdestination = temp;
         break;
       }
       case NEG://changes the value to negative
       {
-        opdestination = ~opdestination + 1;
+        
+        opdestination = (~opdestination + 1);
+
         StatusFlags(opdestination,1);//just sets the zero and negative
+        int16_t temp = opdestination;
+        opdestination = temp;
         break;
       }
       case ADC:
       {
-        if((opdestination == -1) && Status_word.C == true)
+        if((opdestination == -1) && (Status_word.C == true))
         {
           Status_word.C = true;//sets the carry flag to true
         }
         else{
           Status_word.C = false;
         }
-        opdestination = opdestination + Status_word.C;
+        opdestination = (opdestination + Status_word.C);
         StatusFlags(opdestination,0);//just sets the zero and negative
+<<<<<<< HEAD
+
+=======
+        int16_t temp = opdestination;
+        opdestination = temp;
+
+        int16_t temp = opdestination;
+        opdestination = temp;
 
         break;
       }
-      case SBC:
-      {
-        opdestination = opdestination - Status_word.C;
-        StatusFlags(opdestination, 0);//just sets the zero and negative
-        if(opdestination == 0 && Status_word.C == true)
-        {
-            Status_word.C = false;//sets the carry flag to true
-        }
-        else{
-          Status_word.C = false;
-        }
-
-        break;
-      }
-      case TST:
-      {
+      case TST: {
         StatusFlags(opdestination,0);//just sets the zero and negative
         Status_word.C = false;//sets the carry flag to false
         Status_word.V = false;//sets the overflow flag to false
         break;
       }
-      case ROR:
-      {
+      case ROR: {
         int16_t dest16 = opdestination;
         int holder = (dest16 & 0x1);
 
@@ -258,9 +281,10 @@ Take a source and destination memory location
         //current_inst.write_flag = true;
         break;
       }
-      case ROL:
-      {
-        uint16_t dest16 = opdestination;
+
+      case ROL: {
+        int16_t dest16 = opdestination;
+
         int holder = (dest16 & 0x8000);
 
         dest16 = (dest16 << 0x1);
@@ -284,8 +308,7 @@ Take a source and destination memory location
         //current_inst.write_flag = true;
         break;
       }
-      case ASR:
-      {
+      case ASR: {
         int16_t dest16 = opdestination;
 
         Status_word.C = (dest16 & 0x1);
@@ -310,8 +333,7 @@ Take a source and destination memory location
         //current_inst.write_flag = true;
         break;
       }
-      case ASL:
-      {
+      case ASL: {
         int16_t dest16 = opdestination;
 
         Status_word.C = (dest16 & 0x8000);
@@ -333,8 +355,7 @@ Take a source and destination memory location
         opdestination = dest16;
         break;
       }
-      case SWAB:
-      {
+      case SWAB: {
         int16_t dest16 = opdestination;
 
         dest16 = (((dest16 & 0xff00) >> 0x8) | ((dest16 & 0xff) << 0x8));
@@ -369,10 +390,10 @@ Take a source and destination memory location
 
 
 	  if(current_inst.opcode == JSR) {		//Jump to Subroutine
-        opdestination = AddressmodesDecode(current_inst.modeDest, current_inst.destination, current_inst.destReg,current_inst.destPC);
+      opdestination = AddressmodesDecode(current_inst.modeDest, current_inst.destination, current_inst.destReg,current_inst.destPC, access);
 		  //Push specified Link Register's contents onto stack
 		  //modeSrc = 00, sourceReg = Link Register
-		  opsource = AddressmodesDecode(current_inst.modeSrc, current_inst.source, current_inst.sourceReg,current_inst.srcPC);
+		  opsource = AddressmodesDecode(current_inst.modeSrc, current_inst.source, current_inst.sourceReg,current_inst.srcPC, access);
 
 		  //Copy PC's contents to specified Link Register (pre-incremented PC)
 		  GPR[current_inst.sourceReg] = GPR[PC];
@@ -381,17 +402,17 @@ Take a source and destination memory location
 		  GPR[PC] = GPR[PC] + current_inst.destination;
 	  }
 	  else if(current_inst.opcode == RTS) {	//ReTurn from Subroutine
-            opdestination = AddressmodesDecode(current_inst.modeDest, current_inst.destination, current_inst.destReg,current_inst.destPC);
+            opdestination = AddressmodesDecode(current_inst.modeDest, current_inst.destination, current_inst.destReg,current_inst.destPC, access);
 		  //Copy specified Link Register's contents to PC
 		  GPR[PC] = opdestination;
 
 		  //Pop top of stack to specified Link Register
-		  opdestination = AddressmodesDecode(current_inst.modeSrc, current_inst.source, current_inst.sourceReg,current_inst.srcPC);
+		  opdestination = AddressmodesDecode(current_inst.modeSrc, current_inst.source, current_inst.sourceReg,current_inst.srcPC, access);
 	  }
 	  else {
 			//Push specified Link Register's contents onto stack
 		  //modeSrc = 00, sourceReg = Link Register
-		  opdestination = AddressmodesDecode(current_inst.modeDest, current_inst.destination, current_inst.destReg,current_inst.srcPC);
+		  opdestination = AddressmodesDecode(current_inst.modeDest, current_inst.destination, current_inst.destReg,current_inst.srcPC, access);
 
 		  //Copy PC's contents to specified Link Register (pre-incremented PC)
 		  //GPR[current_inst.destReg] = GPR[PC];
@@ -559,8 +580,10 @@ writeflag is used to check for a write for both memory or register
             address = access_mem(current_inst.destination + GPR[current_inst.destReg],-1);//access_mem(RAM, GPR, file, I_or_D) trying to add
 
             current_inst.write_flag = true;
-            current_inst.result = address_Op;
-            current_inst.dest_addr = address;
+
+            current_inst.result = opdestination;
+            current_inst.dest_addr = access_mem(current_inst.destination + GPR[current_inst.destReg],-1);
+
             break;
         }
         case regI:{//ID6 Index
@@ -614,8 +637,12 @@ writeflag is used to check for a write for both memory or register
                     address_Op = opdestination;
                     address = access_mem(GPR[current_inst.destReg]-2,-1);
                     current_inst.write_flag = true;
+
                     current_inst.result = address_Op;
                     current_inst.dest_addr = address;
+
+                    current_inst.result = opdestination;
+                    current_inst.dest_addr = access_mem((GPR[current_inst.destReg]-2), -1);
 
                 }
                 break;
@@ -640,14 +667,10 @@ writeflag is used to check for a write for both memory or register
         }
         case regS://ID 0 Register
         {
-        	//Mask sign-extended bits in 32-bit representation of 16-bit word
 
-        	//if(opdestination < 0) {
-        		//opdestination = (opdestination & 0x0000ffff);
-        	//}
 
-            data = opdestination;
-            GPR[current_inst.destReg] = data;//stores the operand into the register
+        		uint16_t temp = opdestination;
+            GPR[current_inst.destReg] = temp;//stores the operand into the register
 
             break;
         }
@@ -670,10 +693,10 @@ These functions control the address reads to the
 
 ***************************************************************/
 
-int AddressmodesDecode(int mode,int &address_op, int curr_Register, int prog_cntr) {
+int AddressmodesDecode(int mode,int &address_op, int curr_Register, int prog_cntr, bool &access) {
 
 
-uint16_t operand_data=0;
+int16_t operand_data=0;
 uint16_t address_location=0;
 
 
@@ -685,15 +708,19 @@ uint16_t address_location=0;
 			//PC-relative Deferred Mode 77
 			if(curr_Register == PC) {
 
-                address_op = (address_op + prog_cntr);//adds the PC to the address we are currently on to give us memory location
-        		address_location = access_mem(address_op,0);//takes the upper 8 bits of data from RAM
+        address_op = (address_op + prog_cntr);//adds the PC to the address we are currently on to give us memory location
+        if (access) {
+        address_location = access_mem(address_op,0);//takes the upper 8 bits of data from RAM
 				address_location = access_mem(address_location,0);//takes the upper 8 bits of data from RAM
+				}
 				return address_location;//returns the address of the address
 			}
 
 			else {
-				address_location = access_mem(address_op + GPR[curr_Register],0);//access_mem(RAM, GPR, file, I_or_D) trying to add
+				if (access) {
+				address_location = access_mem((address_op + GPR[curr_Register]),0);
 				address_location = access_mem(address_location,0);
+				}
 				return address_location;
 			}
 			break;
@@ -701,13 +728,17 @@ uint16_t address_location=0;
 		case regI: {	//Index Modes modeid:6
 			//PC-relative Mode 67
 			if(curr_Register == PC) {
+				if (access) {
 				address_op = (address_op + prog_cntr);//adds the PC to the address we are currently on to give us memory location
 				address_location = access_mem(address_op,0);//takes the upper 8 bits of data from RAM]
+				}
 				return address_location;
 			}
 			else {
+			if (access) {
 				address_op = (address_op + GPR[curr_Register]);//adds the PC to the address we are currently on to give us memory location
-				operand_data = access_mem(address_op,0);//access_mem(RAM, GPR, file, I_or_D) trying to add
+				operand_data = access_mem(address_op,0);
+				}
 			}
 			break;
 		}
@@ -721,8 +752,10 @@ uint16_t address_location=0;
             else
             {
                 GPR[curr_Register] -= 2;		//Decrement before dereferencing
+                if (access) {
                 operand_data = access_mem(GPR[curr_Register],0);
                 address_location = access_mem(operand_data,0);
+                }
                 return address_location;
             }
 			break;
@@ -730,13 +763,16 @@ uint16_t address_location=0;
 		case regAD: {	//Auto-Decrement Mode mode: 4
 
 			GPR[curr_Register] -= 2;		//Decrement before dereferencing
+			if (access) {
 			address_location = access_mem(GPR[curr_Register],0);
+			}
 			return address_location;
 			break;
 		}
 		case regAID: {	//Auto-Increment Deferred Modes modeid:3
             if(curr_Register == SP)//Stack pops the stack by 2
             {
+            		
                 address_location = GPR[curr_Register];
                 GPR[curr_Register] += 2;//increment the stack pointer by 2 (pop)
                 return address_location;
@@ -744,12 +780,15 @@ uint16_t address_location=0;
 			//PC-relative Absolute Mode
 			else if(curr_Register == PC)
             {
+            	if (access) 
                 operand_data = access_mem(address_op,0);//Set a value stored in memory
             }
 			else
 			{
+				if (access) {
 				operand_data = access_mem(GPR[curr_Register],0);
 				address_location = access_mem(operand_data,0);// Address of the address
+				}
 				GPR[curr_Register] += 2;		//Increment after dereferencing
 				return address_location;
 			}
@@ -762,16 +801,19 @@ uint16_t address_location=0;
 				operand_data = address_op;
 			else
 			{
+				if (access) 
 				operand_data = access_mem(GPR[curr_Register],0);//fetches the address in the register and then increments by one
 				GPR[curr_Register] += 2;
 			}
 			break;
 		}
 		case regD: {	//Register Deferred Mode mode: 1
+			if (access) 
 			operand_data = access_mem(GPR[curr_Register],0);//Goes to the RAM address stored in the register location
 			break;
 		}
 		case regS: {	//Register Mode mode: 0
+		
 			operand_data = GPR[curr_Register];	//Read value in specified register
 			break;
 		}
@@ -792,8 +834,11 @@ This function sets the status flags based on an operation
 **************************************************************/
 void StatusFlags(int regDest, int ignore)
 {
+	int16_t temp = regDest;
   //if the result of the register is zero then set the flag otherwise set to false
-  if(regDest == 0|| regDest == 65536)//setting the zero flag on the Status flags
+
+  if(temp == 0)//setting the zero flag on the Status flags
+
   {
     Status_word.Z = true;
   }
@@ -803,7 +848,8 @@ void StatusFlags(int regDest, int ignore)
   }
 
   //if the result is a negative number
-  if(0x8000&regDest) //setting the negative flag on the Status flags
+
+  if(temp < 0) //setting the negative flag on the Status flags
   {
     Status_word.N = true;
   }
@@ -825,7 +871,7 @@ void StatusFlags(int regDest, int ignore)
   if(ignore == 1)//used to ignore carry modification
    {
       //check for a carry
-      if(((regDest) & (1 << 15)) || (((regDest < 0) && (((regDest) & (1 << 15)) != 0))))
+      if (((regDest >= 0) && (regDest & 0x8000)) || (((regDest < 0) && ((regDest & 0x10000) != 0))))
       {
         Status_word.C = true;
       }

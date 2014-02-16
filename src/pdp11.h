@@ -70,7 +70,7 @@ extern int RAM[MEM_SIZE];	//Contents of main memory
 extern ofstream file;		// trace file stream
 
 //Memory Access Options
-#define NOPRINT		-1
+#define NOPRINT	-1
 #define READ		0
 #define WRITE		1
 #define FETCH		2
@@ -84,7 +84,7 @@ extern ofstream file;		// trace file stream
 #define BIT		03	//compute dest & src set flags only
 #define BIC		04	//dest &= ~src
 #define BIS		05	//Logical OR dest|=src
-#define ADD     06	//dest +=src
+#define ADD   06	//dest +=src
 //byteSel = 1
 #define MOVB	01	//dest = src
 #define CMPB	02	//compute src - dest, set flags only

@@ -255,16 +255,30 @@ int access_mem(uint16_t index, int flag, int out) {
 
     if (display){
       // dump register values
-      for (int i=0; i<REGISTERS; ++i){
-        cout << "R" << i << ","
+      cout << '\n' << "Registors" << '\n';
+      for (int i = 0; i < REGISTERS; ++i){
+        cout << "R" << i << "," 
              << setfill('0') << oct << setw(6) << GPR[i] << endl;
       }
-      // dump PSW
+      
+      // dump PSW 
+      cout << '\n' << "PSW  (PTZNCV) =" << "\t"; 
       cout << Status_word.priority << Status_word.T
            << Status_word.Z << Status_word.N << Status_word.C
            << Status_word.V << endl;
       // dump fetched instruction
-      cout << "\t" << setfill('0') << oct << setw(6) << value << endl;
+      //cout << "Address = " << "\t" << setfill('0') << oct << setw(6) << value << endl;
+      
+      cout << '\n' << '\n' <<"Memory Contents" << '\n';
+      for (int j = 0; j < 8; ++j) {
+      	int k = j; 
+      	uint16_t l = RAM[j];
+      	j += 1;
+      	l = (l | (RAM[j] << 0x8));
+        cout << "Mem[" << k << "] " 
+             << setfill('0') << oct << setw(6) << l << '\n';
+      }
+      cout << '\n';
     }
   }
 
