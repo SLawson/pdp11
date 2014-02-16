@@ -73,7 +73,7 @@ string out_file("tracefile.txt");	//output trace file name
   if (dump_flag){
     mem_dump();
   }
-
+	
 	file.close();	//Close trace file
 
 	cin.get();		//Pause before exiting
