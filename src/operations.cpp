@@ -230,17 +230,29 @@ Take a source and destination memory location
       }
       case ADC:
       {
-        if((opdestination == -1) && (Status_word.C == true))
-        {
+      	int16_t temp = (opdestination + Status_word.C);
+      	opdestination = (opdestination + Status_word.C);
+      	
+      	if (temp == 0x0)
+      		Status_word.C = true;
+      	else 
+      		Status_word.C = false;
+      		
+      	if (temp < 0x0)
+      		Status_word.N = true;
+      	else
+      		Status_word.N = false;
+      		
+      	if ((temp == 0x7fff) && (Status_word.C == true))
+      		Status_word.V = true;
+      	else
+      		Status_word.V = false;
+      		
+        if((opdestination == 0xffff) && (Status_word.C == true))
           Status_word.C = true;//sets the carry flag to true
-        }
-        else{
+        else
           Status_word.C = false;
-        }
-        opdestination = (opdestination + Status_word.C);
-        StatusFlags(opdestination,0);//just sets the zero and negative
 
-        int16_t temp = opdestination;
         opdestination = temp;
 
         break;
@@ -271,18 +283,20 @@ Take a source and destination memory location
           Status_word.N = true;
         else
           Status_word.N = false;
+          
         Status_word.V = (Status_word.C ^ Status_word.N);
+        
         opdestination = dest16;
-        //current_inst.write_flag = true;
+
         break;
       }
 
       case ROL: {
         int16_t dest16 = opdestination;
 
-        int holder = (dest16 & 0x8000);
-
+        int holder = ((opdestination & 0x8000) >> 0xf);
         dest16 = (dest16 << 0x1);
+        
         if (Status_word.C)
           dest16 = (dest16 | (Status_word.C));
         else if (!Status_word.C)
@@ -294,13 +308,16 @@ Take a source and destination memory location
           Status_word.Z = true;
         else
           Status_word.Z = false;
+          
         if ((dest16 & 0x8000) == 0x8000)
           Status_word.N = true;
         else
           Status_word.N = false;
+          
         Status_word.V = (Status_word.C ^ Status_word.N);
+        
         opdestination = dest16;
-        //current_inst.write_flag = true;
+
         break;
       }
       case ASR: {
