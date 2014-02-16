@@ -266,7 +266,7 @@ int access_mem(int index, int flag, int out) {
            << Status_word.Z << Status_word.N << Status_word.C
            << Status_word.V << endl;
       // dump fetched instruction
-      cout << "PC = " << "\t" << setfill('0') << oct << setw(6) << value << endl;
+      //cout << "Address = " << "\t" << setfill('0') << oct << setw(6) << value << endl;
       
       cout << '\n' << '\n' <<"Memory Contents" << '\n';
       for (int j = 0; j < 8; ++j) {
