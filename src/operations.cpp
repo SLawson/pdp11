@@ -15,8 +15,8 @@ void Operation(instruction & current_inst) {
   //TODO Rob/Brett implement instruction ops, populate current_inst.result
 
     //Internal scratch pad registers
-    int opsource = 0;		//this holds the value of the data (RAM or register)
-    int opdestination = 0;	//this holds the value of the data (RAM or register)
+    int opsource;		//this holds the value of the data (RAM or register)
+    int opdestination;	//this holds the value of the data (RAM or register)
     bool writeflag = true;	//sets writeflag to alway write
 
     //opdestination = AddressmodesDecode(current_inst.modeDest, current_inst.destination, current_inst.destReg,current_inst.destPC);
@@ -618,10 +618,6 @@ writeflag is used to check for a write for both memory or register
         }
         case regS://ID 0 Register
         {
-        	//Mask sign-extended bits in 32-bit representation of 16-bit word
-        	if(opdestination < 0) {
-        		opdestination = (opdestination & 0x0000ffff);
-        	}
             GPR[current_inst.destReg] = opdestination;//stores the operand into the register
             break;
         }
