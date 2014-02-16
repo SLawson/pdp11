@@ -239,11 +239,6 @@ Take a source and destination memory location
         }
         opdestination = (opdestination + Status_word.C);
         StatusFlags(opdestination,0);//just sets the zero and negative
-<<<<<<< HEAD
-
-=======
-        int16_t temp = opdestination;
-        opdestination = temp;
 
         int16_t temp = opdestination;
         opdestination = temp;
