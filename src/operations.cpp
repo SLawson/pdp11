@@ -114,8 +114,6 @@ Take a source and destination memory location
         StatusFlags(opdestination, 1);
          if((((opsource < 0) && (opdestination < 0)) && (temp > 0))||(((opsource > 0) && (opdestination > 0)) && (temp < 0)))
             Status_word.V = true;
-         if (((opsource > 0) && (opdestination > 0)) && (temp < 0))
-         		Status_word.V = true;
         else
             Status_word.V = false;
 
@@ -400,7 +398,7 @@ Take a source and destination memory location
   //Subroutine Jump Instructions
   else if(current_inst.instSel == JUMP) {
 
-
+		access = true;
 	  if(current_inst.opcode == JSR) {		//Jump to Subroutine
       opdestination = AddressmodesDecode(current_inst.modeDest, current_inst.destination, current_inst.destReg,current_inst.destPC, access);
 		  //Push specified Link Register's contents onto stack
@@ -582,19 +580,19 @@ writeflag is used to check for a write for both memory or register
   //return function here for the different modes
   if(writeflag)//checks if op requires write to memory or register
   {
-      uint16_t data=0;
-      uint16_t address=0;
+      uint16_t data = 0;
+      uint16_t address = 0;
       uint16_t address_Op = 0;
       switch (current_inst.modeDest) {
 
         case regID:{//ID 7 Index deferred
             address_Op = opdestination;
-            address = access_mem(current_inst.destination + GPR[current_inst.destReg],-1);//access_mem(RAM, GPR, file, I_or_D) trying to add
+            address = access_mem(current_inst.destination + GPR[current_inst.destReg],0);
 
             current_inst.write_flag = true;
 
             current_inst.result = opdestination;
-            current_inst.dest_addr = access_mem(current_inst.destination + GPR[current_inst.destReg],-1);
+            current_inst.dest_addr = access_mem(current_inst.destination + GPR[current_inst.destReg],0);
 
             break;
         }
@@ -614,11 +612,11 @@ writeflag is used to check for a write for both memory or register
             	current_inst.dest_addr = opdestination;
             }
             else {
-				address_Op = opdestination;
-				address = access_mem(GPR[current_inst.destReg],-1);
-				current_inst.write_flag = true;
-				current_inst.result = address_Op;//Address
-				current_inst.dest_addr = address;
+							address_Op = opdestination;
+							address = access_mem(GPR[current_inst.destReg],0);
+							current_inst.write_flag = true;
+							current_inst.result = address_Op;//Address
+							current_inst.dest_addr = address;
 
             }
 			break;
@@ -647,24 +645,24 @@ writeflag is used to check for a write for both memory or register
                 else//for mode 3
                 {
                     address_Op = opdestination;
-                    address = access_mem(GPR[current_inst.destReg]-2,-1);
+                    address = access_mem(GPR[current_inst.destReg]-2,0);
                     current_inst.write_flag = true;
 
                     current_inst.result = address_Op;
                     current_inst.dest_addr = address;
 
                     current_inst.result = opdestination;
-                    current_inst.dest_addr = access_mem((GPR[current_inst.destReg]-2), -1);
+                    current_inst.dest_addr = access_mem((GPR[current_inst.destReg]-2), 0);
 
                 }
                 break;
             }
         case regAI:{//ID 2 Autoincrement
-                    data = opdestination;
-                    address = GPR[current_inst.destReg]-2;
-                    current_inst.write_flag = true;
-                    current_inst.result = data;
-                    current_inst.dest_addr = address;
+		            data = opdestination;
+		            address = GPR[current_inst.destReg]-2;
+		            current_inst.write_flag = true;
+		            current_inst.result = data;
+		            current_inst.dest_addr = address;
 
             break;
         }
