@@ -122,14 +122,14 @@ Take a source and destination memory location
         else
         	Status_word.N = false;
         	
-        if ((temp32 & 0x10000) == 0x10000 )
+        if ((temp32 & 0xffff0000) != 0)
         	Status_word.C = true;
         else
         	Status_word.C = false;
         	
-        if ((opsource > 0x0) && (opdestination > 0x0) && (temp < 0x0))
+        if ((temp2 > 0x0) && (temp1 > 0x0) && (temp < 0x0))
         	Status_word.V = true;
-        if ((opsource < 0x0) && (opdestination < 0x0) && (temp > 0x0))
+        else if ((temp2 < 0x0) && (temp1 < 0x0) && (temp > 0x0))
         	Status_word.V = true;
         else
         	Status_word.V = false;
@@ -251,21 +251,21 @@ Take a source and destination memory location
       	opdestination = (opdestination + Status_word.C);
       	
       	if (temp == 0x0)
-      		Status_word.C = true;
+      		Status_word.Z = true;
       	else 
-      		Status_word.C = false;
+      		Status_word.Z = false;
       		
       	if (temp < 0x0)
       		Status_word.N = true;
       	else
       		Status_word.N = false;
       		
-      	if ((temp1 == 0x7fff) && (Status_word.C == true))
+      	if ((temp1 == 32767) && (Status_word.C == true))
       		Status_word.V = true;
       	else
       		Status_word.V = false;
       		
-        if((temp1 == 0xffff) && (Status_word.C == true))
+        if((temp1 == -1) && (Status_word.C == true))
           Status_word.C = true;//sets the carry flag to true
         else
           Status_word.C = false;
