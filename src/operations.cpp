@@ -107,9 +107,10 @@ Take a source and destination memory location
       }
       case ADD://dest +=src
       {
-				
-        int16_t temp =  (opdestination + opsource);
-        int temp32 = (opdestination + opsource);
+				int16_t temp1 = opdestination;
+				int16_t temp2 = opsource;
+        int16_t temp =  (temp1 + temp2);
+        int temp32 = (temp1 + temp2);
         
         if (temp == 0)
         	Status_word.Z = true;
@@ -121,7 +122,7 @@ Take a source and destination memory location
         else
         	Status_word.N = false;
         	
-        if ((temp32 & 0xffff0000) != 0x0 )
+        if ((temp32 & 0x10000) == 0x10000 )
         	Status_word.C = true;
         else
         	Status_word.C = false;
