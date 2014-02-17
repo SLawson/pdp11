@@ -336,10 +336,10 @@ Take a source and destination memory location
 //        opdestination = dest16;
 
         bool temp_Carry = Status_word.C;
-        Status_word.C = opdestination & 0x8FFF;
+        Status_word.C = opdestination & 0x8000;
         opdestination = (opdestination << 1) | temp_Carry;
         
-        if (opdestination & 0x8FFFF){
+        if (opdestination & 0x8000){
           opdestination = opdestination | 0xFFFF0000;
           Status_word.N = true;
         }
