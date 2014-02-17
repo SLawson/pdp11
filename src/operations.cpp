@@ -245,8 +245,9 @@ Take a source and destination memory location
       }
       case ADC:
       {
-      	int16_t temp = (opdestination + Status_word.C);
-      	uint16_t temp2 = (opdestination + Status_word.C);
+      	int16_t temp1 = (opdestination & 0xffff);
+      	int16_t temp = (temp1 + Status_word.C);
+      	uint16_t temp2 = (temp1 + Status_word.C);
       	opdestination = (opdestination + Status_word.C);
       	
       	if (temp == 0x0)
@@ -259,12 +260,12 @@ Take a source and destination memory location
       	else
       		Status_word.N = false;
       		
-      	if ((temp2 == 0x7fff) && (Status_word.C == true))
+      	if ((temp1 == 0x7fff) && (Status_word.C == true))
       		Status_word.V = true;
       	else
       		Status_word.V = false;
       		
-        if((temp2 == 0xffff) && (Status_word.C == true))
+        if((temp1 == 0xffff) && (Status_word.C == true))
           Status_word.C = true;//sets the carry flag to true
         else
           Status_word.C = false;
@@ -317,8 +318,6 @@ Take a source and destination memory location
           dest16 = (dest16 | (Status_word.C));
         else if (!Status_word.C)
           dest16 = (dest16 & 0xfffe);
-        
-        Status_word.C = holder;
 
         //set remaining flags
         if (dest16 == 0)
@@ -331,6 +330,7 @@ Take a source and destination memory location
         else
           Status_word.N = false;
           
+        Status_word.C = holder;  
         Status_word.V = (Status_word.C ^ Status_word.N);
         
         opdestination = dest16;
@@ -364,7 +364,7 @@ Take a source and destination memory location
         break;
       }
       case ASL: {
-        int16_t dest16 = opdestination;
+        int16_t dest16 = (opdestination & 0xffff);
 
         Status_word.C = ((opdestination & 0x8000) >> 0xf);
 				uint16_t holder = (dest16 & 0x1);
@@ -690,6 +690,7 @@ writeflag is used to check for a write for both memory or register
         }
         case regD://ID 1 Register Deferred
         {
+        		
             data = opdestination;
             address = GPR[current_inst.destReg];
             current_inst.write_flag = true;
