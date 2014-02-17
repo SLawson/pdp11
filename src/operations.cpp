@@ -122,7 +122,7 @@ Take a source and destination memory location
         else
         	Status_word.N = false;
         	
-        if ((temp32 & 0xffff0000) != 0)
+        if (temp32 & 0xFFFF0000)
         	Status_word.C = true;
         else
         	Status_word.C = false;
@@ -309,31 +309,53 @@ Take a source and destination memory location
       }
 
       case ROL: {
-        int16_t dest16 = opdestination;
+//        int16_t dest16 = opdestination;
+//
+//        uint16_t holder = ((opdestination & 0x8000) >> 0xf);
+//        dest16 = (dest16 << 0x1);
+//        
+//        if (Status_word.C)
+//          dest16 = (dest16 | (Status_word.C));
+//        else if (!Status_word.C)
+//          dest16 = (dest16 & 0xfffe);
+//
+//        //set remaining flags
+//        if (dest16 == 0)
+//          Status_word.Z = true;
+//        else
+//          Status_word.Z = false;
+//          
+//        if ((dest16 & 0x8000) == 0x8000)
+//          Status_word.N = true;
+//        else
+//          Status_word.N = false;
+//          
+//        Status_word.C = holder;  
+//        Status_word.V = (Status_word.C ^ Status_word.N);
+//        
+//        opdestination = dest16;
 
-        uint16_t holder = ((opdestination & 0x8000) >> 0xf);
-        dest16 = (dest16 << 0x1);
+        bool temp_Carry = Status_word.C;
+        Status_word.C = opdestination & 0x8FFF;
+        opdestination = (opdestination << 1) | temp_Carry;
         
-        if (Status_word.C)
-          dest16 = (dest16 | (Status_word.C));
-        else if (!Status_word.C)
-          dest16 = (dest16 & 0xfffe);
-
-        //set remaining flags
-        if (dest16 == 0)
-          Status_word.Z = true;
-        else
-          Status_word.Z = false;
-          
-        if ((dest16 & 0x8000) == 0x8000)
+        if (opdestination & 0x8FFFF){
+          opdestination = opdestination | 0xFFFF0000;
           Status_word.N = true;
-        else
+        }
+        else{
+          opdestination = opdestination & 0x0000FFFF;
           Status_word.N = false;
-          
-        Status_word.C = holder;  
-        Status_word.V = (Status_word.C ^ Status_word.N);
+        }
+  
+        if (opdestination == 0x0){
+          Status_word.Z = true;
+        }
+        else{
+          Status_word.Z = false;
+        }
         
-        opdestination = dest16;
+        Status_word.V = Status_word.N ^ Status_word.C;
 
         break;
       }
