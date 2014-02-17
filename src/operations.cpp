@@ -110,7 +110,7 @@ Take a source and destination memory location
 				int16_t temp1 = opdestination;
 				int16_t temp2 = opsource;
         int16_t temp =  (temp1 + temp2);
-        int temp32 = (temp1 + temp2);
+        int temp32 = (0x0000FFFF & opdestination) + (0x0000FFFF & opsource);
         
         if (temp == 0)
         	Status_word.Z = true;
@@ -247,7 +247,6 @@ Take a source and destination memory location
       {
       	int16_t temp1 = (opdestination & 0xffff);
       	int16_t temp = (temp1 + Status_word.C);
-      	uint16_t temp2 = (temp1 + Status_word.C);
       	opdestination = (opdestination + Status_word.C);
       	
       	if (temp == 0x0)
@@ -274,12 +273,31 @@ Take a source and destination memory location
 
         break;
       }
+
+      case SBC:
+      {
+        
+        opdestination = (opdestination - Status_word.C);
+        StatusFlags(opdestination, 0);//just sets the zero and negative
+        if((opdestination == 0) && (Status_word.C == true))
+        {
+            Status_word.C = false;//sets the carry flag to true
+        }
+        else{
+          Status_word.C = false;
+        }
+        int16_t temp = opdestination;
+        opdestination = temp;
+        break;
+      }
+
       case TST: {
         StatusFlags(opdestination,0);//just sets the zero and negative
         Status_word.C = false;//sets the carry flag to false
         Status_word.V = false;//sets the overflow flag to false
         break;
       }
+
       case ROR: {
         int16_t dest16 = opdestination;
         int holder = (dest16 & 0x1);
@@ -309,32 +327,6 @@ Take a source and destination memory location
       }
 
       case ROL: {
-//        int16_t dest16 = opdestination;
-//
-//        uint16_t holder = ((opdestination & 0x8000) >> 0xf);
-//        dest16 = (dest16 << 0x1);
-//        
-//        if (Status_word.C)
-//          dest16 = (dest16 | (Status_word.C));
-//        else if (!Status_word.C)
-//          dest16 = (dest16 & 0xfffe);
-//
-//        //set remaining flags
-//        if (dest16 == 0)
-//          Status_word.Z = true;
-//        else
-//          Status_word.Z = false;
-//          
-//        if ((dest16 & 0x8000) == 0x8000)
-//          Status_word.N = true;
-//        else
-//          Status_word.N = false;
-//          
-//        Status_word.C = holder;  
-//        Status_word.V = (Status_word.C ^ Status_word.N);
-//        
-//        opdestination = dest16;
-
         bool temp_Carry = Status_word.C;
         Status_word.C = opdestination & 0x8000;
         opdestination = (opdestination << 1) | temp_Carry;
@@ -386,27 +378,6 @@ Take a source and destination memory location
         break;
       }
       case ASL: {
-//        int16_t dest16 = (opdestination & 0xffff);
-//
-//        Status_word.C = ((opdestination & 0x8000) >> 0xf);
-//				uint16_t holder = (dest16 & 0x1);
-//				
-//				
-//        dest16 = dest16 << 1;//shift by 1
-//
-//        //set remaining flags
-//        if (dest16 == 0)
-//          Status_word.Z = true;
-//        else
-//          Status_word.Z = false;
-//
-//        if ((dest16 & 0x8000) == 0x8000)
-//          Status_word.N = true;
-//        else
-//          Status_word.N = false;
-//
-//        Status_word.V = (Status_word.C ^ Status_word.N);
-//        opdestination = dest16;
 
         Status_word.C = opdestination & 0x8000;
         opdestination = opdestination << 1;
