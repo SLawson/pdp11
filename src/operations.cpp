@@ -386,27 +386,49 @@ Take a source and destination memory location
         break;
       }
       case ASL: {
-        int16_t dest16 = (opdestination & 0xffff);
+//        int16_t dest16 = (opdestination & 0xffff);
+//
+//        Status_word.C = ((opdestination & 0x8000) >> 0xf);
+//				uint16_t holder = (dest16 & 0x1);
+//				
+//				
+//        dest16 = dest16 << 1;//shift by 1
+//
+//        //set remaining flags
+//        if (dest16 == 0)
+//          Status_word.Z = true;
+//        else
+//          Status_word.Z = false;
+//
+//        if ((dest16 & 0x8000) == 0x8000)
+//          Status_word.N = true;
+//        else
+//          Status_word.N = false;
+//
+//        Status_word.V = (Status_word.C ^ Status_word.N);
+//        opdestination = dest16;
 
-        Status_word.C = ((opdestination & 0x8000) >> 0xf);
-				uint16_t holder = (dest16 & 0x1);
-				
-				
-        dest16 = dest16 << 1;//shift by 1
-
-        //set remaining flags
-        if (dest16 == 0)
-          Status_word.Z = true;
-        else
-          Status_word.Z = false;
-
-        if ((dest16 & 0x8000) == 0x8000)
+        Status_word.C = opdestination & 0x8000;
+        opdestination = opdestination << 1;
+        
+        if (opdestination & 0x8000){
+          opdestination = opdestination | 0xFFFF0000;
           Status_word.N = true;
-        else
+        }
+        else{
+          opdestination = opdestination & 0x0000FFFF;
           Status_word.N = false;
+        }
+  
+        if (opdestination == 0x0){
+          Status_word.Z = true;
+        }
+        else{
+          Status_word.Z = false;
+        }
+        
+        Status_word.V = Status_word.N ^ Status_word.C;
 
-        Status_word.V = (Status_word.C ^ Status_word.N);
-        opdestination = dest16;
         break;
       }
       case SWAB: {
