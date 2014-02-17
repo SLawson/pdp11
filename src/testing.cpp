@@ -59,13 +59,15 @@ int reg_dump(bool file_out, bool std_out){
 void mem_dump(){
 
   int i = 0;
+  int temp = 0;
   
   cout << "\nAccessed Memory Locations and Current Data:\n" << endl;
 
-  for (i=0; i<MEM_SIZE; ++i){
+  for (i=0; i<MEM_SIZE; i=i+2){
     if (mem_tracker[i]){
+      temp = RAM[i] | (RAM[i+1] << 0x8);
       cout << setfill('0') << oct << setw(6) << i << "\t"
-           << oct << setw(6) << RAM[i] << endl;
+           << oct << setw(6) << temp << endl;
     }
   }
 
